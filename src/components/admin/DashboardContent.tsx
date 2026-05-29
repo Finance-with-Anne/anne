@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { useAdminTheme } from "@/lib/admin-theme";
 
 const statusColors: Record<string, string> = {
@@ -30,6 +31,7 @@ type Props = {
 
 export default function DashboardContent({ stats, recentClients, recentBookings, topPosts }: Props) {
   const { dark } = useAdminTheme();
+  const [search, setSearch] = useState("");
 
   const card = dark ? "bg-[#111318] border-white/5" : "bg-white border-gray-200";
   const heading = dark ? "text-white" : "text-gray-900";
@@ -39,6 +41,11 @@ export default function DashboardContent({ stats, recentClients, recentBookings,
   const tableText = dark ? "text-white/70" : "text-gray-700";
   const tableSub = dark ? "text-white/30" : "text-gray-400";
   const divider = dark ? "border-white/5" : "border-gray-100";
+
+  const q = search.toLowerCase();
+  const filteredClients  = recentClients.filter(c => c.name?.toLowerCase().includes(q) || c.email?.toLowerCase().includes(q));
+  const filteredBookings = recentBookings.filter(b => b.client_name?.toLowerCase().includes(q) || b.service?.toLowerCase().includes(q));
+  const filteredPosts    = topPosts.filter(p => p.title?.toLowerCase().includes(q));
 
   const statCards = [
     {
@@ -66,9 +73,32 @@ export default function DashboardContent({ stats, recentClients, recentBookings,
   return (
     <div className="space-y-6">
       {/* Page header */}
-      <div>
-        <h1 className={`text-xl font-bold ${heading}`}>Dashboard</h1>
-        <p className={`text-sm mt-0.5 ${sub}`}>Here&apos;s everything happening with your platform.</p>
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <h1 className={`text-xl font-bold ${heading}`}>Dashboard</h1>
+          <p className={`text-sm mt-0.5 ${sub}`}>Here&apos;s everything happening with your platform.</p>
+        </div>
+
+        {/* Search bar */}
+        <div className="relative w-56">
+          <svg className={`absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 ${sub}`} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <input
+            type="text"
+            placeholder="Search dashboard..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className={`w-full rounded-lg border pl-9 pr-4 py-2 text-xs focus:outline-none transition-colors ${
+              dark
+                ? "bg-white/5 border-white/5 text-white/70 placeholder-white/20 focus:border-white/20"
+                : "bg-white border-gray-200 text-gray-700 placeholder-gray-400 focus:border-gray-300"
+            }`}
+          />
+          {search && (
+            <button onClick={() => setSearch("")} className={`absolute right-3 top-1/2 -translate-y-1/2 text-xs ${sub} hover:opacity-70`}>✕</button>
+          )}
+        </div>
       </div>
 
       {/* Stat cards */}
@@ -97,8 +127,8 @@ export default function DashboardContent({ stats, recentClients, recentBookings,
             <p className={`text-sm font-semibold ${heading}`}>Recent Students</p>
             <Link href="/admin/clients" className={`text-xs ${sub} hover:underline`}>View all</Link>
           </div>
-          {recentClients.length === 0 ? (
-            <div className={`py-12 text-center text-sm ${sub}`}>No clients yet.</div>
+          {filteredClients.length === 0 ? (
+            <div className={`py-12 text-center text-sm ${sub}`}>{search ? "No results." : "No clients yet."}</div>
           ) : (
             <table className="w-full text-sm">
               <thead>
@@ -109,7 +139,7 @@ export default function DashboardContent({ stats, recentClients, recentBookings,
                 </tr>
               </thead>
               <tbody>
-                {recentClients.map((c) => (
+                {filteredClients.map((c) => (
                   <tr key={c.id} className={`border-b last:border-0 transition-colors ${tableRow}`}>
                     <td className={`px-5 py-3 font-medium ${tableText}`}>{c.name}</td>
                     <td className={`px-5 py-3 ${tableSub}`}>{c.email}</td>
@@ -131,8 +161,8 @@ export default function DashboardContent({ stats, recentClients, recentBookings,
             <p className={`text-sm font-semibold ${heading}`}>Upcoming Bookings</p>
             <Link href="/admin/booking" className={`text-xs ${sub} hover:underline`}>View all</Link>
           </div>
-          {recentBookings.length === 0 ? (
-            <div className={`py-12 text-center text-sm ${sub}`}>No bookings yet.</div>
+          {filteredBookings.length === 0 ? (
+            <div className={`py-12 text-center text-sm ${sub}`}>{search ? "No results." : "No bookings yet."}</div>
           ) : (
             <table className="w-full text-sm">
               <thead>
@@ -143,7 +173,7 @@ export default function DashboardContent({ stats, recentClients, recentBookings,
                 </tr>
               </thead>
               <tbody>
-                {recentBookings.map((b) => (
+                {filteredBookings.map((b) => (
                   <tr key={b.id} className={`border-b last:border-0 transition-colors ${tableRow}`}>
                     <td className={`px-5 py-3 font-medium ${tableText}`}>
                       {b.client_name}
@@ -172,8 +202,8 @@ export default function DashboardContent({ stats, recentClients, recentBookings,
             <p className={`text-sm font-semibold ${heading}`}>Blog Posts</p>
             <Link href="/admin/blog" className={`text-xs ${sub} hover:underline`}>View all</Link>
           </div>
-          {topPosts.length === 0 ? (
-            <div className={`py-12 text-center text-sm ${sub}`}>No posts yet.</div>
+          {filteredPosts.length === 0 ? (
+            <div className={`py-12 text-center text-sm ${sub}`}>{search ? "No results." : "No posts yet."}</div>
           ) : (
             <table className="w-full text-sm">
               <thead>
@@ -184,7 +214,7 @@ export default function DashboardContent({ stats, recentClients, recentBookings,
                 </tr>
               </thead>
               <tbody>
-                {topPosts.map((p) => (
+                {filteredPosts.map((p) => (
                   <tr key={p.id} className={`border-b last:border-0 transition-colors ${tableRow}`}>
                     <td className={`px-5 py-3 font-medium ${tableText} max-w-[240px] truncate`}>{p.title}</td>
                     <td className="px-5 py-3">
