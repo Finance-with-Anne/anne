@@ -86,7 +86,33 @@ export default function AdminSidebar() {
         )}
 
         {(filtered ?? mainNav).map((item) => !filtered || filtered.includes(item) ? (
-          <NavItem key={item.href} item={item} active={isActive(item.href)} collapsed={collapsed} dark={dark} />
+          <div key={item.href}>
+            <NavItem item={item} active={isActive(item.href)} collapsed={collapsed} dark={dark} />
+            {/* Blog sub-nav */}
+            {item.href === "/admin/blog" && isActive("/admin/blog") && !collapsed && (
+              <div className="ml-4 mt-0.5 space-y-0.5 border-l border-white/5 pl-3">
+                {[
+                  { label: "All Posts", href: "/admin/blog" },
+                  { label: "New Post", href: "/admin/blog/new" },
+                  { label: "Categories", href: "/admin/blog/categories" },
+                  { label: "Archives", href: "/admin/blog/archives" },
+                ].map((sub) => (
+                  <Link
+                    key={sub.href}
+                    href={sub.href}
+                    className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-xs transition-colors ${
+                      pathname === sub.href
+                        ? dark ? "text-white font-medium" : "text-brand font-medium"
+                        : dark ? "text-white/30 hover:text-white/60" : "text-gray-400 hover:text-brand"
+                    }`}
+                  >
+                    <span className={`h-1 w-1 rounded-full ${pathname === sub.href ? dark ? "bg-blue-400" : "bg-brand" : dark ? "bg-white/20" : "bg-gray-300"}`} />
+                    {sub.label}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
         ) : null)}
 
         {!filtered && (
