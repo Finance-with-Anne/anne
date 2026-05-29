@@ -123,7 +123,7 @@ export default function AuthPage() {
                   />
                   <div>
                     <p className="text-sm font-bold text-gray-900 leading-tight">Finance with Anne</p>
-                    <p className="text-sm text-gray-400 leading-tight">@financewithanне</p>
+                    <p className="text-sm text-gray-400 leading-tight">@financewithanne</p>
                   </div>
                 </div>
                 {/* X / Twitter icon */}
