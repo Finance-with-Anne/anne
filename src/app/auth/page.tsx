@@ -7,23 +7,33 @@ import { useRouter } from "next/navigation";
 const slides = [
   {
     quote: "Financial freedom is not a destination. It's a daily practice of intentional decisions that compound into a life of abundance.",
-    author: "Finance with Anne",
+    time: "9:00 AM · Jan 12, 2025",
+    replies: "1.2K",
+    likes: "8.4K",
   },
   {
     quote: "Your money is a reflection of your beliefs. Change how you think about wealth, and you'll change what's possible for your future.",
-    author: "Finance with Anne",
+    time: "11:30 AM · Feb 3, 2025",
+    replies: "980",
+    likes: "6.1K",
   },
   {
     quote: "Budgeting isn't about restriction — it's about giving every pound a purpose so you can live the life you actually want.",
-    author: "Finance with Anne",
+    time: "2:15 PM · Mar 7, 2025",
+    replies: "1.5K",
+    likes: "9.2K",
   },
   {
     quote: "The best investment you'll ever make is in understanding your own finances. Knowledge is the foundation of every wealthy life.",
-    author: "Finance with Anne",
+    time: "8:45 AM · Apr 1, 2025",
+    replies: "743",
+    likes: "5.7K",
   },
   {
     quote: "You don't have to earn more to build wealth. You have to be intentional with what you already have.",
-    author: "Finance with Anne",
+    time: "6:00 PM · May 15, 2025",
+    replies: "2.1K",
+    likes: "11.3K",
   },
 ];
 
@@ -96,17 +106,53 @@ export default function AuthPage() {
             <span className="text-white text-lg font-semibold tracking-tight">Finance with Anne</span>
           </div>
 
-          {/* White carousel card */}
-          <div className="bg-white rounded-2xl p-7 shadow-2xl">
-            {/* Quote */}
+          {/* Tweet card carousel */}
+          <div className="bg-white rounded-2xl p-6 shadow-2xl">
             <div
               className="transition-opacity duration-300"
               style={{ opacity: fading ? 0 : 1 }}
             >
-              <p className="text-gray-900 text-base leading-relaxed font-medium min-h-[96px]">
-                &ldquo;{slides[currentSlide].quote}&rdquo;
+              {/* Tweet header */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <img
+                    src="/anne-profile.jpg"
+                    alt="Finance with Anne"
+                    onError={(e) => { (e.target as HTMLImageElement).src = "/fwa-dark.svg"; }}
+                    className="h-11 w-11 rounded-full object-cover border border-gray-100"
+                  />
+                  <div>
+                    <p className="text-sm font-bold text-gray-900 leading-tight">Finance with Anne</p>
+                    <p className="text-sm text-gray-400 leading-tight">@financewithanне</p>
+                  </div>
+                </div>
+                {/* X / Twitter icon */}
+                <svg className="h-5 w-5 text-black" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622 5.912-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                </svg>
+              </div>
+
+              {/* Tweet body */}
+              <p className="mt-4 text-gray-900 text-[15px] leading-relaxed min-h-[80px]">
+                {slides[currentSlide].quote}
               </p>
-              <p className="mt-4 text-gray-400 text-sm font-medium">— {slides[currentSlide].author}</p>
+
+              {/* Timestamp */}
+              <p className="mt-3 text-gray-400 text-sm border-t border-gray-100 pt-3">
+                {slides[currentSlide].time} &middot; Finance with Anne
+              </p>
+
+              {/* Stats */}
+              <div className="mt-2 flex items-center gap-5 text-sm border-t border-gray-100 pt-3">
+                <span>
+                  <strong className="text-gray-900">{slides[currentSlide].replies}</strong>
+                  <span className="text-gray-400 ml-1">replies</span>
+                </span>
+                <span>
+                  <strong className="text-gray-900">{slides[currentSlide].likes}</strong>
+                  <span className="text-gray-400 ml-1">likes</span>
+                </span>
+              </div>
             </div>
 
             {/* Dots */}
