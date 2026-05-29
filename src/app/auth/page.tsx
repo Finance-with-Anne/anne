@@ -116,7 +116,7 @@ export default function AuthPage() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <img
-                    src="/anne-profile.jpg"
+                    src="/anne-profile.png"
                     alt="Finance with Anne"
                     onError={(e) => { (e.target as HTMLImageElement).src = "/fwa-dark.svg"; }}
                     className="h-11 w-11 rounded-full object-cover border border-gray-100"

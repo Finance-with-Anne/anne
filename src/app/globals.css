@@ -12,8 +12,8 @@
   --font-mono: var(--font-geist-mono);
 
   /* Brand colours */
-  --color-brand: #0F1F3D;
-  --color-brand-hover: #172d57;
+  --color-brand: #070F1E;
+  --color-brand-hover: #0F1F3D;
 }
 
 @media (prefers-color-scheme: dark) {
