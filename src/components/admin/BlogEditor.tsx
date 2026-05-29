@@ -393,55 +393,49 @@ export default function BlogEditor({ initialData }: BlogEditorProps) {
         <div className="flex-1 overflow-y-auto">
 
           {previewTab === "post" ? (
-            // Post preview shown as a white "page" card inside the dark container
-            <div className={`p-5`}>
-              <div className={`text-xs font-medium mb-3 ${labelCls}`}>Preview — how it looks on the public site</div>
-              <div className="rounded-xl overflow-hidden shadow-lg">
-            <article className="bg-white mx-auto max-w-full px-8 py-10">
+            <article className="mx-auto max-w-2xl px-8 py-12">
 
               {/* Cover image */}
               {coverImage ? (
                 <img src={coverImage} alt={title} className="w-full rounded-xl object-cover h-56 mb-8" />
               ) : (
-                <div className="w-full h-56 rounded-xl bg-gray-50 border border-gray-100 mb-8 flex items-center justify-center">
-                  <svg className="h-10 w-10 text-gray-200" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                <div className={`w-full h-56 rounded-xl mb-8 flex items-center justify-center ${dark ? "bg-white/5 border border-white/5" : "bg-gray-50 border border-gray-100"}`}>
+                  <svg className={`h-10 w-10 ${dark ? "text-white/10" : "text-gray-200"}`} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
                 </div>
               )}
 
               {/* Date */}
-              <p className="text-sm text-gray-400">
+              <p className={`text-sm ${labelCls}`}>
                 {new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}
               </p>
 
               {/* Title */}
-              <h1 className="mt-2 text-3xl font-bold tracking-tight text-gray-900 leading-tight">
-                {title || <span className="text-gray-200">Post title will appear here…</span>}
+              <h1 className={`mt-2 text-3xl font-bold tracking-tight leading-tight ${headingCls}`}>
+                {title || <span className={labelCls}>Post title will appear here…</span>}
               </h1>
 
               {/* Excerpt */}
               {excerpt && (
-                <p className="mt-4 text-base text-gray-500 leading-relaxed border-l-4 border-gray-200 pl-4 italic">{excerpt}</p>
+                <p className={`mt-4 text-base leading-relaxed border-l-4 pl-4 italic ${dark ? "text-white/40 border-white/10" : "text-gray-500 border-gray-200"}`}>{excerpt}</p>
               )}
 
               {/* Content */}
               <div
-                className="mt-8 prose prose-gray max-w-none prose-headings:font-bold prose-a:text-brand prose-img:rounded-xl"
+                className={`mt-8 prose max-w-none prose-headings:font-bold prose-a:text-brand prose-img:rounded-xl ${dark ? "prose-invert" : "prose-gray"}`}
                 dangerouslySetInnerHTML={{
-                  __html: content || "<p style='color:#d1d5db'>Your content will appear here as you write…</p>",
+                  __html: content || `<p style='color:${dark ? "#ffffff30" : "#d1d5db"}'>Your content will appear here as you write…</p>`,
                 }}
               />
             </article>
-              </div>
-            </div>
 
           ) : (
             <div className="p-5 space-y-6">
 
               {/* Google search snippet */}
               <div className="space-y-2">
-                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Google Search Preview</p>
+                <p className={`text-xs font-semibold uppercase tracking-wide ${labelCls}`}>Google Search Preview</p>
                 <div className="rounded-xl border border-gray-200 bg-white p-5 space-y-1 shadow-sm">
                   <div className="flex items-center gap-2 mb-2">
                     <div className="h-5 w-5 rounded-full bg-gray-100 flex items-center justify-center">
@@ -463,7 +457,7 @@ export default function BlogEditor({ initialData }: BlogEditorProps) {
 
               {/* Social OG card */}
               <div className="space-y-2">
-                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Social Share Preview</p>
+                <p className={`text-xs font-semibold uppercase tracking-wide ${labelCls}`}>Social Share Preview</p>
                 <div className="rounded-xl border border-gray-200 overflow-hidden shadow-sm">
                   {coverImage ? (
                     <img src={coverImage} alt="" className="w-full h-44 object-cover" />
@@ -483,12 +477,12 @@ export default function BlogEditor({ initialData }: BlogEditorProps) {
               {/* SEO checklist */}
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">SEO Analysis</p>
-                  <span className={`text-sm font-bold ${seoColor === "green" ? "text-green-600" : seoColor === "yellow" ? "text-yellow-600" : "text-red-500"}`}>
+                  <p className={`text-xs font-semibold uppercase tracking-wide ${labelCls}`}>SEO Analysis</p>
+                  <span className={`text-sm font-bold ${seoColor === "green" ? dark ? "text-green-400" : "text-green-600" : seoColor === "yellow" ? dark ? "text-yellow-400" : "text-yellow-600" : "text-red-500"}`}>
                     {seoScore}%
                   </span>
                 </div>
-                <div className="h-2 rounded-full bg-gray-100 overflow-hidden">
+                <div className={`h-2 rounded-full overflow-hidden ${dark ? "bg-white/5" : "bg-gray-100"}`}>
                   <div
                     className={`h-full rounded-full transition-all duration-500 ${seoColor === "green" ? "bg-green-500" : seoColor === "yellow" ? "bg-yellow-400" : "bg-red-500"}`}
                     style={{ width: `${seoScore}%` }}
@@ -498,20 +492,20 @@ export default function BlogEditor({ initialData }: BlogEditorProps) {
                   {seoChecks.map((check) => (
                     <div key={check.label} className="flex items-center justify-between gap-3">
                       <div className="flex items-center gap-2.5 flex-1 min-w-0">
-                        <div className={`h-5 w-5 rounded-full flex-none flex items-center justify-center ${check.ok ? "bg-green-100" : "bg-gray-100"}`}>
+                        <div className={`h-5 w-5 rounded-full flex-none flex items-center justify-center ${check.ok ? dark ? "bg-green-500/20" : "bg-green-100" : dark ? "bg-white/5" : "bg-gray-100"}`}>
                           {check.ok ? (
-                            <svg className="h-3 w-3 text-green-600" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                            <svg className={`h-3 w-3 ${dark ? "text-green-400" : "text-green-600"}`} fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                             </svg>
                           ) : (
-                            <svg className="h-3 w-3 text-gray-400" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                            <svg className={`h-3 w-3 ${labelCls}`} fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                             </svg>
                           )}
                         </div>
-                        <p className={`text-xs truncate ${check.ok ? "text-gray-700" : "text-gray-400"}`}>{check.label}</p>
+                        <p className={`text-xs truncate ${check.ok ? dark ? "text-white/70" : "text-gray-700" : labelCls}`}>{check.label}</p>
                       </div>
-                      <span className={`text-xs flex-none font-medium ${check.ok ? "text-green-600" : "text-gray-400"}`}>{check.value}</span>
+                      <span className={`text-xs flex-none font-medium ${check.ok ? dark ? "text-green-400" : "text-green-600" : labelCls}`}>{check.value}</span>
                     </div>
                   ))}
                 </div>
