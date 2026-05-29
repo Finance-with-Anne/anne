@@ -141,11 +141,15 @@ function NavItem({ item, active, collapsed, dark }: { item: (typeof mainNav)[0];
       className={`relative flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-all ${
         active
           ? dark ? "text-white" : "text-brand"
-          : dark ? "text-white/40 hover:text-white/70 hover:bg-white/5" : "text-gray-500 hover:text-gray-800 hover:bg-gray-100"
+          : dark ? "text-white/40 hover:text-white/70 hover:bg-white/5" : "text-gray-400 hover:text-brand hover:bg-brand/5"
       }`}
     >
       {active && (
-        <span className={`absolute inset-0 rounded-lg ${dark ? "bg-gradient-to-r from-blue-600/30 to-brand/40 border border-white/10" : "bg-brand/8 border border-brand/20"}`} />
+        <span className={`absolute inset-0 rounded-lg ${
+          dark
+            ? "bg-gradient-to-r from-blue-600/30 to-brand/40 border border-white/10"
+            : "bg-gradient-to-r from-blue-100/80 to-brand/10 border border-brand/20"
+        }`} />
       )}
       <span className={`relative shrink-0 ${active ? dark ? "text-blue-400" : "text-brand" : ""}`}>
         <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
