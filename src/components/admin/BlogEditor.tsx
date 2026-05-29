@@ -8,7 +8,7 @@ import Placeholder from "@tiptap/extension-placeholder";
 import Underline from "@tiptap/extension-underline";
 import TextAlign from "@tiptap/extension-text-align";
 import { useAdminTheme } from "@/lib/admin-theme";
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 
 interface BlogEditorProps {
@@ -62,22 +62,11 @@ export default function BlogEditor({ initialData }: BlogEditorProps) {
     ],
     content: initialData?.content ?? "",
     editorProps: {
-      attributes: { class: "prose prose-sm max-w-none focus:outline-none min-h-[400px] px-1" },
+      attributes: { class: "focus:outline-none min-h-[400px] px-1" },
     },
     onUpdate: ({ editor }) => setContent(editor.getHTML()),
   });
 
-  // Keep prose-invert in sync with dark mode (editorProps.attributes is static on init)
-  useEffect(() => {
-    if (!editor) return;
-    editor.setOptions({
-      editorProps: {
-        attributes: {
-          class: `prose prose-sm max-w-none focus:outline-none min-h-[400px] px-1${dark ? " prose-invert" : ""}`,
-        },
-      },
-    });
-  }, [editor, dark]);
 
   function generateSlug(t: string) {
     return t.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
@@ -193,7 +182,7 @@ export default function BlogEditor({ initialData }: BlogEditorProps) {
   const toolbarBtn = dark
     ? "text-white/40 hover:text-white hover:bg-white/10 data-[active=true]:bg-white/10 data-[active=true]:text-white"
     : "text-gray-400 hover:text-gray-700 hover:bg-gray-100 data-[active=true]:bg-gray-100 data-[active=true]:text-gray-900";
-  const editorCls  = dark ? "text-white/80 [&_.ProseMirror_p.is-editor-empty:first-child::before]:text-white/20" : "text-gray-800";
+  const editorCls  = dark ? "text-white/85" : "text-gray-900";
 
   return (
     // Break out of the p-6 on <main> and fill the remaining viewport height (header = h-14 = 56px)
@@ -567,7 +556,7 @@ export default function BlogEditor({ initialData }: BlogEditorProps) {
 
               {/* Content */}
               <div
-                className={`mt-8 prose max-w-none prose-headings:font-bold prose-a:text-brand prose-img:rounded-xl ${dark ? "prose-invert" : "prose-gray"}`}
+                className="mt-8"
                 dangerouslySetInnerHTML={{
                   __html: content || `<p style='color:${dark ? "#ffffff30" : "#d1d5db"}'>Your content will appear here as you write…</p>`,
                 }}
