@@ -367,23 +367,23 @@ export default function BlogEditor({ initialData }: BlogEditorProps) {
       </div>
 
       {/* ════════════════ RIGHT — PREVIEW ════════════════ */}
-      <div className="w-1/2 flex flex-col overflow-hidden bg-white">
+      <div className={`w-1/2 flex flex-col overflow-hidden ${leftBg}`}>
 
         {/* Preview header */}
-        <div className="flex-none flex items-center justify-between px-6 py-3.5 border-b border-gray-200 bg-white">
-          <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
+        <div className={`flex-none flex items-center justify-between px-6 py-3.5 border-b ${headerBg}`}>
+          <div className={`flex items-center gap-1 rounded-lg p-1 ${dark ? "bg-white/5" : "bg-gray-100"}`}>
             <button onClick={() => setPreviewTab("post")}
-              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${previewTab === "post" ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}>
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${previewTab === "post" ? dark ? "bg-white/10 text-white shadow-sm" : "bg-white text-gray-900 shadow-sm" : dark ? "text-white/30 hover:text-white/60" : "text-gray-500 hover:text-gray-700"}`}>
               Post Preview
             </button>
             <button onClick={() => setPreviewTab("seo")}
-              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${previewTab === "seo" ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}>
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${previewTab === "seo" ? dark ? "bg-white/10 text-white shadow-sm" : "bg-white text-gray-900 shadow-sm" : dark ? "text-white/30 hover:text-white/60" : "text-gray-500 hover:text-gray-700"}`}>
               SEO Preview
             </button>
           </div>
           <div className="flex items-center gap-1.5">
             <div className={`h-2 w-2 rounded-full ${seoColor === "green" ? "bg-green-500" : seoColor === "yellow" ? "bg-yellow-500" : "bg-red-500"}`} />
-            <span className="text-xs text-gray-400">
+            <span className={`text-xs ${labelCls}`}>
               SEO {seoScore >= 75 ? "Good" : seoScore >= 50 ? "Needs work" : "Poor"}
             </span>
           </div>
@@ -393,7 +393,11 @@ export default function BlogEditor({ initialData }: BlogEditorProps) {
         <div className="flex-1 overflow-y-auto">
 
           {previewTab === "post" ? (
-            <article className="mx-auto max-w-2xl px-8 py-12">
+            // Post preview shown as a white "page" card inside the dark container
+            <div className={`p-5`}>
+              <div className={`text-xs font-medium mb-3 ${labelCls}`}>Preview — how it looks on the public site</div>
+              <div className="rounded-xl overflow-hidden shadow-lg">
+            <article className="bg-white mx-auto max-w-full px-8 py-10">
 
               {/* Cover image */}
               {coverImage ? (
@@ -429,9 +433,11 @@ export default function BlogEditor({ initialData }: BlogEditorProps) {
                 }}
               />
             </article>
+              </div>
+            </div>
 
           ) : (
-            <div className="p-8 space-y-8">
+            <div className="p-5 space-y-6">
 
               {/* Google search snippet */}
               <div className="space-y-2">
