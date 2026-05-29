@@ -15,10 +15,13 @@ create table if not exists blog_posts (
   excerpt     text,
   content     text,
   cover_image text,
-  published   boolean not null default false,
-  published_at timestamptz,
-  created_at  timestamptz not null default now(),
-  updated_at  timestamptz not null default now()
+  published        boolean not null default false,
+  published_at     timestamptz,
+  meta_title       text,
+  meta_description text,
+  focus_keyword    text,
+  created_at       timestamptz not null default now(),
+  updated_at       timestamptz not null default now()
 );
 
 alter table blog_posts enable row level security;

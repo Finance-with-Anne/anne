@@ -7,16 +7,7 @@ export async function POST(req: NextRequest) {
   if (!user) return NextResponse.json({ error: "Unauthorised." }, { status: 401 });
 
   const body = await req.json();
-  const { title, slug, excerpt, content, cover_image, published, published_at, meta_title, meta_description, focus_keyword } = body;
-
-  if (!title || !slug) return NextResponse.json({ error: "Title and slug are required." }, { status: 400 });
-
-  const { data, error } = await supabase
-    .from("blog_posts")
-    .insert({ title, slug, excerpt, content, cover_image, published, published_at, meta_title, meta_description, focus_keyword })
-    .select()
-    .single();
-
+  const { data, error } = await supabase.from("products").insert(body).select().single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json(data, { status: 201 });
 }
