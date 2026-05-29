@@ -8,7 +8,7 @@ import Placeholder from "@tiptap/extension-placeholder";
 import Underline from "@tiptap/extension-underline";
 import TextAlign from "@tiptap/extension-text-align";
 import { useAdminTheme } from "@/lib/admin-theme";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 
 interface BlogEditorProps {
@@ -46,6 +46,10 @@ export default function BlogEditor({ initialData }: BlogEditorProps) {
   const [metaTitle, setMetaTitle]       = useState(initialData?.meta_title ?? "");
   const [metaDesc, setMetaDesc]         = useState(initialData?.meta_description ?? "");
   const [focusKw, setFocusKw]           = useState(initialData?.focus_keyword ?? "");
+  const [linkInput, setLinkInput]       = useState("");
+  const [showLinkBar, setShowLinkBar]   = useState(false);
+  const [imgUploading, setImgUploading] = useState(false);
+  const imgInputRef                     = useRef<HTMLInputElement>(null);
 
   const editor = useEditor({
     extensions: [
@@ -116,10 +120,35 @@ export default function BlogEditor({ initialData }: BlogEditorProps) {
     setSaving(false);
   }
 
-  const addImageToEditor = useCallback(() => {
-    const url = window.prompt("Image URL");
-    if (url) editor?.chain().focus().setImage({ src: url }).run();
-  }, [editor]);
+  async function handleEditorImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file || !editor) return;
+    setImgUploading(true);
+    const form = new FormData();
+    form.append("file", file);
+    form.append("folder", "blog");
+    const res = await fetch("/api/upload", { method: "POST", body: form });
+    const data = await res.json();
+    if (data.url) editor.chain().focus().setImage({ src: data.url }).run();
+    setImgUploading(false);
+    if (imgInputRef.current) imgInputRef.current.value = "";
+  }
+
+  function applyLink() {
+    if (!linkInput) {
+      editor?.chain().focus().unsetLink().run();
+    } else {
+      editor?.chain().focus().setLink({ href: linkInput }).run();
+    }
+    setLinkInput("");
+    setShowLinkBar(false);
+  }
+
+  function toggleLinkBar() {
+    const existing = editor?.getAttributes("link").href ?? "";
+    setLinkInput(existing);
+    setShowLinkBar(v => !v);
+  }
 
   // ── SEO analysis ──────────────────────────────────────────
   const effTitle   = metaTitle || title;
@@ -209,12 +238,27 @@ export default function BlogEditor({ initialData }: BlogEditorProps) {
 
             {/* Toolbar + editor */}
             <div className={`rounded-xl border overflow-hidden ${card}`}>
-              <div className={`flex flex-wrap items-center gap-0.5 px-4 py-2 border-b ${divider}`}>
+              {/* Hidden file input for in-editor image upload */}
+              <input ref={imgInputRef} type="file" accept="image/*" onChange={handleEditorImageUpload} className="hidden" />
+
+              <div className={`flex flex-wrap items-center gap-0.5 px-3 py-2 border-b ${divider}`}>
+
+                {/* Undo / Redo */}
+                <button title="Undo" onClick={() => editor?.chain().focus().undo().run()} disabled={!editor?.can().undo()} className={`h-7 w-7 rounded flex items-center justify-center transition-colors disabled:opacity-25 ${toolbarBtn}`}>
+                  <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" /></svg>
+                </button>
+                <button title="Redo" onClick={() => editor?.chain().focus().redo().run()} disabled={!editor?.can().redo()} className={`h-7 w-7 rounded flex items-center justify-center transition-colors disabled:opacity-25 ${toolbarBtn}`}>
+                  <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M21 10H11a8 8 0 00-8 8v2m18-10l-6 6m6-6l-6-6" /></svg>
+                </button>
+
+                <div className={`w-px h-4 mx-1 ${dark ? "bg-white/10" : "bg-gray-200"}`} />
+
+                {/* Text formatting */}
                 {[
-                  { label: "B",  action: () => editor?.chain().focus().toggleBold().run(),      active: () => editor?.isActive("bold")      ?? false, title: "Bold" },
-                  { label: "I",  action: () => editor?.chain().focus().toggleItalic().run(),    active: () => editor?.isActive("italic")    ?? false, title: "Italic" },
-                  { label: "U",  action: () => editor?.chain().focus().toggleUnderline().run(), active: () => editor?.isActive("underline") ?? false, title: "Underline" },
-                  { label: "S",  action: () => editor?.chain().focus().toggleStrike().run(),    active: () => editor?.isActive("strike")    ?? false, title: "Strikethrough" },
+                  { label: "B", action: () => editor?.chain().focus().toggleBold().run(),      active: () => editor?.isActive("bold")      ?? false, title: "Bold" },
+                  { label: "I", action: () => editor?.chain().focus().toggleItalic().run(),    active: () => editor?.isActive("italic")    ?? false, title: "Italic" },
+                  { label: "U", action: () => editor?.chain().focus().toggleUnderline().run(), active: () => editor?.isActive("underline") ?? false, title: "Underline" },
+                  { label: "S", action: () => editor?.chain().focus().toggleStrike().run(),    active: () => editor?.isActive("strike")    ?? false, title: "Strikethrough" },
                 ].map(btn => (
                   <button key={btn.title} title={btn.title} onClick={btn.action} data-active={btn.active()}
                     className={`h-7 w-7 rounded flex items-center justify-center text-xs font-bold transition-colors ${toolbarBtn}`}>
@@ -224,6 +268,7 @@ export default function BlogEditor({ initialData }: BlogEditorProps) {
 
                 <div className={`w-px h-4 mx-1 ${dark ? "bg-white/10" : "bg-gray-200"}`} />
 
+                {/* Headings */}
                 {[1, 2, 3].map(level => (
                   <button key={level} title={`Heading ${level}`}
                     onClick={() => editor?.chain().focus().toggleHeading({ level: level as 1|2|3 }).run()}
@@ -235,22 +280,71 @@ export default function BlogEditor({ initialData }: BlogEditorProps) {
 
                 <div className={`w-px h-4 mx-1 ${dark ? "bg-white/10" : "bg-gray-200"}`} />
 
+                {/* Lists + blockquote */}
                 <button title="Bullet list" onClick={() => editor?.chain().focus().toggleBulletList().run()} data-active={editor?.isActive("bulletList") ?? false} className={`h-7 w-7 rounded flex items-center justify-center transition-colors ${toolbarBtn}`}>
-                  <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" /></svg>
+                  <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />
+                  </svg>
                 </button>
                 <button title="Ordered list" onClick={() => editor?.chain().focus().toggleOrderedList().run()} data-active={editor?.isActive("orderedList") ?? false} className={`h-7 w-7 rounded flex items-center justify-center transition-colors ${toolbarBtn}`}>
-                  <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h8" /></svg>
+                  <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01" />
+                    <text x="2" y="7.5" fontSize="5" fill="currentColor" stroke="none">1</text>
+                    <text x="2" y="13.5" fontSize="5" fill="currentColor" stroke="none">2</text>
+                    <text x="2" y="19.5" fontSize="5" fill="currentColor" stroke="none">3</text>
+                  </svg>
                 </button>
                 <button title="Blockquote" onClick={() => editor?.chain().focus().toggleBlockquote().run()} data-active={editor?.isActive("blockquote") ?? false} className={`h-7 w-7 rounded flex items-center justify-center transition-colors ${toolbarBtn}`}>
-                  <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" /></svg>
+                  <svg className="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                  </svg>
                 </button>
-                <button title="Add image" onClick={addImageToEditor} className={`h-7 w-7 rounded flex items-center justify-center transition-colors ${toolbarBtn}`}>
-                  <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+
+                <div className={`w-px h-4 mx-1 ${dark ? "bg-white/10" : "bg-gray-200"}`} />
+
+                {/* Link */}
+                <button title="Insert link" onClick={toggleLinkBar} data-active={editor?.isActive("link") ?? false} className={`h-7 w-7 rounded flex items-center justify-center transition-colors ${toolbarBtn}`}>
+                  <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                  </svg>
                 </button>
+
+                {/* Image upload */}
+                <button title="Upload image" onClick={() => imgInputRef.current?.click()} className={`h-7 w-7 rounded flex items-center justify-center transition-colors ${toolbarBtn} ${imgUploading ? "opacity-50 cursor-wait" : ""}`}>
+                  {imgUploading ? (
+                    <svg className="h-3.5 w-3.5 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth={3} /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" /></svg>
+                  ) : (
+                    <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                  )}
+                </button>
+
+                {/* Code block */}
                 <button title="Code block" onClick={() => editor?.chain().focus().toggleCodeBlock().run()} data-active={editor?.isActive("codeBlock") ?? false} className={`h-7 w-7 rounded flex items-center justify-center transition-colors ${toolbarBtn}`}>
                   <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
                 </button>
               </div>
+
+              {/* Link input bar */}
+              {showLinkBar && (
+                <div className={`flex items-center gap-2 px-3 py-2 border-b ${divider}`}>
+                  <svg className={`h-3.5 w-3.5 shrink-0 ${labelCls}`} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+                  <input
+                    autoFocus
+                    type="url"
+                    value={linkInput}
+                    onChange={e => setLinkInput(e.target.value)}
+                    onKeyDown={e => { if (e.key === "Enter") applyLink(); if (e.key === "Escape") setShowLinkBar(false); }}
+                    placeholder="https://example.com"
+                    className={`flex-1 text-xs bg-transparent border-none focus:outline-none ${dark ? "text-white placeholder-white/20" : "text-gray-700 placeholder-gray-300"}`}
+                  />
+                  <button onClick={applyLink} className="text-xs font-medium text-brand hover:opacity-70 transition-opacity">Apply</button>
+                  {editor?.isActive("link") && (
+                    <button onClick={() => { editor.chain().focus().unsetLink().run(); setShowLinkBar(false); }} className="text-xs text-red-400 hover:opacity-70 transition-opacity">Remove</button>
+                  )}
+                  <button onClick={() => setShowLinkBar(false)} className={`text-xs ${labelCls} hover:opacity-70`}>✕</button>
+                </div>
+              )}
+
               <div className={`px-5 py-4 ${editorCls}`}>
                 <EditorContent editor={editor} />
               </div>
