@@ -71,7 +71,7 @@ export default function AuthPage() {
   }
 
   const right = darkMode
-    ? "bg-zinc-950 text-white"
+    ? "bg-brand text-white"
     : "bg-white text-gray-900";
 
   const inputClass = darkMode
@@ -87,7 +87,7 @@ export default function AuthPage() {
       {/* Left panel — full bleed image */}
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
         <img src="/img1.png" alt="" className="absolute inset-0 h-full w-full object-cover" />
-        <div className="absolute inset-0 bg-black/55" />
+        <div className="absolute inset-0 bg-brand/60" />
 
         <div className="relative z-10 flex flex-col justify-between w-full p-12">
           {/* Logo + name */}
@@ -116,7 +116,7 @@ export default function AuthPage() {
                   key={i}
                   onClick={() => goToSlide(i)}
                   className={`h-1.5 rounded-full transition-all duration-300 ${
-                    i === currentSlide ? "w-6 bg-black" : "w-1.5 bg-gray-300"
+                    i === currentSlide ? "w-6 bg-brand" : "w-1.5 bg-gray-300"
                   }`}
                 />
               ))}
@@ -222,7 +222,7 @@ export default function AuthPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full rounded-lg bg-black px-4 py-3 text-sm font-semibold text-white hover:bg-zinc-800 disabled:opacity-40 disabled:cursor-not-allowed transition-all mt-2"
+                className="w-full rounded-lg bg-brand px-4 py-3 text-sm font-semibold text-white hover:bg-brand-hover disabled:opacity-40 disabled:cursor-not-allowed transition-all mt-2"
               >
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">
