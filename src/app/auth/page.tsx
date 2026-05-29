@@ -47,7 +47,7 @@ export default function AuthPage() {
         <div className="relative z-10 flex flex-col justify-between w-full p-12">
           {/* Logo top-left */}
           <div>
-            <img src="/FWA%20light.svg" alt="Finance with Anne" className="h-10 w-auto" />
+            <img src="/fwa-light.svg" alt="Finance with Anne" className="h-10 w-auto" />
           </div>
 
           {/* Bottom card */}
@@ -66,7 +66,7 @@ export default function AuthPage() {
 
           {/* Mobile logo */}
           <div className="lg:hidden mb-10 text-center">
-            <img src="/FWA%20light.svg" alt="Finance with Anne" className="h-8 w-auto mx-auto" />
+            <img src="/fwa-light.svg" alt="Finance with Anne" className="h-8 w-auto mx-auto" />
           </div>
 
           <div className="mb-8">
