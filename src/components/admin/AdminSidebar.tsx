@@ -124,7 +124,7 @@ export default function AdminSidebar() {
     : null;
 
   return (
-    <aside className={`flex h-full flex-col bg-[#111318] border-r border-white/5 transition-all duration-300 ${collapsed ? "w-16" : "w-60"}`}>
+    <aside className={`flex h-full flex-col bg-[#111318] border-r border-white/5 transition-all duration-300 ${collapsed ? "w-14" : "w-52"}`}>
       {/* Header */}
       <div className="flex h-16 items-center justify-between px-4 border-b border-white/5">
         {!collapsed && (
