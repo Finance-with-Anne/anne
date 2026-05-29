@@ -29,19 +29,21 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-/* ── Blog editor (TipTap / ProseMirror) ───────────────────────────────────── */
+/* ── Shared blog typography — used by both editor and preview ─────────────── */
+.blog-content,
 .ProseMirror {
-  font-size: 1rem;          /* 16px — comfortable reading size */
+  font-size: 1rem;
   line-height: 1.75;
-  outline: none;
 }
 
+.blog-content p,
 .ProseMirror p {
   margin-bottom: 0.85rem;
 }
 
+.blog-content h1,
 .ProseMirror h1 {
-  font-size: 2rem;          /* 32px */
+  font-size: 2rem;
   font-weight: 800;
   line-height: 1.15;
   letter-spacing: -0.02em;
@@ -49,8 +51,9 @@ body {
   margin-bottom: 0.6rem;
 }
 
+.blog-content h2,
 .ProseMirror h2 {
-  font-size: 1.5rem;        /* 24px */
+  font-size: 1.5rem;
   font-weight: 700;
   line-height: 1.25;
   letter-spacing: -0.015em;
@@ -58,23 +61,27 @@ body {
   margin-bottom: 0.5rem;
 }
 
+.blog-content h3,
 .ProseMirror h3 {
-  font-size: 1.2rem;        /* 19px */
+  font-size: 1.2rem;
   font-weight: 600;
   line-height: 1.35;
   margin-top: 1.5rem;
   margin-bottom: 0.4rem;
 }
 
+.blog-content h1:first-child,
+.blog-content h2:first-child,
+.blog-content h3:first-child,
 .ProseMirror h1:first-child,
 .ProseMirror h2:first-child,
 .ProseMirror h3:first-child {
   margin-top: 0;
 }
 
+.blog-content blockquote,
 .ProseMirror blockquote {
-  border-left: 3px solid;
-  border-color: inherit;
+  border-left: 3px solid currentColor;
   opacity: 0.7;
   padding-left: 1.25rem;
   margin-left: 0;
@@ -83,23 +90,27 @@ body {
   line-height: 1.7;
 }
 
+.blog-content ul,
 .ProseMirror ul {
   list-style-type: disc;
   padding-left: 1.5rem;
   margin-bottom: 0.85rem;
 }
 
+.blog-content ol,
 .ProseMirror ol {
   list-style-type: decimal;
   padding-left: 1.5rem;
   margin-bottom: 0.85rem;
 }
 
+.blog-content li,
 .ProseMirror li {
   margin-bottom: 0.3rem;
   line-height: 1.65;
 }
 
+.blog-content code,
 .ProseMirror code {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 0.875em;
@@ -108,6 +119,7 @@ body {
   background: rgba(135, 135, 135, 0.15);
 }
 
+.blog-content pre,
 .ProseMirror pre {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 0.875rem;
@@ -119,27 +131,34 @@ body {
   line-height: 1.6;
 }
 
+.blog-content pre code,
 .ProseMirror pre code {
   background: none;
   padding: 0;
   font-size: inherit;
 }
 
+.blog-content a,
 .ProseMirror a {
   text-decoration: underline;
   text-underline-offset: 3px;
-  opacity: 0.85;
+  color: #070F1E;
 }
 
+.blog-content img,
 .ProseMirror img {
   border-radius: 0.6rem;
   max-width: 100%;
 }
 
-.ProseMirror strong { font-weight: 700; }
-.ProseMirror em     { font-style: italic; }
-.ProseMirror s      { text-decoration: line-through; opacity: 0.6; }
+.blog-content strong, .ProseMirror strong { font-weight: 700; }
+.blog-content em,     .ProseMirror em     { font-style: italic; }
+.blog-content s,      .ProseMirror s      { text-decoration: line-through; opacity: 0.6; }
 
+/* Editor-only: placeholder */
+.ProseMirror {
+  outline: none;
+}
 .ProseMirror p.is-editor-empty:first-child::before {
   content: attr(data-placeholder);
   float: left;

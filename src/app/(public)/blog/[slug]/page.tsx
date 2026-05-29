@@ -23,7 +23,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
       </p>
       <h1 className="mt-2 text-4xl font-bold tracking-tight text-gray-900">{post.title}</h1>
       <div
-        className="mt-8 prose prose-gray max-w-none"
+        className="mt-8 blog-content"
         dangerouslySetInnerHTML={{ __html: post.content }}
       />
     </article>

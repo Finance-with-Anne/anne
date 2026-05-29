@@ -556,7 +556,7 @@ export default function BlogEditor({ initialData }: BlogEditorProps) {
 
               {/* Content */}
               <div
-                className="mt-8"
+                className="mt-8 blog-content"
                 dangerouslySetInnerHTML={{
                   __html: content || `<p style='color:${dark ? "#ffffff30" : "#d1d5db"}'>Your content will appear here as you write…</p>`,
                 }}
