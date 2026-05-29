@@ -36,7 +36,8 @@ export default function BlogEditor({ initialData }: BlogEditorProps) {
   const [excerpt, setExcerpt]           = useState(initialData?.excerpt ?? "");
   const [slug, setSlug]                 = useState(initialData?.slug ?? "");
   const [coverImage, setCoverImage]     = useState(initialData?.cover_image ?? "");
-  const [published, setPublished]       = useState(initialData?.published ?? false);
+  const [status, setStatus]             = useState<"draft" | "scheduled" | "published">(initialData?.published ? "published" : "draft");
+  const [scheduledAt, setScheduledAt]   = useState("");
   const [saving, setSaving]             = useState(false);
   const [uploading, setUploading]       = useState(false);
   const [error, setError]               = useState("");
@@ -84,18 +85,24 @@ export default function BlogEditor({ initialData }: BlogEditorProps) {
     setUploading(false);
   }
 
-  async function handleSave(publish: boolean) {
+  async function handleSave(forceDraft?: boolean) {
     if (!title) return setError("Title is required.");
+    if (status === "scheduled" && !scheduledAt) return setError("Please set a scheduled date.");
     setSaving(true);
     setError("");
+    const effectiveStatus = forceDraft ? "draft" : status;
     const body = {
       title,
       slug: slug || generateSlug(title),
       excerpt,
       content: editor?.getHTML() ?? "",
       cover_image: coverImage,
-      published: publish,
-      published_at: publish ? new Date().toISOString() : null,
+      published: effectiveStatus === "published",
+      published_at: effectiveStatus === "published"
+        ? new Date().toISOString()
+        : effectiveStatus === "scheduled"
+        ? new Date(scheduledAt).toISOString()
+        : null,
       meta_title: metaTitle || title,
       meta_description: metaDesc || excerpt,
       focus_keyword: focusKw,
@@ -161,13 +168,13 @@ export default function BlogEditor({ initialData }: BlogEditorProps) {
             <p className={`text-xs mt-0.5 ${labelCls}`}>Write and publish your article</p>
           </div>
           <div className="flex items-center gap-2">
-            <button onClick={() => handleSave(false)} disabled={saving}
+            <button onClick={() => handleSave(true)} disabled={saving}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${dark ? "border-white/10 text-white/60 hover:bg-white/5" : "border-gray-200 text-gray-600 hover:bg-gray-50"}`}>
               Save Draft
             </button>
-            <button onClick={() => handleSave(true)} disabled={saving}
+            <button onClick={() => handleSave()} disabled={saving}
               className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-brand text-white hover:bg-brand-hover transition-colors disabled:opacity-50">
-              {saving ? "Publishing…" : "Publish"}
+              {saving ? "Saving…" : status === "published" ? "Publish" : status === "scheduled" ? "Schedule" : "Save"}
             </button>
           </div>
         </div>
@@ -284,15 +291,45 @@ export default function BlogEditor({ initialData }: BlogEditorProps) {
                   className={`w-full rounded-lg border px-3 py-2 text-xs focus:outline-none transition-colors ${inputCls}`}
                 />
               </div>
-              <div className={`rounded-xl border p-4 ${card}`}>
-                <div className="flex items-center justify-between mb-2">
-                  <p className={`text-xs font-semibold uppercase tracking-wide ${labelCls}`}>Status</p>
-                  <button onClick={() => setPublished(!published)}
-                    className={`relative h-5 w-9 rounded-full transition-colors ${published ? "bg-green-500" : dark ? "bg-white/10" : "bg-gray-200"}`}>
-                    <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${published ? "translate-x-4" : "translate-x-0.5"}`} />
-                  </button>
+              <div className={`rounded-xl border p-4 space-y-3 ${card}`}>
+                <p className={`text-xs font-semibold uppercase tracking-wide ${labelCls}`}>Status</p>
+                <div className="grid grid-cols-3 gap-1.5">
+                  {([
+                    { value: "draft",     label: "Draft",     icon: "M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" },
+                    { value: "scheduled", label: "Scheduled", icon: "M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" },
+                    { value: "published", label: "Publish",   icon: "M5 13l4 4L19 7" },
+                  ] as const).map(opt => {
+                    const active = status === opt.value;
+                    const activeStyle =
+                      opt.value === "published" ? dark ? "bg-green-500/20 border-green-500/40 text-green-400" : "bg-green-50 border-green-300 text-green-700" :
+                      opt.value === "scheduled" ? dark ? "bg-yellow-500/20 border-yellow-500/40 text-yellow-400" : "bg-yellow-50 border-yellow-300 text-yellow-700" :
+                      dark ? "bg-white/10 border-white/20 text-white" : "bg-gray-100 border-gray-300 text-gray-800";
+                    const inactiveStyle = dark ? "border-white/5 text-white/30 hover:border-white/15 hover:text-white/50" : "border-gray-200 text-gray-400 hover:border-gray-300 hover:text-gray-600";
+                    return (
+                      <button key={opt.value} onClick={() => setStatus(opt.value)}
+                        className={`flex flex-col items-center gap-1.5 rounded-lg border py-2.5 text-xs font-medium transition-all ${active ? activeStyle : inactiveStyle}`}>
+                        <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" d={opt.icon} />
+                        </svg>
+                        {opt.label}
+                      </button>
+                    );
+                  })}
                 </div>
-                <p className={`text-xs ${labelCls}`}>{published ? "Will publish immediately" : "Saved as draft"}</p>
+                {status === "scheduled" && (
+                  <input
+                    type="datetime-local"
+                    value={scheduledAt}
+                    onChange={e => setScheduledAt(e.target.value)}
+                    min={new Date().toISOString().slice(0, 16)}
+                    className={`w-full rounded-lg border px-3 py-2 text-xs focus:outline-none transition-colors ${inputCls}`}
+                  />
+                )}
+                <p className={`text-xs ${labelCls}`}>
+                  {status === "published" ? "Will go live immediately on save" :
+                   status === "scheduled" ? scheduledAt ? `Scheduled for ${new Date(scheduledAt).toLocaleString("en-GB", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}` : "Pick a date and time above" :
+                   "Saved privately, not visible on site"}
+                </p>
               </div>
             </div>
 
