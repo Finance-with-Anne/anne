@@ -7,9 +7,24 @@ import Link from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
 import Underline from "@tiptap/extension-underline";
 import TextAlign from "@tiptap/extension-text-align";
+import { TextStyle } from "@tiptap/extension-text-style";
+import { Color } from "@tiptap/extension-color";
 import { useAdminTheme } from "@/lib/admin-theme";
 import { useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
+
+const COLORS = [
+  { label: "Default",  value: "inherit" },
+  { label: "Brand",    value: "#070F1E" },
+  { label: "Red",      value: "#ef4444" },
+  { label: "Orange",   value: "#f97316" },
+  { label: "Yellow",   value: "#eab308" },
+  { label: "Green",    value: "#22c55e" },
+  { label: "Blue",     value: "#3b82f6" },
+  { label: "Purple",   value: "#8b5cf6" },
+  { label: "Pink",     value: "#ec4899" },
+  { label: "Gray",     value: "#6b7280" },
+];
 
 interface BlogEditorProps {
   initialData?: {
@@ -48,6 +63,7 @@ export default function BlogEditor({ initialData }: BlogEditorProps) {
   const [focusKw, setFocusKw]           = useState(initialData?.focus_keyword ?? "");
   const [linkInput, setLinkInput]       = useState("");
   const [showLinkBar, setShowLinkBar]   = useState(false);
+  const [showColors, setShowColors]     = useState(false);
   const [imgUploading, setImgUploading] = useState(false);
   const imgInputRef                     = useRef<HTMLInputElement>(null);
 
@@ -55,6 +71,8 @@ export default function BlogEditor({ initialData }: BlogEditorProps) {
     extensions: [
       StarterKit,
       Underline,
+      TextStyle,
+      Color,
       Image,
       Link.configure({ openOnClick: false }),
       Placeholder.configure({ placeholder: "Start writing your post…" }),
@@ -310,6 +328,55 @@ export default function BlogEditor({ initialData }: BlogEditorProps) {
                     <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
                   </svg>
                 </button>
+
+                {/* Text colour */}
+                <div className="relative">
+                  <button
+                    title="Text colour"
+                    onMouseDown={e => e.preventDefault()}
+                    onClick={() => setShowColors(v => !v)}
+                    className={`h-7 w-7 rounded flex flex-col items-center justify-center gap-0.5 transition-colors ${toolbarBtn}`}
+                  >
+                    <span className="text-xs font-bold leading-none">A</span>
+                    <span className="w-4 h-1 rounded-full" style={{ backgroundColor: editor?.getAttributes("textStyle").color ?? (dark ? "#ffffff" : "#111827") }} />
+                  </button>
+                  {showColors && (
+                    <div
+                      onMouseDown={e => e.preventDefault()}
+                      className={`absolute top-full left-0 mt-1 z-50 rounded-xl border shadow-xl p-3 w-48 ${dark ? "bg-[#1c1f27] border-white/10" : "bg-white border-gray-200"}`}
+                    >
+                      <p className={`text-xs font-semibold uppercase tracking-wide mb-2 ${labelCls}`}>Text colour</p>
+                      <div className="grid grid-cols-5 gap-2">
+                        {COLORS.map(c => (
+                          <button
+                            key={c.value}
+                            title={c.label}
+                            onMouseDown={e => e.preventDefault()}
+                            onClick={() => {
+                              if (c.value === "inherit") {
+                                editor?.chain().focus().unsetColor().run();
+                              } else {
+                                editor?.chain().focus().setColor(c.value).run();
+                              }
+                              setShowColors(false);
+                            }}
+                            className="h-7 w-7 rounded-lg border-2 transition-transform hover:scale-110"
+                            style={{
+                              backgroundColor: c.value === "inherit" ? "transparent" : c.value,
+                              borderColor: c.value === "inherit" ? (dark ? "rgba(255,255,255,0.2)" : "#d1d5db") : c.value,
+                            }}
+                          >
+                            {c.value === "inherit" && (
+                              <svg className={`h-3.5 w-3.5 mx-auto ${labelCls}`} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                              </svg>
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
 
                 {/* Image upload */}
                 <button title="Upload image" onMouseDown={e => e.preventDefault()} onClick={() => imgInputRef.current?.click()} className={`h-7 w-7 rounded flex items-center justify-center transition-colors ${toolbarBtn} ${imgUploading ? "opacity-50 cursor-wait" : ""}`}>
