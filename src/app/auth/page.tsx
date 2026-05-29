@@ -34,7 +34,7 @@ export default function AuthPage() {
       {/* Left panel — branding */}
       <div className="hidden lg:flex lg:w-1/2 flex-col justify-between p-12 bg-black border-r border-white/10">
         <div>
-          <span className="text-white text-2xl font-bold tracking-tight">ANNE</span>
+          <img src="/FWA%20light.svg" alt="Finance with Anne" className="h-10 w-auto" />
         </div>
 
         <div>
@@ -55,7 +55,7 @@ export default function AuthPage() {
 
           {/* Mobile logo */}
           <div className="lg:hidden mb-10 text-center">
-            <span className="text-white text-2xl font-bold tracking-tight">ANNE</span>
+            <img src="/FWA%20light.svg" alt="Finance with Anne" className="h-8 w-auto mx-auto" />
           </div>
 
           <div className="mb-8">
