@@ -31,21 +31,32 @@ export default function AuthPage() {
 
   return (
     <div className="min-h-screen bg-black flex">
-      {/* Left panel — branding */}
-      <div className="hidden lg:flex lg:w-1/2 flex-col justify-between p-12 bg-black border-r border-white/10">
-        <div>
-          <img src="/FWA%20light.svg" alt="Finance with Anne" className="h-10 w-auto" />
-        </div>
+      {/* Left panel — full bleed image */}
+      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
+        {/* Background image */}
+        <img
+          src="/img1.png"
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover"
+        />
 
-        <div>
-          <blockquote className="text-white/60 text-lg leading-relaxed font-light max-w-sm">
-            &ldquo;Financial freedom is not a destination. It&apos;s a daily practice of intentional decisions.&rdquo;
-          </blockquote>
-          <p className="mt-4 text-white/30 text-sm">— ANNE Finance</p>
-        </div>
+        {/* Dark overlay */}
+        <div className="absolute inset-0 bg-black/50" />
 
-        <div className="text-white/20 text-xs">
-          &copy; {new Date().getFullYear()} ANNE. All rights reserved.
+        {/* Content on top of image */}
+        <div className="relative z-10 flex flex-col justify-between w-full p-12">
+          {/* Logo top-left */}
+          <div>
+            <img src="/FWA%20light.svg" alt="Finance with Anne" className="h-10 w-auto" />
+          </div>
+
+          {/* Bottom card */}
+          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6">
+            <blockquote className="text-white text-base leading-relaxed font-light">
+              &ldquo;Financial freedom is not a destination. It&apos;s a daily practice of intentional decisions.&rdquo;
+            </blockquote>
+            <p className="mt-3 text-white/50 text-sm">— Finance with Anne</p>
+          </div>
         </div>
       </div>
 
