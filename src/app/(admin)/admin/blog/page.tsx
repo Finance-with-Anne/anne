@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import type { BlogPost } from "@/types";
 import Link from "next/link";
+import ActionButton from "@/components/admin/ActionButton";
 
 export default async function AdminBlogPage() {
   const supabase = await createClient();
@@ -16,12 +17,7 @@ export default async function AdminBlogPage() {
           <h1 className="text-2xl font-bold text-gray-900">Blog</h1>
           <p className="mt-1 text-sm text-gray-500">{posts?.length ?? 0} posts total</p>
         </div>
-        <Link
-          href="/admin/blog/new"
-          className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white hover:bg-gray-800 transition-colors"
-        >
-          + New Post
-        </Link>
+        <ActionButton label="New Post" onClick={() => { window.location.href = "/admin/blog/new"; }} />
       </div>
 
       <div className="mt-6 rounded-xl border border-gray-200 bg-white overflow-hidden">

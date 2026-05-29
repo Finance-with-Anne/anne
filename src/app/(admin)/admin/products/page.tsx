@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import type { Product } from "@/types";
 import Link from "next/link";
+import ActionButton from "@/components/admin/ActionButton";
 
 export default async function AdminProductsPage() {
   const supabase = await createClient();
@@ -16,12 +17,7 @@ export default async function AdminProductsPage() {
           <h1 className="text-2xl font-bold text-gray-900">Products</h1>
           <p className="mt-1 text-sm text-gray-500">{products?.length ?? 0} products total</p>
         </div>
-        <Link
-          href="/admin/products/new"
-          className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white hover:bg-gray-800 transition-colors"
-        >
-          + New Product
-        </Link>
+        <ActionButton label="New Product" onClick={() => { window.location.href = "/admin/products/new"; }} />
       </div>
 
       <div className="mt-6 rounded-xl border border-gray-200 bg-white overflow-hidden">
