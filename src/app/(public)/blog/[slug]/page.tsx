@@ -16,7 +16,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   return (
     <article className="mx-auto max-w-3xl px-4 py-20 sm:px-6 lg:px-8">
       {post.cover_image && (
-        <img src={post.cover_image} alt={post.title} className="w-full rounded-xl object-cover h-64 mb-8" />
+        <img src={post.cover_image} alt={post.title} className="w-full rounded-xl object-cover aspect-video mb-8" />
       )}
       <p className="text-sm text-gray-400">
         {post.published_at ? new Date(post.published_at).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) : ""}

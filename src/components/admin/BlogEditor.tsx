@@ -420,23 +420,26 @@ export default function BlogEditor({ initialData }: BlogEditorProps) {
             </div>
 
             {/* Cover image */}
-            <div className={`rounded-xl border p-5 space-y-3 ${card}`}>
-              <p className={`text-xs font-semibold uppercase tracking-wide ${labelCls}`}>Cover Image</p>
+            <div className={`rounded-xl border overflow-hidden ${card}`}>
+              <div className={`flex items-center justify-between px-5 py-3 border-b ${divider}`}>
+                <p className={`text-xs font-semibold uppercase tracking-wide ${labelCls}`}>Cover Image</p>
+                <span className={`text-xs ${labelCls}`}>16:9 · PNG, JPG, WEBP</span>
+              </div>
               {coverImage ? (
                 <div className="relative">
-                  <img src={coverImage} alt="" className="w-full h-44 object-cover rounded-lg" />
+                  <img src={coverImage} alt="" className="w-full aspect-video object-cover" />
                   <button onClick={() => setCoverImage("")}
-                    className="absolute top-2 right-2 bg-black/60 text-white rounded-full h-6 w-6 flex items-center justify-center text-xs hover:bg-black/80 transition-colors">
+                    className="absolute top-3 right-3 bg-black/60 text-white rounded-full h-7 w-7 flex items-center justify-center text-xs hover:bg-black/80 transition-colors backdrop-blur-sm">
                     ✕
                   </button>
                 </div>
               ) : (
-                <label className={`flex flex-col items-center justify-center h-36 rounded-lg border-2 border-dashed cursor-pointer transition-colors ${dark ? "border-white/10 hover:border-white/20" : "border-gray-200 hover:border-gray-300"}`}>
-                  <svg className={`h-6 w-6 mb-2 ${labelCls}`} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                <label className={`flex flex-col items-center justify-center aspect-video cursor-pointer transition-colors ${dark ? "bg-white/2 hover:bg-white/5" : "bg-gray-50 hover:bg-gray-100"}`}>
+                  <svg className={`h-8 w-8 mb-3 ${labelCls}`} fill="none" stroke="currentColor" strokeWidth={1.2} viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
-                  <span className={`text-xs ${labelCls}`}>{uploading ? "Uploading…" : "Click to upload cover image"}</span>
-                  <span className={`text-xs mt-1 ${dark ? "text-white/20" : "text-gray-300"}`}>PNG, JPG, WEBP — max 10 MB</span>
+                  <span className={`text-sm font-medium ${labelCls}`}>{uploading ? "Uploading…" : "Click to upload"}</span>
+                  <span className={`text-xs mt-1 ${dark ? "text-white/20" : "text-gray-400"}`}>Recommended: 1280 × 720 px</span>
                   <input type="file" accept="image/*" onChange={handleCoverUpload} className="hidden" />
                 </label>
               )}
@@ -597,9 +600,9 @@ export default function BlogEditor({ initialData }: BlogEditorProps) {
 
               {/* Cover image */}
               {coverImage ? (
-                <img src={coverImage} alt={title} className="w-full rounded-xl object-cover h-56 mb-8" />
+                <img src={coverImage} alt={title} className="w-full rounded-xl object-cover aspect-video mb-8" />
               ) : (
-                <div className={`w-full h-56 rounded-xl mb-8 flex items-center justify-center ${dark ? "bg-white/5 border border-white/5" : "bg-gray-50 border border-gray-100"}`}>
+                <div className={`w-full aspect-video rounded-xl mb-8 flex items-center justify-center ${dark ? "bg-white/5 border border-white/5" : "bg-gray-50 border border-gray-100"}`}>
                   <svg className={`h-10 w-10 ${dark ? "text-white/10" : "text-gray-200"}`} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
