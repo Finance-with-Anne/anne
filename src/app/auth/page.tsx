@@ -133,7 +133,7 @@ export default function AuthPage() {
               </div>
 
               {/* Tweet body */}
-              <p className="mt-4 text-gray-900 text-[15px] leading-relaxed min-h-[80px]">
+              <p className="mt-4 text-gray-900 text-[15px] leading-relaxed">
                 {slides[currentSlide].quote}
               </p>
 
@@ -268,7 +268,11 @@ export default function AuthPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full rounded-lg bg-brand px-4 py-3 text-sm font-semibold text-white hover:bg-brand-hover disabled:opacity-40 disabled:cursor-not-allowed transition-all mt-2"
+                className={`w-full rounded-lg px-4 py-3 text-sm font-semibold disabled:opacity-40 disabled:cursor-not-allowed transition-all mt-2 ${
+                  darkMode
+                    ? "bg-white text-brand hover:bg-gray-100"
+                    : "bg-brand text-white hover:bg-brand-hover"
+                }`}
               >
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">
@@ -279,7 +283,7 @@ export default function AuthPage() {
                     Signing in…
                   </span>
                 ) : (
-                  "Sign in to Dashboard"
+                  "Sign in"
                 )}
               </button>
             </form>
