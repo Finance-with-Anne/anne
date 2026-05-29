@@ -8,7 +8,7 @@ import Placeholder from "@tiptap/extension-placeholder";
 import Underline from "@tiptap/extension-underline";
 import TextAlign from "@tiptap/extension-text-align";
 import { useAdminTheme } from "@/lib/admin-theme";
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 interface BlogEditorProps {
@@ -66,6 +66,18 @@ export default function BlogEditor({ initialData }: BlogEditorProps) {
     },
     onUpdate: ({ editor }) => setContent(editor.getHTML()),
   });
+
+  // Keep prose-invert in sync with dark mode (editorProps.attributes is static on init)
+  useEffect(() => {
+    if (!editor) return;
+    editor.setOptions({
+      editorProps: {
+        attributes: {
+          class: `prose prose-sm max-w-none focus:outline-none min-h-[400px] px-1${dark ? " prose-invert" : ""}`,
+        },
+      },
+    });
+  }, [editor, dark]);
 
   function generateSlug(t: string) {
     return t.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
@@ -244,10 +256,10 @@ export default function BlogEditor({ initialData }: BlogEditorProps) {
               <div className={`flex flex-wrap items-center gap-0.5 px-3 py-2 border-b ${divider}`}>
 
                 {/* Undo / Redo */}
-                <button title="Undo" onClick={() => editor?.chain().focus().undo().run()} disabled={!editor?.can().undo()} className={`h-7 w-7 rounded flex items-center justify-center transition-colors disabled:opacity-25 ${toolbarBtn}`}>
+                <button title="Undo" onMouseDown={e => e.preventDefault()} onClick={() => editor?.chain().focus().undo().run()} disabled={!editor?.can().undo()} className={`h-7 w-7 rounded flex items-center justify-center transition-colors disabled:opacity-25 ${toolbarBtn}`}>
                   <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" /></svg>
                 </button>
-                <button title="Redo" onClick={() => editor?.chain().focus().redo().run()} disabled={!editor?.can().redo()} className={`h-7 w-7 rounded flex items-center justify-center transition-colors disabled:opacity-25 ${toolbarBtn}`}>
+                <button title="Redo" onMouseDown={e => e.preventDefault()} onClick={() => editor?.chain().focus().redo().run()} disabled={!editor?.can().redo()} className={`h-7 w-7 rounded flex items-center justify-center transition-colors disabled:opacity-25 ${toolbarBtn}`}>
                   <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M21 10H11a8 8 0 00-8 8v2m18-10l-6 6m6-6l-6-6" /></svg>
                 </button>
 
@@ -260,7 +272,7 @@ export default function BlogEditor({ initialData }: BlogEditorProps) {
                   { label: "U", action: () => editor?.chain().focus().toggleUnderline().run(), active: () => editor?.isActive("underline") ?? false, title: "Underline" },
                   { label: "S", action: () => editor?.chain().focus().toggleStrike().run(),    active: () => editor?.isActive("strike")    ?? false, title: "Strikethrough" },
                 ].map(btn => (
-                  <button key={btn.title} title={btn.title} onClick={btn.action} data-active={btn.active()}
+                  <button key={btn.title} title={btn.title} onMouseDown={e => e.preventDefault()} onClick={btn.action} data-active={btn.active()}
                     className={`h-7 w-7 rounded flex items-center justify-center text-xs font-bold transition-colors ${toolbarBtn}`}>
                     {btn.label}
                   </button>
@@ -271,6 +283,7 @@ export default function BlogEditor({ initialData }: BlogEditorProps) {
                 {/* Headings */}
                 {[1, 2, 3].map(level => (
                   <button key={level} title={`Heading ${level}`}
+                    onMouseDown={e => e.preventDefault()}
                     onClick={() => editor?.chain().focus().toggleHeading({ level: level as 1|2|3 }).run()}
                     data-active={editor?.isActive("heading", { level }) ?? false}
                     className={`h-7 px-2 rounded text-xs font-bold transition-colors ${toolbarBtn}`}>
@@ -281,12 +294,12 @@ export default function BlogEditor({ initialData }: BlogEditorProps) {
                 <div className={`w-px h-4 mx-1 ${dark ? "bg-white/10" : "bg-gray-200"}`} />
 
                 {/* Lists + blockquote */}
-                <button title="Bullet list" onClick={() => editor?.chain().focus().toggleBulletList().run()} data-active={editor?.isActive("bulletList") ?? false} className={`h-7 w-7 rounded flex items-center justify-center transition-colors ${toolbarBtn}`}>
+                <button title="Bullet list" onMouseDown={e => e.preventDefault()} onClick={() => editor?.chain().focus().toggleBulletList().run()} data-active={editor?.isActive("bulletList") ?? false} className={`h-7 w-7 rounded flex items-center justify-center transition-colors ${toolbarBtn}`}>
                   <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />
                   </svg>
                 </button>
-                <button title="Ordered list" onClick={() => editor?.chain().focus().toggleOrderedList().run()} data-active={editor?.isActive("orderedList") ?? false} className={`h-7 w-7 rounded flex items-center justify-center transition-colors ${toolbarBtn}`}>
+                <button title="Ordered list" onMouseDown={e => e.preventDefault()} onClick={() => editor?.chain().focus().toggleOrderedList().run()} data-active={editor?.isActive("orderedList") ?? false} className={`h-7 w-7 rounded flex items-center justify-center transition-colors ${toolbarBtn}`}>
                   <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01" />
                     <text x="2" y="7.5" fontSize="5" fill="currentColor" stroke="none">1</text>
@@ -294,7 +307,7 @@ export default function BlogEditor({ initialData }: BlogEditorProps) {
                     <text x="2" y="19.5" fontSize="5" fill="currentColor" stroke="none">3</text>
                   </svg>
                 </button>
-                <button title="Blockquote" onClick={() => editor?.chain().focus().toggleBlockquote().run()} data-active={editor?.isActive("blockquote") ?? false} className={`h-7 w-7 rounded flex items-center justify-center transition-colors ${toolbarBtn}`}>
+                <button title="Blockquote" onMouseDown={e => e.preventDefault()} onClick={() => editor?.chain().focus().toggleBlockquote().run()} data-active={editor?.isActive("blockquote") ?? false} className={`h-7 w-7 rounded flex items-center justify-center transition-colors ${toolbarBtn}`}>
                   <svg className="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
                   </svg>
@@ -303,14 +316,14 @@ export default function BlogEditor({ initialData }: BlogEditorProps) {
                 <div className={`w-px h-4 mx-1 ${dark ? "bg-white/10" : "bg-gray-200"}`} />
 
                 {/* Link */}
-                <button title="Insert link" onClick={toggleLinkBar} data-active={editor?.isActive("link") ?? false} className={`h-7 w-7 rounded flex items-center justify-center transition-colors ${toolbarBtn}`}>
+                <button title="Insert link" onMouseDown={e => e.preventDefault()} onClick={toggleLinkBar} data-active={editor?.isActive("link") ?? false} className={`h-7 w-7 rounded flex items-center justify-center transition-colors ${toolbarBtn}`}>
                   <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
                   </svg>
                 </button>
 
                 {/* Image upload */}
-                <button title="Upload image" onClick={() => imgInputRef.current?.click()} className={`h-7 w-7 rounded flex items-center justify-center transition-colors ${toolbarBtn} ${imgUploading ? "opacity-50 cursor-wait" : ""}`}>
+                <button title="Upload image" onMouseDown={e => e.preventDefault()} onClick={() => imgInputRef.current?.click()} className={`h-7 w-7 rounded flex items-center justify-center transition-colors ${toolbarBtn} ${imgUploading ? "opacity-50 cursor-wait" : ""}`}>
                   {imgUploading ? (
                     <svg className="h-3.5 w-3.5 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth={3} /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" /></svg>
                   ) : (
@@ -319,7 +332,7 @@ export default function BlogEditor({ initialData }: BlogEditorProps) {
                 </button>
 
                 {/* Code block */}
-                <button title="Code block" onClick={() => editor?.chain().focus().toggleCodeBlock().run()} data-active={editor?.isActive("codeBlock") ?? false} className={`h-7 w-7 rounded flex items-center justify-center transition-colors ${toolbarBtn}`}>
+                <button title="Code block" onMouseDown={e => e.preventDefault()} onClick={() => editor?.chain().focus().toggleCodeBlock().run()} data-active={editor?.isActive("codeBlock") ?? false} className={`h-7 w-7 rounded flex items-center justify-center transition-colors ${toolbarBtn}`}>
                   <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
                 </button>
               </div>
