@@ -92,9 +92,9 @@ export default function AdminHeader() {
           </button>
 
           {profileOpen && (
-            <div className={`absolute right-0 top-full mt-2 w-64 rounded-2xl border shadow-2xl py-2 z-50 ${dropdownBg}`}>
+            <div className={`absolute right-0 top-full mt-2 w-64 rounded-2xl border py-2 z-50 shadow-[0_8px_32px_rgba(0,0,0,0.4)] ${dropdownBg}`}>
               {/* Profile header */}
-              <div className="flex items-center gap-3 px-4 py-3 border-b mb-1 ${dividerColor}">
+              <div className={`flex items-center gap-3 px-4 py-3 border-b mb-1 ${dividerColor}`}>
                 <img src="/anne-profile.png" alt="Anne" className="h-11 w-11 rounded-full object-cover ring-2 ring-white/10 shrink-0" />
                 <div className="min-w-0">
                   <p className={`text-sm font-bold truncate ${dropdownLabel}`}>Finance with Anne</p>
