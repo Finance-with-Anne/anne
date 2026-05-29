@@ -9,6 +9,7 @@ export default function AuthPage() {
   const supabase = createClient();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -20,7 +21,7 @@ export default function AuthPage() {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
-      setError(error.message);
+      setError("Invalid email or password. Please try again.");
       setLoading(false);
     } else {
       router.push("/admin");
@@ -29,50 +30,115 @@ export default function AuthPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
-      <div className="w-full max-w-sm">
-        <div className="mb-8 text-center">
-          <h1 className="text-2xl font-bold text-gray-900">ANNE Admin</h1>
-          <p className="mt-1 text-sm text-gray-500">Sign in to access the admin panel.</p>
+    <div className="min-h-screen bg-black flex">
+      {/* Left panel — branding */}
+      <div className="hidden lg:flex lg:w-1/2 flex-col justify-between p-12 bg-black border-r border-white/10">
+        <div>
+          <span className="text-white text-2xl font-bold tracking-tight">ANNE</span>
         </div>
 
-        <form onSubmit={handleLogin} className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm space-y-4">
-          <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1.5">Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-black focus:outline-none focus:ring-1 focus:ring-black"
-              placeholder="admin@anne.com"
-            />
+        <div>
+          <blockquote className="text-white/60 text-lg leading-relaxed font-light max-w-sm">
+            &ldquo;Financial freedom is not a destination. It&apos;s a daily practice of intentional decisions.&rdquo;
+          </blockquote>
+          <p className="mt-4 text-white/30 text-sm">— ANNE Finance</p>
+        </div>
+
+        <div className="text-white/20 text-xs">
+          &copy; {new Date().getFullYear()} ANNE. All rights reserved.
+        </div>
+      </div>
+
+      {/* Right panel — form */}
+      <div className="flex-1 flex items-center justify-center px-6 py-12 bg-zinc-950">
+        <div className="w-full max-w-sm">
+
+          {/* Mobile logo */}
+          <div className="lg:hidden mb-10 text-center">
+            <span className="text-white text-2xl font-bold tracking-tight">ANNE</span>
           </div>
 
-          <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1.5">Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-black focus:outline-none focus:ring-1 focus:ring-black"
-              placeholder="••••••••"
-            />
+          <div className="mb-8">
+            <h1 className="text-2xl font-semibold text-white tracking-tight">Admin sign in</h1>
+            <p className="mt-2 text-sm text-zinc-400">
+              Enter your credentials to access the dashboard.
+            </p>
           </div>
 
-          {error && (
-            <p className="text-xs text-red-600 bg-red-50 rounded-md px-3 py-2">{error}</p>
-          )}
+          <form onSubmit={handleLogin} className="space-y-4">
+            {/* Email */}
+            <div>
+              <label className="block text-xs font-medium text-zinc-400 mb-2">
+                Email address
+              </label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                autoComplete="email"
+                autoFocus
+                placeholder="you@example.com"
+                className="w-full rounded-lg bg-white/5 border border-white/10 px-4 py-3 text-sm text-white placeholder-zinc-600 focus:border-white/30 focus:outline-none focus:ring-0 transition-colors"
+              />
+            </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-md bg-black px-4 py-2.5 text-sm font-medium text-white hover:bg-gray-800 disabled:opacity-50 transition-colors"
-          >
-            {loading ? "Signing in…" : "Sign In"}
-          </button>
-        </form>
+            {/* Password */}
+            <div>
+              <label className="block text-xs font-medium text-zinc-400 mb-2">
+                Password
+              </label>
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  autoComplete="current-password"
+                  placeholder="••••••••••••"
+                  className="w-full rounded-lg bg-white/5 border border-white/10 px-4 py-3 pr-10 text-sm text-white placeholder-zinc-600 focus:border-white/30 focus:outline-none focus:ring-0 transition-colors"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 transition-colors text-xs"
+                >
+                  {showPassword ? "Hide" : "Show"}
+                </button>
+              </div>
+            </div>
+
+            {/* Error */}
+            {error && (
+              <div className="flex items-start gap-2.5 rounded-lg bg-red-500/10 border border-red-500/20 px-4 py-3">
+                <span className="text-red-400 text-xs leading-relaxed">{error}</span>
+              </div>
+            )}
+
+            {/* Submit */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="relative w-full rounded-lg bg-white px-4 py-3 text-sm font-semibold text-black hover:bg-zinc-100 disabled:opacity-40 disabled:cursor-not-allowed transition-all mt-2"
+            >
+              {loading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                  </svg>
+                  Signing in…
+                </span>
+              ) : (
+                "Sign in to Dashboard"
+              )}
+            </button>
+          </form>
+
+          <p className="mt-8 text-center text-xs text-zinc-600">
+            ANNE Admin Panel &mdash; Authorised access only
+          </p>
+        </div>
       </div>
     </div>
   );
