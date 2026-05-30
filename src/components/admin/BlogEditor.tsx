@@ -10,8 +10,9 @@ import TextAlign from "@tiptap/extension-text-align";
 import { TextStyle } from "@tiptap/extension-text-style";
 import { Color } from "@tiptap/extension-color";
 import { useAdminTheme } from "@/lib/admin-theme";
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import type { Category } from "@/types";
 
 const COLORS = [
   { label: "Default",  value: "inherit" },
@@ -61,6 +62,8 @@ export default function BlogEditor({ initialData }: BlogEditorProps) {
   const [metaTitle, setMetaTitle]       = useState(initialData?.meta_title ?? "");
   const [metaDesc, setMetaDesc]         = useState(initialData?.meta_description ?? "");
   const [focusKw, setFocusKw]           = useState(initialData?.focus_keyword ?? "");
+  const [allCategories, setAllCategories] = useState<Category[]>([]);
+  const [selectedCats, setSelectedCats]   = useState<string[]>([]);
   const [linkInput, setLinkInput]       = useState("");
   const [showLinkBar, setShowLinkBar]   = useState(false);
   const [showColors, setShowColors]     = useState(false);
@@ -86,6 +89,10 @@ export default function BlogEditor({ initialData }: BlogEditorProps) {
     onUpdate: ({ editor }) => setContent(editor.getHTML()),
   });
 
+
+  useEffect(() => {
+    fetch("/api/blog-categories").then(r => r.json()).then(setAllCategories).catch(() => {});
+  }, []);
 
   function generateSlug(t: string) {
     return t.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
@@ -137,6 +144,8 @@ export default function BlogEditor({ initialData }: BlogEditorProps) {
     const data = await res.json();
     if (!res.ok) {
       setError(data.error ?? "Failed to save.");
+      setSaving(false);
+      return;
     } else {
       const toastMap = {
         published: { title: "Post Published! 🎉", sub: "Your post is now live on the site.", color: "green" },
@@ -549,6 +558,79 @@ export default function BlogEditor({ initialData }: BlogEditorProps) {
                 </p>
               </div>
             </div>
+
+            {/* ── Categories ── */}
+            {allCategories.length > 0 && (() => {
+              const parents = allCategories.filter(c => !c.parent_id);
+              return (
+                <div className={`rounded-xl border p-5 space-y-3 ${card}`}>
+                  <p className={`text-xs font-semibold uppercase tracking-wide ${labelCls}`}>Categories</p>
+                  <div className="space-y-2">
+                    {parents.map(parent => {
+                      const subs = allCategories.filter(c => c.parent_id === parent.id);
+                      const parentSelected = selectedCats.includes(parent.id);
+                      const toggle = (id: string) => setSelectedCats(prev =>
+                        prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+                      );
+                      return (
+                        <div key={parent.id}>
+                          <button
+                            onMouseDown={e => e.preventDefault()}
+                            onClick={() => toggle(parent.id)}
+                            className={`flex items-center gap-2.5 w-full rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                              parentSelected
+                                ? dark ? "bg-blue-500/15 text-blue-400 border border-blue-500/30" : "bg-blue-50 text-blue-700 border border-blue-200"
+                                : dark ? "bg-white/3 border border-white/5 text-white/50 hover:text-white/80 hover:bg-white/5" : "bg-gray-50 border border-gray-200 text-gray-500 hover:text-gray-800 hover:bg-gray-100"
+                            }`}
+                          >
+                            <span className={`h-4 w-4 rounded flex-none flex items-center justify-center border ${parentSelected ? "bg-blue-500 border-blue-500" : dark ? "border-white/20" : "border-gray-300"}`}>
+                              {parentSelected && <svg className="h-2.5 w-2.5 text-white" fill="none" stroke="currentColor" strokeWidth={3} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
+                            </span>
+                            {parent.name}
+                          </button>
+                          {subs.length > 0 && (
+                            <div className="ml-4 mt-1 space-y-1 border-l pl-3" style={{ borderColor: dark ? "rgba(255,255,255,0.05)" : "#e5e7eb" }}>
+                              {subs.map(s => {
+                                const sel = selectedCats.includes(s.id);
+                                return (
+                                  <button
+                                    key={s.id}
+                                    onMouseDown={e => e.preventDefault()}
+                                    onClick={() => toggle(s.id)}
+                                    className={`flex items-center gap-2 w-full rounded-md px-2.5 py-1.5 text-xs transition-colors ${
+                                      sel
+                                        ? dark ? "text-blue-400 bg-blue-500/10" : "text-blue-700 bg-blue-50"
+                                        : dark ? "text-white/40 hover:text-white/60 hover:bg-white/5" : "text-gray-400 hover:text-gray-700 hover:bg-gray-100"
+                                    }`}
+                                  >
+                                    <span className={`h-1.5 w-1.5 rounded-full flex-none ${sel ? "bg-blue-400" : dark ? "bg-white/20" : "bg-gray-300"}`} />
+                                    {s.name}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                  {selectedCats.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 pt-1">
+                      {selectedCats.map(id => {
+                        const cat = allCategories.find(c => c.id === id);
+                        if (!cat) return null;
+                        return (
+                          <span key={id} className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${dark ? "bg-blue-500/15 text-blue-400" : "bg-blue-50 text-blue-700"}`}>
+                            {cat.name}
+                            <button onClick={() => setSelectedCats(p => p.filter(x => x !== id))} className="opacity-60 hover:opacity-100">✕</button>
+                          </span>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
 
             {/* ── SEO section ── */}
             <div className={`rounded-xl border p-5 space-y-4 ${card}`}>

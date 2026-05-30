@@ -4,7 +4,6 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAdminTheme } from "@/lib/admin-theme";
-import ActionButton from "./ActionButton";
 import type { BlogPost } from "@/types";
 
 type Filter = "all" | "published" | "draft";
@@ -68,7 +67,16 @@ export default function BlogList({ posts }: { posts: BlogPost[] }) {
           <h1 className={`text-xl font-bold ${heading}`}>Blog Posts</h1>
           <p className={`text-sm mt-0.5 ${sub}`}>{posts.length} posts total</p>
         </div>
-        <ActionButton label="New Post" onClick={() => router.push("/admin/blog/new")} />
+        <Link
+          href="/admin/blog/new"
+          className={`relative flex items-center gap-2.5 rounded-xl px-4 py-2.5 text-sm font-semibold text-white overflow-hidden transition-opacity hover:opacity-90`}
+        >
+          <span className={`absolute inset-0 ${dark ? "bg-gradient-to-r from-blue-600/80 to-[#0F1F3D] border border-white/10" : "bg-gradient-to-r from-blue-600 to-brand border border-brand/20"}`} />
+          <svg className="relative h-4 w-4 shrink-0" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+          </svg>
+          <span className="relative">New Post</span>
+        </Link>
       </div>
 
       {/* Filters + Search */}

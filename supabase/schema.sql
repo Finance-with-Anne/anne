@@ -31,6 +31,38 @@ create policy "Admins can do everything on blog_posts" on blog_posts
   for all using (auth.role() = 'service_role');
 
 -- ============================================================
+-- BLOG CATEGORIES
+-- ============================================================
+create table if not exists blog_categories (
+  id         uuid primary key default uuid_generate_v4(),
+  name       text not null,
+  slug       text not null unique,
+  parent_id  uuid references blog_categories(id) on delete set null,
+  created_at timestamptz not null default now()
+);
+
+alter table blog_categories enable row level security;
+create policy "Public can read categories" on blog_categories
+  for select using (true);
+create policy "Admins can do everything on blog_categories" on blog_categories
+  for all using (auth.role() = 'service_role');
+
+-- ============================================================
+-- BLOG POST CATEGORIES (many-to-many)
+-- ============================================================
+create table if not exists blog_post_categories (
+  post_id     uuid not null references blog_posts(id) on delete cascade,
+  category_id uuid not null references blog_categories(id) on delete cascade,
+  primary key (post_id, category_id)
+);
+
+alter table blog_post_categories enable row level security;
+create policy "Public can read post categories" on blog_post_categories
+  for select using (true);
+create policy "Admins can do everything on blog_post_categories" on blog_post_categories
+  for all using (auth.role() = 'service_role');
+
+-- ============================================================
 -- PRODUCTS
 -- ============================================================
 create table if not exists products (
