@@ -90,9 +90,8 @@ const rightLinks = [
 const topLinks = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about" },
-  { label: "Blog", href: "/blog" },
-  { label: "Shop", href: "/shop" },
-  { label: "Booking", href: "/booking" },
+  { label: "Money Talks", href: "/money-talks" },
+  { label: "Contact", href: "/contact" },
 ];
 
 // ── Component ─────────────────────────────────────────────────────────────────
