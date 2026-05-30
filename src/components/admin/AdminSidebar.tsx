@@ -22,7 +22,7 @@ const otherNav = [
   { label: "Calculators", href: "/admin/calculators", icon: <path strokeLinecap="round" strokeLinejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" /> },
 ];
 
-export default function AdminSidebar() {
+export default function AdminSidebar({ userRole }: { userRole?: string }) {
   const pathname = usePathname();
   const router = useRouter();
   const supabase = createClient();
@@ -32,6 +32,7 @@ export default function AdminSidebar() {
   const [expandedSection, setExpandedSection] = useState<string | null>(
     pathname.startsWith("/admin/blog") ? "/admin/blog" : null
   );
+  const isEditor = userRole === "editor";
 
   async function handleSignOut() {
     await supabase.auth.signOut();
@@ -88,7 +89,9 @@ export default function AdminSidebar() {
           </div>
         )}
 
-        {(filtered ?? mainNav).map((item) => !filtered || filtered.includes(item) ? (
+        {(filtered ?? mainNav)
+          .filter(item => isEditor ? item.href === "/admin/blog" : true)
+          .map((item) => !filtered || filtered.includes(item) ? (
           <div key={item.href}>
             {/* Blog gets a toggle instead of direct nav */}
             {item.href === "/admin/blog" && !collapsed ? (
@@ -118,14 +121,13 @@ export default function AdminSidebar() {
                 {expandedSection === "/admin/blog" && (
                   <div className={`ml-4 mt-0.5 mb-1 space-y-0.5 border-l pl-3 ${dark ? "border-white/5" : "border-gray-200"}`}>
                     {[
-                      { label: "All Posts", href: "/admin/blog" },
-                      { label: "New Post", href: "/admin/blog/new" },
-                      { label: "Categories", href: "/admin/blog/categories" },
-                      { label: "Archives", href: "/admin/blog/archives" },
+                      { label: "All Posts",   href: "/admin/blog" },
+                      { label: "New Post",    href: "/admin/blog/new" },
+                      { label: "Categories",  href: "/admin/blog/categories" },
+                      { label: "Archives",    href: "/admin/blog/archives" },
+                      ...(isEditor ? [] : [{ label: "Editors", href: "/admin/editors" }]),
                     ].map((sub) => (
-                      <Link
-                        key={sub.href}
-                        href={sub.href}
+                      <Link key={sub.href} href={sub.href}
                         className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-xs transition-colors ${
                           pathname === sub.href
                             ? dark ? "text-white font-medium" : "text-brand font-medium"
@@ -145,7 +147,7 @@ export default function AdminSidebar() {
           </div>
         ) : null)}
 
-        {!filtered && (
+        {!filtered && !isEditor && (
           <>
             <div className={`my-2 border-t mx-1 ${divider}`} />
             {!collapsed && <p className={`px-3 py-1 text-[10px] font-semibold uppercase tracking-widest ${sectionLabel}`}>Other</p>}

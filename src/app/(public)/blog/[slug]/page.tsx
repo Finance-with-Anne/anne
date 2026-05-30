@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
+import ViewTracker from "@/components/public/ViewTracker";
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -15,6 +16,9 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
   return (
     <article className="mx-auto max-w-3xl px-4 py-20 sm:px-6 lg:px-8">
+      {/* Client-side view tracker — fires once on mount */}
+      <ViewTracker postId={post.id} />
+
       {post.cover_image && (
         <img src={post.cover_image} alt={post.title} className="w-full rounded-xl object-cover aspect-video mb-8" />
       )}

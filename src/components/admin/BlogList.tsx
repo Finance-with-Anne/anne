@@ -4,10 +4,12 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAdminTheme } from "@/lib/admin-theme";
-import type { BlogPost } from "@/types";
+import type { BlogPost, Category } from "@/types";
 
 type Filter  = "all" | "published" | "draft" | "scheduled";
 type PostStatus = "published" | "draft" | "scheduled";
+type ViewCount = { post_id: string; views: number };
+type PostCat   = { post_id: string; category_id: string };
 
 function getStatus(post: BlogPost): PostStatus {
   if (post.published) return "published";
@@ -21,13 +23,21 @@ const STATUS_STYLE: Record<PostStatus, { dark: string; light: string; dot: strin
   draft:     { dark: "bg-white/5 text-white/30",        light: "bg-gray-100 text-gray-500",   dot: "bg-gray-400",        label: "Draft"     },
 };
 
-export default function BlogList({ posts }: { posts: BlogPost[] }) {
+export default function BlogList({
+  posts, categories = [], postCats = [], viewCounts = [],
+}: {
+  posts: BlogPost[];
+  categories?: Category[];
+  postCats?: PostCat[];
+  viewCounts?: ViewCount[];
+}) {
   const { dark } = useAdminTheme();
   const router   = useRouter();
 
-  const [filter,  setFilter]  = useState<Filter>("all");
-  const [search,  setSearch]  = useState("");
-  const [loading, setLoading] = useState<string | null>(null);
+  const [filter,     setFilter]     = useState<Filter>("all");
+  const [catFilter,  setCatFilter]  = useState<string>("all");
+  const [search,     setSearch]     = useState("");
+  const [loading,    setLoading]    = useState<string | null>(null);
 
   // Status modal
   const [statusTarget, setStatusTarget] = useState<BlogPost | null>(null);
@@ -60,10 +70,18 @@ export default function BlogList({ posts }: { posts: BlogPost[] }) {
     scheduled: posts.filter(p => getStatus(p) === "scheduled").length,
   };
 
+  const viewMap  = Object.fromEntries(viewCounts.map(v => [v.post_id, v.views]));
+  const catMap   = postCats.reduce<Record<string, string[]>>((acc, pc) => {
+    (acc[pc.post_id] = acc[pc.post_id] ?? []).push(pc.category_id);
+    return acc;
+  }, {});
+  const parentCats = categories.filter(c => !c.parent_id);
+
   const filtered = posts.filter(p => {
     const matchFilter = filter === "all" || getStatus(p) === filter;
     const matchSearch = !search || p.title?.toLowerCase().includes(search.toLowerCase());
-    return matchFilter && matchSearch;
+    const matchCat    = catFilter === "all" || (catMap[p.id] ?? []).includes(catFilter);
+    return matchFilter && matchSearch && matchCat;
   });
 
   // ── actions ───────────────────────────────────────────────
@@ -127,12 +145,24 @@ export default function BlogList({ posts }: { posts: BlogPost[] }) {
               </button>
             ))}
           </div>
-          <div className="relative w-48">
-            <svg className={`absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 ${sub}`} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-            <input type="text" placeholder="Search posts…" value={search} onChange={e => setSearch(e.target.value)}
-              className={`w-full rounded-lg border pl-9 pr-3 py-1.5 text-xs focus:outline-none transition-colors ${inputBg}`} />
+          <div className="flex items-center gap-2">
+            {/* Category filter */}
+            {parentCats.length > 0 && (
+              <select value={catFilter} onChange={e => setCatFilter(e.target.value)}
+                className={`rounded-lg border px-3 py-1.5 text-xs focus:outline-none transition-colors appearance-none pr-7 ${inputBg}`}
+                style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' stroke='%236b7280' viewBox='0 0 24 24'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E\")", backgroundRepeat: "no-repeat", backgroundPosition: "right 8px center", backgroundSize: "14px" }}>
+                <option value="all">All categories</option>
+                {parentCats.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+              </select>
+            )}
+            {/* Search */}
+            <div className="relative w-44">
+              <svg className={`absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 ${sub}`} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <input type="text" placeholder="Search posts…" value={search} onChange={e => setSearch(e.target.value)}
+                className={`w-full rounded-lg border pl-9 pr-3 py-1.5 text-xs focus:outline-none transition-colors ${inputBg}`} />
+            </div>
           </div>
         </div>
 
@@ -147,6 +177,7 @@ export default function BlogList({ posts }: { posts: BlogPost[] }) {
               <tr className={`border-b text-xs uppercase tracking-wide ${tHead}`}>
                 <th className="px-5 py-3 text-left font-medium">Title</th>
                 <th className="px-5 py-3 text-left font-medium">Status</th>
+                <th className="px-5 py-3 text-left font-medium">Views</th>
                 <th className="px-5 py-3 text-left font-medium">Date</th>
                 <th className="px-5 py-3 text-right font-medium">Actions</th>
               </tr>
@@ -171,6 +202,14 @@ export default function BlogList({ posts }: { posts: BlogPost[] }) {
                           <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                         </svg>
                       </button>
+                    </td>
+                    <td className={`px-5 py-4 ${tSub} text-xs`}>
+                      {viewMap[post.id] ? (
+                        <span className="flex items-center gap-1">
+                          <svg className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                          {viewMap[post.id].toLocaleString()}
+                        </span>
+                      ) : "—"}
                     </td>
                     <td className={`px-5 py-4 ${tSub} text-xs`}>
                       {status === "scheduled" && post.published_at
