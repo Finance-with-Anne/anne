@@ -64,6 +64,7 @@ export default function BlogEditor({ initialData }: BlogEditorProps) {
   const [linkInput, setLinkInput]       = useState("");
   const [showLinkBar, setShowLinkBar]   = useState(false);
   const [showColors, setShowColors]     = useState(false);
+  const [toast, setToast]               = useState<{ title: string; sub: string; color: string } | null>(null);
   const [imgUploading, setImgUploading] = useState(false);
   const imgInputRef                     = useRef<HTMLInputElement>(null);
 
@@ -134,8 +135,17 @@ export default function BlogEditor({ initialData }: BlogEditorProps) {
     const method   = initialData?.id ? "PATCH" : "POST";
     const res  = await fetch(endpoint, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
     const data = await res.json();
-    if (!res.ok) setError(data.error ?? "Failed to save.");
-    else router.push("/admin/blog");
+    if (!res.ok) {
+      setError(data.error ?? "Failed to save.");
+    } else {
+      const toastMap = {
+        published: { title: "Post Published! 🎉", sub: "Your post is now live on the site.", color: "green" },
+        scheduled: { title: "Post Scheduled 📅", sub: scheduledAt ? `Goes live ${new Date(scheduledAt).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}` : "Scheduled.", color: "yellow" },
+        draft:     { title: "Draft Saved",        sub: "Saved privately — not visible on site.", color: "blue"  },
+      };
+      setToast(toastMap[effectiveStatus]);
+      setTimeout(() => router.push("/admin/blog"), 2800);
+    }
     setSaving(false);
   }
 
@@ -203,7 +213,40 @@ export default function BlogEditor({ initialData }: BlogEditorProps) {
   const editorCls  = dark ? "text-white/85" : "text-gray-900";
 
   return (
-    // Break out of the p-6 on <main> and fill the remaining viewport height (header = h-14 = 56px)
+    <>
+    {/* ── Toast notification ── */}
+    {toast && (
+      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] animate-in fade-in slide-in-from-bottom-4 duration-300">
+        <div className={`flex items-center gap-4 rounded-2xl px-5 py-4 shadow-2xl border backdrop-blur-md min-w-[320px] ${
+          toast.color === "green"  ? "bg-green-500/10 border-green-500/20" :
+          toast.color === "yellow" ? "bg-yellow-500/10 border-yellow-500/20" :
+          "bg-blue-500/10 border-blue-500/20"
+        } ${dark ? "bg-opacity-80" : "bg-white/90"}`}>
+          <div className={`h-9 w-9 rounded-full flex items-center justify-center flex-none ${
+            toast.color === "green"  ? "bg-green-500/20 text-green-500" :
+            toast.color === "yellow" ? "bg-yellow-500/20 text-yellow-500" :
+            "bg-blue-500/20 text-blue-500"
+          }`}>
+            {toast.color === "green" ? (
+              <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+            ) : toast.color === "yellow" ? (
+              <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+            ) : (
+              <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+            )}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className={`text-sm font-semibold ${dark ? "text-white" : "text-gray-900"}`}>{toast.title}</p>
+            <p className={`text-xs mt-0.5 ${dark ? "text-white/50" : "text-gray-500"}`}>{toast.sub}</p>
+          </div>
+          <a href="/admin/blog" className={`text-xs font-medium underline underline-offset-2 flex-none ${dark ? "text-white/50 hover:text-white" : "text-gray-500 hover:text-gray-900"}`}>
+            View all
+          </a>
+        </div>
+      </div>
+    )}
+
+    {/* Break out of the p-6 on <main> and fill the remaining viewport height (header = h-14 = 56px) */}
     <div className="flex -m-6 h-[calc(100vh-56px)] overflow-hidden">
 
       {/* ════════════════ LEFT — EDITOR ════════════════ */}
@@ -211,9 +254,17 @@ export default function BlogEditor({ initialData }: BlogEditorProps) {
 
         {/* Sticky top bar */}
         <div className={`flex-none flex items-center justify-between px-6 py-3.5 border-b ${headerBg}`}>
-          <div>
-            <h1 className={`text-sm font-bold ${headingCls}`}>{initialData?.id ? "Edit Post" : "New Blog Post"}</h1>
-            <p className={`text-xs mt-0.5 ${labelCls}`}>Write and publish your article</p>
+          <div className="flex items-center gap-3">
+            <a href="/admin/blog" className={`flex items-center gap-1 text-xs font-medium transition-colors ${dark ? "text-white/30 hover:text-white/70" : "text-gray-400 hover:text-gray-700"}`}>
+              <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+              </svg>
+              All Posts
+            </a>
+            <div className={`w-px h-3.5 ${dark ? "bg-white/10" : "bg-gray-200"}`} />
+            <div>
+              <h1 className={`text-sm font-bold ${headingCls}`}>{initialData?.id ? "Edit Post" : "New Blog Post"}</h1>
+            </div>
           </div>
           <div className="flex items-center gap-2">
             <button onClick={() => handleSave(true)} disabled={saving}
@@ -661,18 +712,18 @@ export default function BlogEditor({ initialData }: BlogEditorProps) {
               {/* Social OG card */}
               <div className="space-y-2">
                 <p className={`text-xs font-semibold uppercase tracking-wide ${labelCls}`}>Social Share Preview</p>
-                <div className="rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+                <div className={`rounded-xl border overflow-hidden shadow-sm ${dark ? "border-white/10" : "border-gray-200"}`}>
                   {coverImage ? (
-                    <img src={coverImage} alt="" className="w-full h-44 object-cover" />
+                    <img src={coverImage} alt="" className="w-full aspect-video object-cover" />
                   ) : (
-                    <div className="w-full h-44 bg-gray-50 flex items-center justify-center border-b border-gray-100">
-                      <span className="text-xs text-gray-300">No cover image set</span>
+                    <div className={`w-full aspect-video flex items-center justify-center border-b ${dark ? "bg-white/5 border-white/5" : "bg-gray-50 border-gray-100"}`}>
+                      <span className={`text-xs ${labelCls}`}>No cover image set</span>
                     </div>
                   )}
-                  <div className="p-4">
-                    <p className="text-xs text-gray-400 uppercase tracking-wide">anne-fawn.vercel.app</p>
-                    <p className="text-sm font-semibold text-gray-900 mt-1 line-clamp-1">{effTitle || "Post title…"}</p>
-                    <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">{effDesc || "Description…"}</p>
+                  <div className={`p-4 ${dark ? "bg-[#111318]" : "bg-white"}`}>
+                    <p className={`text-xs uppercase tracking-wide font-medium ${labelCls}`}>anne-fawn.vercel.app</p>
+                    <p className={`text-sm font-semibold mt-1 line-clamp-1 ${headingCls}`}>{effTitle || "Post title…"}</p>
+                    <p className={`text-xs mt-0.5 line-clamp-2 ${labelCls}`}>{effDesc || "Description…"}</p>
                   </div>
                 </div>
               </div>
@@ -720,5 +771,6 @@ export default function BlogEditor({ initialData }: BlogEditorProps) {
       </div>
 
     </div>
+    </>
   );
 }
