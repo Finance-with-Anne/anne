@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { randomUUID } from "crypto";
 
 const ALLOWED_TYPES: Record<string, string[]> = {
-  image: ["image/jpeg", "image/png", "image/webp", "image/gif", "image/svg+xml"],
+  image: ["image/jpeg", "image/png", "image/webp", "image/gif", "image/svg+xml", "image/avif"],
   video: ["video/mp4", "video/webm", "video/ogg"],
   document: ["application/pdf"],
 };
