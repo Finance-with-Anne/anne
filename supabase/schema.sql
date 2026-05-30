@@ -28,7 +28,7 @@ alter table blog_posts enable row level security;
 create policy "Public can read published posts" on blog_posts
   for select using (published = true);
 create policy "Admins can do everything on blog_posts" on blog_posts
-  for all using (auth.role() = 'service_role');
+  for all to authenticated using (true) with check (true);
 
 -- ============================================================
 -- BLOG CATEGORIES
@@ -45,7 +45,7 @@ alter table blog_categories enable row level security;
 create policy "Public can read categories" on blog_categories
   for select using (true);
 create policy "Admins can do everything on blog_categories" on blog_categories
-  for all using (auth.role() = 'service_role');
+  for all to authenticated using (true) with check (true);
 
 -- ============================================================
 -- BLOG POST CATEGORIES (many-to-many)
@@ -60,7 +60,7 @@ alter table blog_post_categories enable row level security;
 create policy "Public can read post categories" on blog_post_categories
   for select using (true);
 create policy "Admins can do everything on blog_post_categories" on blog_post_categories
-  for all using (auth.role() = 'service_role');
+  for all to authenticated using (true) with check (true);
 
 -- ============================================================
 -- PRODUCTS
@@ -82,7 +82,7 @@ alter table products enable row level security;
 create policy "Public can view active products" on products
   for select using (active = true);
 create policy "Admins can do everything on products" on products
-  for all using (auth.role() = 'service_role');
+  for all to authenticated using (true) with check (true);
 
 -- ============================================================
 -- BOOKINGS
@@ -105,7 +105,7 @@ alter table bookings enable row level security;
 create policy "Anyone can create a booking" on bookings
   for insert with check (true);
 create policy "Admins can do everything on bookings" on bookings
-  for all using (auth.role() = 'service_role');
+  for all to authenticated using (true) with check (true);
 
 -- ============================================================
 -- COURSES
@@ -125,7 +125,7 @@ alter table courses enable row level security;
 create policy "Public can view published courses" on courses
   for select using (published = true);
 create policy "Admins can do everything on courses" on courses
-  for all using (auth.role() = 'service_role');
+  for all to authenticated using (true) with check (true);
 
 -- ============================================================
 -- LESSONS (belongs to courses)
@@ -148,7 +148,7 @@ create policy "Public can view lessons of published courses" on lessons
     )
   );
 create policy "Admins can do everything on lessons" on lessons
-  for all using (auth.role() = 'service_role');
+  for all to authenticated using (true) with check (true);
 
 -- ============================================================
 -- CLIENTS
@@ -167,7 +167,7 @@ create table if not exists clients (
 
 alter table clients enable row level security;
 create policy "Admins can do everything on clients" on clients
-  for all using (auth.role() = 'service_role');
+  for all to authenticated using (true) with check (true);
 
 -- ============================================================
 -- TESTIMONIALS
@@ -187,7 +187,7 @@ alter table testimonials enable row level security;
 create policy "Public can view published testimonials" on testimonials
   for select using (published = true);
 create policy "Admins can do everything on testimonials" on testimonials
-  for all using (auth.role() = 'service_role');
+  for all to authenticated using (true) with check (true);
 
 -- ============================================================
 -- YOUTUBE VIDEOS
@@ -207,7 +207,7 @@ alter table youtube_videos enable row level security;
 create policy "Public can view published videos" on youtube_videos
   for select using (published = true);
 create policy "Admins can do everything on youtube_videos" on youtube_videos
-  for all using (auth.role() = 'service_role');
+  for all to authenticated using (true) with check (true);
 
 -- ============================================================
 -- EMAIL SUBSCRIBERS
@@ -225,7 +225,7 @@ alter table subscribers enable row level security;
 create policy "Anyone can subscribe" on subscribers
   for insert with check (true);
 create policy "Admins can do everything on subscribers" on subscribers
-  for all using (auth.role() = 'service_role');
+  for all to authenticated using (true) with check (true);
 
 -- ============================================================
 -- EMAIL CAMPAIGNS
@@ -242,7 +242,7 @@ create table if not exists email_campaigns (
 
 alter table email_campaigns enable row level security;
 create policy "Admins can do everything on email_campaigns" on email_campaigns
-  for all using (auth.role() = 'service_role');
+  for all to authenticated using (true) with check (true);
 
 -- ============================================================
 -- RESOURCES (free downloads)
@@ -262,7 +262,7 @@ alter table resources enable row level security;
 create policy "Public can view published resources" on resources
   for select using (published = true);
 create policy "Admins can do everything on resources" on resources
-  for all using (auth.role() = 'service_role');
+  for all to authenticated using (true) with check (true);
 
 -- ============================================================
 -- UPDATED_AT trigger helper

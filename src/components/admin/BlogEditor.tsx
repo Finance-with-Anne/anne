@@ -810,7 +810,12 @@ export default function BlogEditor({ initialData }: BlogEditorProps) {
 
               {/* Cover image */}
               {coverImage ? (
-                <img src={coverImage} alt={title} className="w-full rounded-xl object-cover aspect-video mb-8" />
+                <img
+                  src={coverImage}
+                  alt={title}
+                  className="w-full rounded-xl object-cover aspect-video mb-8"
+                  onError={e => { (e.target as HTMLImageElement).style.display = "none"; }}
+                />
               ) : (
                 <div className={`w-full aspect-video rounded-xl mb-8 flex items-center justify-center ${dark ? "bg-white/5 border border-white/5" : "bg-gray-50 border border-gray-100"}`}>
                   <svg className={`h-10 w-10 ${dark ? "text-white/10" : "text-gray-200"}`} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
