@@ -29,6 +29,18 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* ── Stock ticker scroll animation ───────────────────────────────────────── */
+@keyframes ticker {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.animate-ticker {
+  animation: ticker 60s linear infinite;
+}
+.animate-ticker:hover {
+  animation-play-state: paused;
+}
+
 /* ── Shared blog typography — used by both editor and preview ─────────────── */
 .blog-content,
 .ProseMirror {
