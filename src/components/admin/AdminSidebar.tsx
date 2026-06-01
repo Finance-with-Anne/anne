@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useAdminTheme } from "@/lib/admin-theme";
 
@@ -32,7 +32,19 @@ export default function AdminSidebar({ userRole }: { userRole?: string }) {
   const [expandedSection, setExpandedSection] = useState<string | null>(
     pathname.startsWith("/admin/blog") ? "/admin/blog" : null
   );
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
   const isEditor = userRole === "editor";
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
+        setUserMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
 
   async function handleSignOut() {
     await supabase.auth.signOut();
@@ -174,18 +186,73 @@ export default function AdminSidebar({ userRole }: { userRole?: string }) {
           {!collapsed && <span>View Site</span>}
         </Link>
 
-        <button
-          onClick={handleSignOut}
-          className={`w-full flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors group ${dark ? "hover:bg-white/5" : "hover:bg-gray-100"}`}
-        >
-          <img src="/anne-profile.png" alt="Admin" className="h-7 w-7 rounded-full object-cover shrink-0 ring-1 ring-white/10" />
-          {!collapsed && (
-            <div className="flex-1 text-left min-w-0">
-              <p className={`text-xs font-medium truncate ${dark ? "text-white/80" : "text-gray-800"}`}>Finance with Anne</p>
-              <p className={`text-[10px] truncate ${dark ? "text-white/30" : "text-gray-400"}`}>webtech.fwa@gmail.com</p>
+        <div className="relative" ref={userMenuRef}>
+          <button
+            onClick={() => setUserMenuOpen(!userMenuOpen)}
+            className={`w-full flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors ${
+              dark
+                ? "bg-white/5 hover:bg-white/10"
+                : "bg-gray-100 hover:bg-gray-200/70"
+            }`}
+          >
+            <img src="/anne-profile.png" alt="Admin" className="h-7 w-7 rounded-full object-cover shrink-0 ring-1 ring-white/10" />
+            {!collapsed && (
+              <>
+                <div className="flex-1 text-left min-w-0">
+                  <p className={`text-xs font-medium truncate ${dark ? "text-white/80" : "text-gray-800"}`}>Finance with Anne</p>
+                  <p className={`text-[10px] truncate ${dark ? "text-white/30" : "text-gray-400"}`}>webtech.fwa@gmail.com</p>
+                </div>
+                <svg className={`h-3 w-3 shrink-0 transition-transform ${userMenuOpen ? "rotate-180" : ""} ${dark ? "text-white/20" : "text-gray-400"}`} fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </>
+            )}
+          </button>
+
+          {userMenuOpen && (
+            <div className={`absolute bottom-full mb-2 left-0 w-64 rounded-2xl border py-2 z-50 ${dark ? "bg-[#1c1f27] border-white/10 shadow-[0_-6px_16px_rgba(0,0,0,0.25)]" : "bg-white border-gray-200 shadow-lg"}`}>
+              {/* Profile header */}
+              <div className={`flex items-center gap-3 px-4 py-3 border-b mb-1 ${dark ? "border-white/5" : "border-gray-100"}`}>
+                <img src="/anne-profile.png" alt="Anne" className="h-11 w-11 rounded-full object-cover ring-2 ring-white/10 shrink-0" />
+                <div className="min-w-0">
+                  <p className={`text-sm font-bold truncate ${dark ? "text-white" : "text-gray-900"}`}>Finance with Anne</p>
+                  <p className={`text-xs truncate ${dark ? "text-white/30" : "text-gray-400"}`}>webtech.fwa@gmail.com</p>
+                </div>
+              </div>
+
+              {[
+                { label: "Profile",  href: "/admin/profile",  icon: <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /> },
+                { label: "Settings", href: "/admin/settings", icon: <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /> },
+                { label: "Wallet",   href: "/admin/wallet",   icon: <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /> },
+              ].map((item) => (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  onClick={() => setUserMenuOpen(false)}
+                  className={`flex items-center gap-3 px-4 py-3 text-sm transition-colors ${dark ? "text-white/60 hover:text-white hover:bg-white/5" : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"}`}
+                >
+                  <svg className="h-[18px] w-[18px] shrink-0 opacity-60" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">{item.icon}</svg>
+                  <span className="flex-1 font-medium">{item.label}</span>
+                  <svg className="h-3.5 w-3.5 opacity-30" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                  </svg>
+                </Link>
+              ))}
+
+              <div className={`border-t my-1 mx-3 ${dark ? "border-white/5" : "border-gray-100"}`} />
+
+              <button
+                onClick={handleSignOut}
+                className="flex w-full items-center gap-3 px-4 py-3 text-sm text-red-400 hover:bg-red-400/5 transition-colors rounded-b-2xl"
+              >
+                <svg className="h-[18px] w-[18px] shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                <span className="font-medium">Sign out</span>
+              </button>
             </div>
           )}
-        </button>
+        </div>
       </div>
     </aside>
   );
