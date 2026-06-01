@@ -100,8 +100,13 @@ export default function BlogListClient({
   return (
     <>
       {/* ── Hero ─────────────────────────────────────────────── */}
-      <section className="bg-[#eef1ff] border-b border-[#dde3f9] px-4 sm:px-6 lg:px-8 pt-10 pb-10">
+      <section className="bg-[#eef1ff] border-b border-[#dde3f9] px-4 sm:px-6 lg:px-8 pt-8 pb-10">
         <div className="mx-auto max-w-7xl">
+
+          {/* Section label */}
+          <p className="text-xs font-bold uppercase tracking-widest text-[#0822C0]/60 mb-4">
+            Latest Articles
+          </p>
 
           {heroPosts.length === 0 ? (
             <p className="text-gray-400 text-sm py-12">No posts yet.</p>
