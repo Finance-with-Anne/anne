@@ -106,7 +106,7 @@ export default function BlogListClient({
           {heroPosts.length === 0 ? (
             <p className="text-gray-400 text-sm py-12">No posts yet.</p>
           ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-4" style={{ minHeight: "360px" }}>
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-4" style={{ minHeight: "500px" }}>
 
               {/* ── Left: big slide ── */}
               <Link
