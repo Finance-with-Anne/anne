@@ -75,8 +75,6 @@ export default function BlogListClient({
     return ids.map((id) => categories.find((c) => c.id === id)?.name).filter(Boolean)[0] ?? null;
   }
 
-  const current = heroPosts[activeSlide];
-
   return (
     <>
       {/* ── Hero ─────────────────────────────────────────────── */}
