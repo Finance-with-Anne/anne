@@ -42,11 +42,14 @@ body {
 }
 
 /* ── Shared blog typography — used by both editor and preview ─────────────── */
+.blog-content {
+  color: #171717;
+}
+
 .blog-content,
 .ProseMirror {
   font-size: 1rem;
   line-height: 1.75;
-  color: #171717;
 }
 
 .blog-content p,

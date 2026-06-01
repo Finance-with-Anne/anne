@@ -87,7 +87,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           </article>
 
           {/* ── Sidebar ──────────────────────────────────────── */}
-          <aside className="space-y-8 lg:pt-10 lg:pl-10 lg:border-t lg:border-gray-200">
+          <aside className="space-y-8 lg:pt-10 lg:pl-10">
             <div className="lg:sticky lg:top-24 space-y-8">
 
               {/* Latest posts */}
@@ -124,8 +124,6 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                   </ul>
                 </div>
               )}
-
-              <hr className="border-gray-200" />
 
               {/* Subscribe banner */}
               <BlogSubscribeBanner />
