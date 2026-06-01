@@ -123,8 +123,8 @@ export default function Navbar() {
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-8">
           <Link href="/" className="flex items-center gap-2.5 shrink-0">
-            <img src="/fwa-dark.svg" alt="Finance with Anne" className="h-8 w-8" />
-            <span className="text-sm font-semibold" style={{ color: "#0066F6" }}>Finance With Anne</span>
+            <img src="/fwa-light.svg" alt="Finance with Anne" className="h-8 w-8" />
+            <span className="text-sm font-bold tracking-wide" style={{ color: "#0822C0" }}>FINANCE WITH ANNE</span>
           </Link>
 
           {/* Desktop nav */}
@@ -259,10 +259,51 @@ export default function Navbar() {
         </nav>
         </div>
 
-        <div className="hidden lg:flex items-center gap-3">
+        <div className="hidden lg:flex items-center gap-2">
+          {/* Search */}
+          <div className="relative">
+            <svg className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input
+              type="text"
+              placeholder="Search..."
+              className="w-44 rounded-lg border border-gray-200 bg-gray-50 pl-9 pr-3 py-2 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-gray-300 focus:w-56 transition-all duration-200"
+            />
+          </div>
+
+          <div className="mx-1 h-5 w-px bg-gray-200" />
+
+          {/* Account icon */}
+          <button className="flex h-9 w-9 items-center justify-center rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors">
+            <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+          </button>
+
+          {/* Cart icon */}
+          <button className="relative flex h-9 w-9 items-center justify-center rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors">
+            <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-[#0822C0]" />
+          </button>
+
+          <div className="mx-1 h-5 w-px bg-gray-200" />
+
+          {/* Login */}
+          <Link
+            href="/auth"
+            className="rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 transition-colors"
+          >
+            Login
+          </Link>
+
+          {/* Book a Session */}
           <Link
             href="/booking"
-            className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white hover:bg-gray-800 transition-colors"
+            className="rounded-lg px-4 py-2 text-sm font-semibold text-white transition-colors"
+            style={{ backgroundColor: "#0822C0" }}
           >
             Book a Session
           </Link>
