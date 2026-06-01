@@ -64,12 +64,14 @@ export default function CuratedLinksClient({ initialLinks }: { initialLinks: Cur
       body: JSON.stringify({ url: url.trim() }),
     });
     const data = await res.json();
-    if (!res.ok) { setFetchError(data.error ?? "Failed to fetch."); setFetching(false); return; }
-    setPreview({ ...data, partial: data.partial ?? false });
-    setTitle(data.title);
-    setExcerpt(data.description);
-    setSourceName(data.site_name);
-    setCoverImage(data.image);
+    // Never block on error — always open the form (partial if needed)
+    const meta = res.ok ? data : { title: "", description: "", image: "", site_name: "", url: url.trim(), partial: true };
+    setPreview(meta);
+    setTitle(meta.title ?? "");
+    setExcerpt(meta.description ?? "");
+    setSourceName(meta.site_name ?? "");
+    setCoverImage(meta.image ?? "");
+    setFetchError("");
     setFetching(false);
   }
 
@@ -156,7 +158,7 @@ export default function CuratedLinksClient({ initialLinks }: { initialLinks: Cur
                 <svg className="h-3.5 w-3.5 mt-0.5 shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
                 </svg>
-                This site blocked automatic fetching. Fill in the details manually below — the title, image URL, and source name are all editable.
+                <span><strong>{sourceName || "This site"}</strong> blocks automatic scraping (paywall or bot protection). Fill in the details manually — open the article, copy the title and image URL, and paste them below.</span>
               </div>
             )}
             <p className={`text-xs font-semibold uppercase tracking-widest ${sub}`}>Preview & Edit</p>
