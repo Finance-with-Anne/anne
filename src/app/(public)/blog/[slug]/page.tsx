@@ -48,6 +48,17 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           <article>
             <ViewTracker postId={post.id} />
 
+            {/* Back button */}
+            <Link
+              href="/blog"
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors mb-6"
+            >
+              <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+              </svg>
+              All Posts
+            </Link>
+
             {/* Meta */}
             <p className="text-sm text-gray-400 mb-2">
               {fmtDate(post.published_at)} · {mins} min read
@@ -63,7 +74,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
               <img
                 src={post.cover_image}
                 alt={post.title}
-                className="w-full rounded-2xl object-cover aspect-video mb-8"
+                className="w-full rounded-lg object-cover aspect-video mb-8"
               />
             )}
 
@@ -73,18 +84,6 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
               dangerouslySetInnerHTML={{ __html: post.content }}
             />
 
-            {/* Back link */}
-            <div className="mt-12 pt-8 border-t border-gray-100">
-              <Link
-                href="/blog"
-                className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors"
-              >
-                <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-                </svg>
-                Back to Blog
-              </Link>
-            </div>
           </article>
 
           {/* ── Sidebar ──────────────────────────────────────── */}
