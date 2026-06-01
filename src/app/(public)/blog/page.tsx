@@ -23,8 +23,7 @@ export default async function BlogPage() {
       .from("blog_curated")
       .select("id, url, source_name, title, excerpt, cover_image, created_at")
       .eq("published", true)
-      .order("created_at", { ascending: false })
-      .limit(12),
+      .order("created_at", { ascending: false }),
   ]);
 
   return (

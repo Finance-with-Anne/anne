@@ -1,8 +1,60 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import type { BlogPost, Category } from "@/types";
+
+const PER_PAGE = 12;
+
+function Pagination({ page, total, onChange }: { page: number; total: number; onChange: (p: number) => void }) {
+  if (total <= 1) return null;
+
+  const pages: (number | "…")[] = [];
+  if (total <= 7) {
+    for (let i = 1; i <= total; i++) pages.push(i);
+  } else {
+    pages.push(1);
+    if (page > 3) pages.push("…");
+    for (let i = Math.max(2, page - 1); i <= Math.min(total - 1, page + 1); i++) pages.push(i);
+    if (page < total - 2) pages.push("…");
+    pages.push(total);
+  }
+
+  const btn = (label: React.ReactNode, p: number, disabled: boolean, active = false) => (
+    <button
+      key={String(label)}
+      onClick={() => { if (!disabled) { onChange(p); window.scrollTo({ top: 0, behavior: "smooth" }); } }}
+      disabled={disabled}
+      className={`flex items-center justify-center min-w-[36px] h-9 px-3 rounded-lg text-sm font-medium transition-colors ${
+        active
+          ? "bg-gray-900 dark:bg-white text-white dark:text-gray-900"
+          : disabled
+          ? "text-gray-300 dark:text-white/15 cursor-not-allowed"
+          : "text-gray-500 dark:text-white/40 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/8"
+      }`}
+    >
+      {label}
+    </button>
+  );
+
+  return (
+    <div className="flex items-center justify-center gap-1 mt-10">
+      {btn(
+        <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>,
+        page - 1, page === 1
+      )}
+      {pages.map((p, i) =>
+        p === "…"
+          ? <span key={`ellipsis-${i}`} className="px-1 text-gray-400 dark:text-white/20 text-sm">…</span>
+          : btn(p, p, false, p === page)
+      )}
+      {btn(
+        <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>,
+        page + 1, page === total
+      )}
+    </div>
+  );
+}
 
 type PostCat = { post_id: string; category_id: string };
 
@@ -39,6 +91,11 @@ export default function BlogListClient({
 }) {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [search, setSearch] = useState("");
+  const [postsPage, setPostsPage] = useState(1);
+  const [curatedPage, setCuratedPage] = useState(1);
+
+  // Reset to page 1 whenever filter or search changes
+  useEffect(() => { setPostsPage(1); }, [activeCategory, search]);
   // Latest posts sorted by date
   const latestPosts = useMemo(() =>
     [...posts].sort((a, b) => new Date(b.published_at ?? 0).getTime() - new Date(a.published_at ?? 0).getTime()),
@@ -84,6 +141,12 @@ export default function BlogListClient({
     }
     return result;
   }, [posts, activeCategory, search, postCatMap, subIdsByParent]);
+
+  const totalPostPages = Math.ceil(filtered.length / PER_PAGE);
+  const pagedPosts = filtered.slice((postsPage - 1) * PER_PAGE, postsPage * PER_PAGE);
+
+  const totalCuratedPages = Math.ceil(curated.length / PER_PAGE);
+  const pagedCurated = curated.slice((curatedPage - 1) * PER_PAGE, curatedPage * PER_PAGE);
 
   function firstCat(postId: string) {
     const ids = postCatMap[postId] ?? [];
@@ -213,6 +276,13 @@ export default function BlogListClient({
             </div>
           </div>
 
+          {/* Results count */}
+          {filtered.length > 0 && (
+            <p className="text-xs text-gray-400 dark:text-white/25 mb-6">
+              Showing {Math.min((postsPage - 1) * PER_PAGE + 1, filtered.length)}–{Math.min(postsPage * PER_PAGE, filtered.length)} of {filtered.length} post{filtered.length !== 1 ? "s" : ""}
+            </p>
+          )}
+
           {/* Post grid */}
           {filtered.length === 0 ? (
             <div className="py-20 text-center">
@@ -225,7 +295,7 @@ export default function BlogListClient({
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-              {filtered.map((post) => {
+              {pagedPosts.map((post) => {
                 const cat = firstCat(post.id);
                 return (
                   <Link key={post.id} href={`/blog/${post.slug}`} className="group">
@@ -260,12 +330,14 @@ export default function BlogListClient({
               })}
             </div>
           )}
+
+          <Pagination page={postsPage} total={totalPostPages} onChange={setPostsPage} />
         </div>
       </section>
 
       {/* ── Other Sources ─────────────────────────────────────── */}
       {curated.length > 0 && (
-        <section className="bg-gray-50 dark:bg-[#070d1a] border-t border-gray-100 dark:border-white/5 py-12">
+        <section id="other-sources" className="bg-gray-50 dark:bg-[#070d1a] border-t border-gray-100 dark:border-white/5 py-12">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="flex items-center gap-3 mb-8">
               <div className="flex items-center gap-2">
@@ -278,7 +350,7 @@ export default function BlogListClient({
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {curated.map(link => (
+              {pagedCurated.map(link => (
                 <a
                   key={link.id}
                   href={link.url}
@@ -330,6 +402,8 @@ export default function BlogListClient({
                 </a>
               ))}
             </div>
+
+            <Pagination page={curatedPage} total={totalCuratedPages} onChange={p => { setCuratedPage(p); window.scrollTo({ top: document.getElementById("other-sources")?.offsetTop ?? 0, behavior: "smooth" }); }} />
           </div>
         </section>
       )}
