@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Class-based dark mode — applied by PublicThemeProvider */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -14,13 +17,6 @@
   /* Brand colours */
   --color-brand: #070F1E;
   --color-brand-hover: #0F1F3D;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {

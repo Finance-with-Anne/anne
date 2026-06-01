@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
+import { usePublicTheme } from "@/components/public/PublicThemeProvider";
 
 type Post = { id: string; title: string; slug: string; excerpt: string | null; cover_image: string | null; published_at: string | null };
 
@@ -97,6 +98,7 @@ const topLinks = [
 // ── Component ─────────────────────────────────────────────────────────────────
 export default function Navbar() {
   const pathname = usePathname();
+  const { dark, toggle } = usePublicTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileResourcesOpen, setMobileResourcesOpen] = useState(false);
   const [megaOpen, setMegaOpen] = useState(false);
@@ -119,12 +121,12 @@ export default function Navbar() {
   }
 
   return (
-    <header className="w-full border-b border-gray-200 bg-white/95 backdrop-blur">
+    <header className="w-full border-b border-gray-200 dark:border-white/5 bg-white/95 dark:bg-[#050910]/95 backdrop-blur transition-colors duration-200">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-8">
           <Link href="/" className="flex items-center gap-2.5 shrink-0">
             <img src="/fwa-light.svg" alt="Finance with Anne" className="h-8 w-8" />
-            <span className="text-sm font-bold tracking-wide" style={{ color: "#0822C0" }}>FINANCE WITH ANNE</span>
+            <span className="text-sm font-bold tracking-wide dark:text-white" style={{ color: dark ? undefined : "#0822C0" }}>FINANCE WITH ANNE</span>
           </Link>
 
           {/* Desktop nav */}
@@ -133,7 +135,7 @@ export default function Navbar() {
             <Link
               key={link.href}
               href={link.href}
-              className={`text-sm font-medium transition-colors hover:text-black ${pathname === link.href ? "text-black" : "text-gray-500"}`}
+              className={`text-sm font-medium transition-colors hover:text-black dark:hover:text-white ${pathname === link.href ? "text-black dark:text-white" : "text-gray-500 dark:text-white/50"}`}
             >
               {link.label}
             </Link>
@@ -142,7 +144,7 @@ export default function Navbar() {
           {/* Resources trigger */}
           <div className="relative" onMouseEnter={openMega} onMouseLeave={closeMega}>
             <button
-              className={`flex items-center gap-1 text-sm font-medium transition-colors hover:text-black ${megaOpen ? "text-black" : "text-gray-500"}`}
+              className={`flex items-center gap-1 text-sm font-medium transition-colors hover:text-black dark:hover:text-white ${megaOpen ? "text-black dark:text-white" : "text-gray-500 dark:text-white/50"}`}
             >
               Resources
               <IconChevron open={megaOpen} />
@@ -260,19 +262,24 @@ export default function Navbar() {
         </div>
 
         <div className="hidden lg:flex items-center gap-2">
-          {/* Search */}
-          <div className="relative">
-            <svg className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-            <input
-              type="text"
-              placeholder="Search..."
-              className="w-44 rounded-lg border border-gray-200 bg-gray-50 pl-9 pr-3 py-2 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-gray-300 focus:w-56 transition-all duration-200"
-            />
-          </div>
+          {/* Dark mode toggle */}
+          <button
+            onClick={toggle}
+            title={dark ? "Switch to light mode" : "Switch to dark mode"}
+            className="flex h-9 w-9 items-center justify-center rounded-lg text-gray-500 dark:text-white/40 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
+          >
+            {dark ? (
+              <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clipRule="evenodd" />
+              </svg>
+            ) : (
+              <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+              </svg>
+            )}
+          </button>
 
-          <div className="mx-1 h-5 w-px bg-gray-200" />
+          <div className="mx-1 h-5 w-px bg-gray-200 dark:bg-white/10" />
 
           {/* Account icon */}
           <button className="flex h-9 w-9 items-center justify-center rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors">
@@ -325,7 +332,7 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="border-t border-gray-100 bg-white px-4 py-4 lg:hidden">
+        <div className="border-t border-gray-100 dark:border-white/5 bg-white dark:bg-[#050910] px-4 py-4 lg:hidden">
           <nav className="flex flex-col gap-1">
             {topLinks.map((link) => (
               <Link
@@ -380,13 +387,29 @@ export default function Navbar() {
               </div>
             )}
 
-            <Link
-              href="/booking"
-              onClick={() => setMobileOpen(false)}
-              className="mt-2 rounded-md bg-black px-4 py-2.5 text-center text-sm font-medium text-white"
-            >
-              Book a Session
-            </Link>
+            <div className="flex items-center gap-3 mt-2">
+              <Link
+                href="/booking"
+                onClick={() => setMobileOpen(false)}
+                className="flex-1 rounded-md bg-black dark:bg-white dark:text-black px-4 py-2.5 text-center text-sm font-medium text-white"
+              >
+                Book a Session
+              </Link>
+              <button
+                onClick={toggle}
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-gray-200 dark:border-white/10 text-gray-600 dark:text-white/50 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
+              >
+                {dark ? (
+                  <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clipRule="evenodd" />
+                  </svg>
+                ) : (
+                  <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+                  </svg>
+                )}
+              </button>
+            </div>
           </nav>
         </div>
       )}
