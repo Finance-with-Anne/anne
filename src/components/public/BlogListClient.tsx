@@ -103,7 +103,7 @@ export default function BlogListClient({
   );
 
   const featuredPost = latestPosts.find(p => p.featured) ?? latestPosts[0] ?? null;
-  const sidebarPosts = latestPosts.filter(p => p.id !== featuredPost?.id);
+  const sidebarPosts = latestPosts.filter(p => p.id !== featuredPost?.id).slice(0, 5);
 
   const parentCats = categories.filter((c) => !c.parent_id);
 
