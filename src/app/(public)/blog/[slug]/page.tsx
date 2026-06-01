@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import ViewTracker from "@/components/public/ViewTracker";
 import BlogSubscribeBanner from "@/components/public/BlogSubscribeBanner";
+import PostLike from "@/components/public/PostLike";
+import PostComments from "@/components/public/PostComments";
 
 function readTime(content: string) {
   const words = content.replace(/<[^>]*>/g, "").split(/\s+/).filter(Boolean).length;
@@ -83,6 +85,15 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
               className="blog-content"
               dangerouslySetInnerHTML={{ __html: post.content }}
             />
+
+            {/* Like + share row */}
+            <div className="mt-8 pt-6 border-t border-gray-100 flex items-center gap-3">
+              <PostLike postId={post.id} />
+              <span className="text-sm text-gray-400">If you found this helpful, give it a like!</span>
+            </div>
+
+            {/* Comments */}
+            <PostComments postId={post.id} />
 
           </article>
 

@@ -2,12 +2,32 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
 export async function POST(req: NextRequest) {
-  const { post_id } = await req.json();
+  const { post_id, read_duration_seconds } = await req.json();
   if (!post_id) return NextResponse.json({ error: "post_id required" }, { status: 400 });
 
-  // Best-effort — don't block the page load
   const country = req.headers.get("x-vercel-ip-country") ?? null;
-  await supabaseAdmin.from("blog_post_views").insert({ post_id, country });
+  await supabaseAdmin.from("blog_post_views").insert({
+    post_id,
+    country,
+    ...(read_duration_seconds != null ? { read_duration_seconds } : {}),
+  });
+
+  return NextResponse.json({ ok: true });
+}
+
+// PATCH — update duration on existing view (called when reader leaves)
+export async function PATCH(req: NextRequest) {
+  const { post_id, read_duration_seconds } = await req.json();
+  if (!post_id || read_duration_seconds == null) return NextResponse.json({ ok: true });
+
+  // Update the most recent view for this post that has no duration yet
+  await supabaseAdmin
+    .from("blog_post_views")
+    .update({ read_duration_seconds })
+    .eq("post_id", post_id)
+    .is("read_duration_seconds", null)
+    .order("created_at", { ascending: false })
+    .limit(1);
 
   return NextResponse.json({ ok: true });
 }

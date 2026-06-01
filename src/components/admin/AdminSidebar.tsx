@@ -133,11 +133,15 @@ export default function AdminSidebar({ userRole, userName, userEmail, userAvatar
                 {expandedSection === "/admin/blog" && (
                   <div className={`ml-4 mt-0.5 mb-1 space-y-0.5 border-l pl-3 ${dark ? "border-white/5" : "border-gray-200"}`}>
                     {[
-                      { label: "All Posts",   href: "/admin/blog" },
-                      { label: "New Post",    href: "/admin/blog/new" },
-                      { label: "Categories",  href: "/admin/blog/categories" },
-                      { label: "Archives",    href: "/admin/blog/archives" },
-                      ...(isEditor ? [] : [{ label: "Editors", href: "/admin/editors" }]),
+                      { label: "All Posts",    href: "/admin/blog" },
+                      { label: "New Post",     href: "/admin/blog/new" },
+                      { label: "Categories",   href: "/admin/blog/categories" },
+                      { label: "Archives",     href: "/admin/blog/archives" },
+                      ...(isEditor ? [] : [
+                        { label: "Post Metrics", href: "/admin/blog/metrics" },
+                        { label: "Comments",     href: "/admin/blog/comments" },
+                        { label: "Editors",      href: "/admin/editors" },
+                      ]),
                     ].map((sub) => (
                       <Link key={sub.href} href={sub.href}
                         className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-xs transition-colors ${
