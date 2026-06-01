@@ -356,11 +356,11 @@ export default function BlogEditor({ initialData }: BlogEditorProps) {
             </div>
 
             {/* Toolbar + editor */}
-            <div className={`rounded-xl border overflow-hidden ${card}`}>
+            <div className={`rounded-xl border ${card}`}>
               {/* Hidden file input for in-editor image upload */}
               <input ref={imgInputRef} type="file" accept="image/*" onChange={handleEditorImageUpload} className="hidden" />
 
-              <div className={`flex flex-wrap items-center gap-0.5 px-3 py-2 border-b ${divider}`}>
+              <div className={`sticky top-0 z-10 flex flex-wrap items-center gap-0.5 px-3 py-2 border-b rounded-t-xl ${divider} ${dark ? "bg-[#111318]" : "bg-white"}`}>
 
                 {/* Undo / Redo */}
                 <button title="Undo" onMouseDown={e => e.preventDefault()} onClick={() => editor?.chain().focus().undo().run()} disabled={!editor?.can().undo()} className={`h-7 w-7 rounded flex items-center justify-center transition-colors disabled:opacity-25 ${toolbarBtn}`}>
