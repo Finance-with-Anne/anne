@@ -134,6 +134,16 @@ export default function BlogEditor({ initialData }: BlogEditorProps) {
     fetch("/api/blog-categories").then(r => r.json()).then(setAllCategories).catch(() => {});
   }, []);
 
+  useEffect(() => {
+    if (!initialData?.id) return;
+    fetch(`/api/blog-post-categories?post_id=${initialData.id}`)
+      .then(r => r.json())
+      .then((data: { category_id: string }[]) => {
+        if (Array.isArray(data)) setSelectedCats(data.map(d => d.category_id));
+      })
+      .catch(() => {});
+  }, [initialData?.id]);
+
   function generateSlug(t: string) {
     return t.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
   }
@@ -187,6 +197,16 @@ export default function BlogEditor({ initialData }: BlogEditorProps) {
       setSaving(false);
       return;
     } else {
+      // Save categories
+      const postId = data.id ?? initialData?.id;
+      if (postId) {
+        await fetch("/api/blog-post-categories", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ post_id: postId, category_ids: selectedCats }),
+        });
+      }
+
       const toastMap = {
         published: { title: "Post Published! 🎉", sub: "Your post is now live on the site.", color: "green" },
         scheduled: { title: "Post Scheduled 📅", sub: scheduledAt ? `Goes live ${new Date(scheduledAt).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}` : "Scheduled.", color: "yellow" },

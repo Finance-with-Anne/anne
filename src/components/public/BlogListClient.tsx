@@ -91,7 +91,7 @@ export default function BlogListClient({
                 <h2 className="text-xl font-bold text-gray-900 mb-3">Featured</h2>
                 <Link
                   href={`/blog/${featuredPost.slug}`}
-                  className="group relative overflow-hidden rounded-2xl flex-1 block"
+                  className="group relative overflow-hidden rounded-2xl flex-1 block min-h-[320px] lg:min-h-0"
                 >
                   {featuredPost.cover_image ? (
                     <img
