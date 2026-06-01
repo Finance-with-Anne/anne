@@ -100,7 +100,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                     {latest.map((p) => (
                       <li key={p.id}>
                         <Link href={`/blog/${p.slug}`} className="group flex gap-3">
-                          <div className="h-16 w-20 shrink-0 overflow-hidden rounded-lg bg-gray-100 ring-1 ring-gray-200">
+                          <div className="h-16 w-20 shrink-0 overflow-hidden rounded-md bg-gray-100 ring-2 ring-[#c7d2fe]">
                             {p.cover_image && (
                               <img
                                 src={p.cover_image}
