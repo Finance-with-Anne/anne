@@ -121,12 +121,13 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/95 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="text-xl font-bold tracking-tight text-gray-900">
-          ANNE
-        </Link>
+        <div className="flex items-center gap-8">
+          <Link href="/" className="shrink-0">
+            <img src="/fwa-dark.svg" alt="Finance with Anne" className="h-8 w-8" />
+          </Link>
 
-        {/* Desktop nav */}
-        <nav className="hidden items-center gap-6 lg:flex">
+          {/* Desktop nav */}
+          <nav className="hidden items-center gap-6 lg:flex">
           {topLinks.map((link) => (
             <Link
               key={link.href}
@@ -255,6 +256,7 @@ export default function Navbar() {
             )}
           </div>
         </nav>
+        </div>
 
         <div className="hidden lg:flex items-center gap-3">
           <Link
