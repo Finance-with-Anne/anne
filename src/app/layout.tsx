@@ -9,8 +9,13 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "ANNE — Finance Platform",
+  title: "Finance with Anne",
   description: "Your trusted finance partner. Building wealth, one step at a time.",
+  icons: {
+    icon: "/fwa-dark.svg",
+    shortcut: "/fwa-dark.svg",
+    apple: "/fwa-dark.svg",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
