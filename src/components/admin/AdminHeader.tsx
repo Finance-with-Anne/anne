@@ -6,12 +6,25 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { useAdminTheme } from "@/lib/admin-theme";
 
-export default function AdminHeader() {
+export default function AdminHeader({
+  userName,
+  userEmail,
+  userRole,
+}: {
+  userName?: string;
+  userEmail?: string;
+  userRole?: string;
+}) {
   const router = useRouter();
   const supabase = createClient();
   const { dark, toggle } = useAdminTheme();
   const [profileOpen, setProfileOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
+
+  const isEditor = userRole === "editor";
+  const displayName = userName ?? (isEditor ? "Editor" : "Finance with Anne");
+  const displayEmail = userEmail ?? "webtech.fwa@gmail.com";
+  const firstName = displayName.split(" ")[0];
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
@@ -39,11 +52,33 @@ export default function AdminHeader() {
   const dividerColor = dark ? "border-white/5" : "border-gray-100";
   const chevronColor = dark ? "text-white/30" : "text-gray-400";
 
+  const menuItems = isEditor
+    ? [
+        {
+          label: "My Profile", href: "/admin/profile",
+          icon: <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />,
+        },
+      ]
+    : [
+        {
+          label: "Profile", href: "/admin/profile",
+          icon: <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />,
+        },
+        {
+          label: "Settings", href: "/admin/settings",
+          icon: <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />,
+        },
+        {
+          label: "Wallet", href: "/admin/wallet",
+          icon: <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />,
+        },
+      ];
+
   return (
     <header className={`flex h-14 items-center justify-between border-b px-6 transition-colors duration-300 ${bg}`}>
       {/* Left */}
       <p className={`text-sm font-semibold ${dark ? "text-white/80" : "text-gray-800"}`}>
-        Welcome back, Anne 👋
+        Welcome back, {firstName} 👋
       </p>
 
       {/* Right */}
@@ -79,13 +114,19 @@ export default function AdminHeader() {
 
         <div className={`mx-2 h-5 w-px ${dark ? "bg-white/10" : "bg-gray-200"}`} />
 
-        {/* Profile */}
+        {/* Profile avatar */}
         <div className="relative" ref={profileRef}>
           <button
             onClick={() => setProfileOpen(!profileOpen)}
             className={`flex items-center gap-2 rounded-lg px-2 py-1.5 transition-colors ${dark ? "hover:bg-white/5" : "hover:bg-gray-100"}`}
           >
-            <img src="/anne-profile.png" alt="Anne" className="h-7 w-7 rounded-full object-cover ring-1 ring-white/10" />
+            {isEditor ? (
+              <div className={`h-7 w-7 rounded-full flex items-center justify-center text-xs font-bold uppercase ${dark ? "bg-white/10 text-white/70" : "bg-brand/10 text-brand"}`}>
+                {displayName[0]}
+              </div>
+            ) : (
+              <img src="/anne-profile.png" alt="Anne" className="h-7 w-7 rounded-full object-cover ring-1 ring-white/10" />
+            )}
             <svg className={`h-3 w-3 transition-transform ${profileOpen ? "rotate-180" : ""} ${chevronColor}`} fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
             </svg>
@@ -95,28 +136,23 @@ export default function AdminHeader() {
             <div className={`absolute right-0 top-full mt-2 w-64 rounded-2xl border py-2 z-50 ${dark ? "shadow-[0_6px_16px_rgba(0,0,0,0.25)]" : ""} ${dropdownBg}`}>
               {/* Profile header */}
               <div className={`flex items-center gap-3 px-4 py-3 border-b mb-1 ${dividerColor}`}>
-                <img src="/anne-profile.png" alt="Anne" className="h-11 w-11 rounded-full object-cover ring-2 ring-white/10 shrink-0" />
+                {isEditor ? (
+                  <div className={`h-11 w-11 rounded-full flex items-center justify-center text-lg font-bold uppercase shrink-0 ${dark ? "bg-white/10 text-white/70" : "bg-brand/10 text-brand"}`}>
+                    {displayName[0]}
+                  </div>
+                ) : (
+                  <img src="/anne-profile.png" alt="Anne" className="h-11 w-11 rounded-full object-cover ring-2 ring-white/10 shrink-0" />
+                )}
                 <div className="min-w-0">
-                  <p className={`text-sm font-bold truncate ${dropdownLabel}`}>Finance with Anne</p>
-                  <p className={`text-xs truncate ${dropdownSub}`}>webtech.fwa@gmail.com</p>
+                  <p className={`text-sm font-bold truncate ${dropdownLabel}`}>{displayName}</p>
+                  <p className={`text-xs truncate ${dropdownSub}`}>{displayEmail}</p>
+                  {isEditor && (
+                    <span className={`text-[10px] font-medium ${dark ? "text-blue-400" : "text-brand"}`}>Editor</span>
+                  )}
                 </div>
               </div>
 
-              {/* Menu items */}
-              {[
-                {
-                  label: "Profile", href: "/admin/profile", badge: null,
-                  icon: <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />,
-                },
-                {
-                  label: "Settings", href: "/admin/settings", badge: null,
-                  icon: <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />,
-                },
-                {
-                  label: "Wallet", href: "/admin/wallet", badge: null,
-                  icon: <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />,
-                },
-              ].map((item) => (
+              {menuItems.map((item) => (
                 <Link
                   key={item.label}
                   href={item.href}

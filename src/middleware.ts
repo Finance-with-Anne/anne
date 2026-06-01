@@ -43,8 +43,12 @@ export async function middleware(req: NextRequest) {
   const isEditor = role === "editor";
 
   if (isEditor) {
-    // Editors may only access /admin/blog/** routes
-    const allowedForEditor = pathname === "/admin/blog" || pathname.startsWith("/admin/blog/");
+    // Editors may only access /admin/blog/**, /admin/profile, and /admin/settings
+    const allowedForEditor =
+      pathname === "/admin/blog" ||
+      pathname.startsWith("/admin/blog/") ||
+      pathname === "/admin/profile" ||
+      pathname === "/admin/settings";
 
     if (!allowedForEditor) {
       const url = req.nextUrl.clone();

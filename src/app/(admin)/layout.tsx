@@ -22,7 +22,7 @@ function AdminLayoutInner({ children, userRole, userName, userEmail }: { childre
     <AdminLayoutWrapper>
       <AdminSidebar userRole={userRole} userName={userName} userEmail={userEmail} />
       <div className="flex flex-1 flex-col overflow-hidden">
-        <AdminHeader />
+        <AdminHeader userName={userName} userEmail={userEmail} userRole={userRole} />
         <main className="flex-1 overflow-y-auto p-6">{children}</main>
       </div>
     </AdminLayoutWrapper>
