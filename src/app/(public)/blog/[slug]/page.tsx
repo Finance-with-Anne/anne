@@ -87,7 +87,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           </article>
 
           {/* ── Sidebar ──────────────────────────────────────── */}
-          <aside className="space-y-8 lg:pt-10 lg:pl-10">
+          <aside className="space-y-8 lg:pt-10 lg:pl-10 lg:border-t lg:border-gray-100">
             <div className="lg:sticky lg:top-24 space-y-8">
 
               {/* Latest posts */}
