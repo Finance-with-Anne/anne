@@ -140,6 +140,7 @@ export default function AdminSidebar({ userRole, userName, userEmail, userAvatar
                       ...(isEditor ? [] : [
                         { label: "Post Metrics", href: "/admin/blog/metrics" },
                         { label: "Comments",     href: "/admin/blog/comments" },
+                        { label: "Curated",      href: "/admin/blog/curated" },
                         { label: "Editors",      href: "/admin/editors" },
                       ]),
                     ].map((sub) => (

@@ -6,6 +6,16 @@ import type { BlogPost, Category } from "@/types";
 
 type PostCat = { post_id: string; category_id: string };
 
+type CuratedLink = {
+  id: string;
+  url: string;
+  source_name: string;
+  title: string;
+  excerpt: string | null;
+  cover_image: string | null;
+  created_at: string;
+};
+
 function readTime(content: string) {
   const words = content.replace(/<[^>]*>/g, "").split(/\s+/).filter(Boolean).length;
   return Math.max(1, Math.round(words / 200));
@@ -20,10 +30,12 @@ export default function BlogListClient({
   posts,
   categories,
   postCats,
+  curated = [],
 }: {
   posts: BlogPost[];
   categories: Category[];
   postCats: PostCat[];
+  curated?: CuratedLink[];
 }) {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [search, setSearch] = useState("");
@@ -250,6 +262,77 @@ export default function BlogListClient({
           )}
         </div>
       </section>
+
+      {/* ── Other Sources ─────────────────────────────────────── */}
+      {curated.length > 0 && (
+        <section className="bg-gray-50 dark:bg-[#070d1a] border-t border-gray-100 dark:border-white/5 py-12">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center gap-3 mb-8">
+              <div className="flex items-center gap-2">
+                <svg className="h-4 w-4 text-gray-400 dark:text-white/30" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+                <h2 className="text-lg font-bold text-gray-900 dark:text-white">Other Sources</h2>
+              </div>
+              <span className="text-xs text-gray-400 dark:text-white/30">Articles from around the web, curated by Anne</span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {curated.map(link => (
+                <a
+                  key={link.id}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex flex-col rounded-2xl overflow-hidden border border-gray-200 dark:border-white/5 bg-white dark:bg-white/3 hover:shadow-md dark:hover:bg-white/5 transition-all"
+                >
+                  {/* Cover image */}
+                  <div className="relative h-40 bg-gray-100 dark:bg-white/5 overflow-hidden shrink-0">
+                    {link.cover_image ? (
+                      <img
+                        src={link.cover_image}
+                        alt={link.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <svg className="h-8 w-8 text-gray-300 dark:text-white/10" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                        </svg>
+                      </div>
+                    )}
+                    {/* Source badge */}
+                    <span className="absolute top-3 left-3 flex items-center gap-1 rounded-full bg-black/60 backdrop-blur-sm px-2.5 py-1 text-[11px] font-semibold text-white">
+                      <svg className="h-2.5 w-2.5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                      </svg>
+                      {link.source_name}
+                    </span>
+                  </div>
+
+                  {/* Content */}
+                  <div className="flex flex-col flex-1 p-4">
+                    <p className="text-sm font-semibold text-gray-900 dark:text-white leading-snug line-clamp-2 group-hover:text-black dark:group-hover:text-white/80 mb-2">
+                      {link.title}
+                    </p>
+                    {link.excerpt && (
+                      <p className="text-xs text-gray-500 dark:text-white/40 line-clamp-2 leading-relaxed flex-1">
+                        {link.excerpt}
+                      </p>
+                    )}
+                    <div className="mt-3 flex items-center gap-1 text-xs font-semibold text-[#0822C0] dark:text-blue-400">
+                      Read on {link.source_name}
+                      <svg className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                      </svg>
+                    </div>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
     </>
   );
 }
