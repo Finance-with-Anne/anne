@@ -94,13 +94,13 @@ export default function BlogListClient({
   return (
     <>
       {/* ── Hero ─────────────────────────────────────────────── */}
-      <section className="bg-white border-b border-gray-100 px-4 sm:px-6 lg:px-8 pt-12 pb-12">
+      <section className="bg-[#eef1ff] border-b border-[#dde3f9] px-4 sm:px-6 lg:px-8 pt-12 pb-12">
         <div className="mx-auto max-w-7xl">
 
           {/* Header row */}
           <div className="flex items-center justify-between gap-4 mb-6">
             {/* Tab toggle */}
-            <div className="flex items-center gap-1 bg-gray-100 rounded-full p-1">
+            <div className="flex items-center gap-1 bg-white/70 border border-[#c7d0f0] rounded-full p-1">
               {(["latest", "trending"] as const).map((tab) => (
                 <button
                   key={tab}
@@ -129,7 +129,7 @@ export default function BlogListClient({
                 placeholder="Search articles..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full rounded-full bg-gray-100 border border-gray-200 pl-9 pr-4 py-2 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-gray-300 transition-colors"
+                className="w-full rounded-full bg-white/70 border border-[#c7d0f0] pl-9 pr-4 py-2 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#a0aee0] transition-colors"
               />
             </div>
           </div>
