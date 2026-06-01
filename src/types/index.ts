@@ -27,6 +27,7 @@ export type BlogPost = {
   cover_image: string | null;
   published: boolean;
   published_at: string | null;
+  featured: boolean | null;
   meta_title: string | null;
   meta_description: string | null;
   focus_keyword: string | null;

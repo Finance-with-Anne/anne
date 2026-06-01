@@ -33,8 +33,8 @@ export default function BlogListClient({
     [posts]
   );
 
-  const featuredPost = latestPosts[0] ?? null;
-  const sidebarPosts = latestPosts.slice(1, 5);
+  const featuredPost = latestPosts.find(p => p.featured) ?? latestPosts[0] ?? null;
+  const sidebarPosts = latestPosts.filter(p => p.id !== featuredPost?.id);
 
   const parentCats = categories.filter((c) => !c.parent_id);
 
@@ -81,11 +81,6 @@ export default function BlogListClient({
       <section className="bg-[#eef1ff] border-b border-[#dde3f9] px-4 sm:px-6 lg:px-8 pt-8 pb-10">
         <div className="mx-auto max-w-7xl">
 
-          {/* Section label */}
-          <p className="text-xs font-bold uppercase tracking-widest text-[#0822C0]/60 mb-4">
-            Latest Articles
-          </p>
-
           {!featuredPost ? (
             <p className="text-gray-400 text-sm py-12">No posts yet.</p>
           ) : (
@@ -93,7 +88,7 @@ export default function BlogListClient({
 
               {/* ── Left: Featured ── */}
               <div className="flex flex-col">
-                <h2 className="text-base font-bold text-gray-800 mb-3">Featured</h2>
+                <h2 className="text-xl font-bold text-gray-900 mb-3">Featured</h2>
                 <Link
                   href={`/blog/${featuredPost.slug}`}
                   className="group relative overflow-hidden rounded-2xl flex-1 block"
@@ -124,7 +119,7 @@ export default function BlogListClient({
 
               {/* ── Right: Latest Posts ── */}
               <div className="flex flex-col">
-                <h2 className="text-base font-bold text-gray-800 mb-3">Latest Posts</h2>
+                <h2 className="text-xl font-bold text-gray-900 mb-3">Latest Posts</h2>
                 <div className="flex flex-col gap-2 flex-1">
                   {sidebarPosts.map((post) => (
                     <Link
