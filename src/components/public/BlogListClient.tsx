@@ -64,7 +64,10 @@ export default function BlogListClient({
     if (search.trim()) {
       const q = search.toLowerCase();
       result = result.filter(
-        (p) => p.title.toLowerCase().includes(q) || p.excerpt?.toLowerCase().includes(q)
+        (p) =>
+          p.title.toLowerCase().includes(q) ||
+          (p.excerpt ?? "").toLowerCase().includes(q) ||
+          (p.content ?? "").replace(/<[^>]*>/g, "").toLowerCase().includes(q)
       );
     }
     return result;
@@ -157,7 +160,7 @@ export default function BlogListClient({
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
           {/* Top bar: category filters + search */}
-          <div className="flex items-center gap-4 mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-8">
             <div className="flex items-center gap-1.5 overflow-x-auto pb-1 flex-1 scrollbar-none">
               {[{ id: null as string | null, name: "All Posts" }, ...parentCats].map((cat) => (
                 <button
@@ -174,23 +177,40 @@ export default function BlogListClient({
               ))}
             </div>
             {/* Search */}
-            <div className="relative shrink-0">
+            <div className="relative sm:w-60 shrink-0">
               <svg className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
               <input
                 type="text"
-                placeholder="Search..."
+                placeholder="Search posts…"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-44 rounded-full bg-gray-100 border border-gray-200 pl-9 pr-4 py-1.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:w-56 focus:border-gray-300 transition-all"
+                className="w-full rounded-full bg-gray-100 border border-gray-200 pl-9 pr-8 py-2 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-gray-300 focus:bg-white transition-colors"
               />
+              {search && (
+                <button
+                  onClick={() => setSearch("")}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              )}
             </div>
           </div>
 
           {/* Post grid */}
           {filtered.length === 0 ? (
-            <p className="py-20 text-center text-sm text-gray-400">No posts found.</p>
+            <div className="py-20 text-center">
+              <p className="text-sm text-gray-400">No posts found{search ? ` for "${search}"` : ""}.</p>
+              {search && (
+                <button onClick={() => setSearch("")} className="mt-2 text-xs font-medium text-gray-500 underline underline-offset-2 hover:text-gray-900 transition-colors">
+                  Clear search
+                </button>
+              )}
+            </div>
           ) : (
             <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
               {filtered.map((post) => {
