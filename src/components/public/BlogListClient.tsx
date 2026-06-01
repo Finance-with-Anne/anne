@@ -81,7 +81,7 @@ export default function BlogListClient({
   return (
     <>
       {/* ── Hero ─────────────────────────────────────────────── */}
-      <section className="bg-[#eef1ff] border-b border-[#dde3f9] pt-8 pb-10">
+      <section className="bg-[#eef1ff] dark:bg-[#070d1a] border-b border-[#dde3f9] dark:border-white/5 pt-8 pb-10">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
           {!featuredPost ? (
@@ -91,7 +91,7 @@ export default function BlogListClient({
 
               {/* ── Left: Featured ── */}
               <div className="flex flex-col">
-                <h2 className="text-xl font-bold text-gray-900 mb-3">Featured</h2>
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-3">Featured</h2>
                 <Link
                   href={`/blog/${featuredPost.slug}`}
                   className="group relative overflow-hidden rounded-2xl flex-1 block min-h-[320px] lg:min-h-0"
@@ -122,15 +122,15 @@ export default function BlogListClient({
 
               {/* ── Right: Latest Posts ── */}
               <div className="flex flex-col">
-                <h2 className="text-xl font-bold text-gray-900 mb-3">Latest Posts</h2>
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-3">Latest Posts</h2>
                 <div className="flex flex-col gap-2 flex-1">
                   {sidebarPosts.map((post) => (
                     <Link
                       key={post.id}
                       href={`/blog/${post.slug}`}
-                      className="flex gap-3 items-start rounded-xl p-2.5 bg-white/40 border border-transparent hover:bg-white hover:border-white hover:shadow-sm transition-all group"
+                      className="flex gap-3 items-start rounded-xl p-2.5 bg-white/40 dark:bg-white/5 border border-transparent hover:bg-white dark:hover:bg-white/10 hover:border-white dark:hover:border-white/10 hover:shadow-sm transition-all group"
                     >
-                      <div className="h-14 w-20 shrink-0 overflow-hidden rounded-lg bg-gray-200">
+                      <div className="h-14 w-20 shrink-0 overflow-hidden rounded-lg bg-gray-200 dark:bg-white/10">
                         {post.cover_image && (
                           <img
                             src={post.cover_image}
@@ -140,8 +140,8 @@ export default function BlogListClient({
                         )}
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="text-[11px] text-gray-400 mb-0.5">{fmtDate(post.published_at)}</p>
-                        <p className="text-sm font-semibold text-gray-700 leading-snug line-clamp-2 group-hover:text-gray-900">
+                        <p className="text-[11px] text-gray-400 dark:text-white/30 mb-0.5">{fmtDate(post.published_at)}</p>
+                        <p className="text-sm font-semibold text-gray-700 dark:text-white/75 leading-snug line-clamp-2 group-hover:text-gray-900 dark:group-hover:text-white">
                           {post.title}
                         </p>
                       </div>
@@ -156,7 +156,7 @@ export default function BlogListClient({
       </section>
 
       {/* ── White section: filter tabs + grid ─────────────────── */}
-      <section className="bg-white py-10">
+      <section className="bg-white dark:bg-[#05090f] py-10">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
           {/* Top bar: category filters + search */}
@@ -168,8 +168,8 @@ export default function BlogListClient({
                   onClick={() => setActiveCategory(cat.id)}
                   className={`shrink-0 rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
                     activeCategory === cat.id
-                      ? "bg-gray-900 text-white"
-                      : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
+                      ? "bg-gray-900 dark:bg-white text-white dark:text-gray-900"
+                      : "text-gray-500 dark:text-white/40 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/8"
                   }`}
                 >
                   {cat.name}
@@ -186,7 +186,7 @@ export default function BlogListClient({
                 placeholder="Search posts…"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full rounded-full bg-gray-100 border border-gray-200 pl-9 pr-8 py-2 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-gray-300 focus:bg-white transition-colors"
+                className="w-full rounded-full bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/8 pl-9 pr-8 py-2 text-sm text-gray-700 dark:text-white/70 placeholder-gray-400 dark:placeholder-white/20 focus:outline-none focus:border-gray-300 dark:focus:border-white/15 focus:bg-white dark:focus:bg-white/8 transition-colors"
               />
               {search && (
                 <button
@@ -217,7 +217,7 @@ export default function BlogListClient({
                 const cat = firstCat(post.id);
                 return (
                   <Link key={post.id} href={`/blog/${post.slug}`} className="group">
-                    <div className="relative overflow-hidden rounded-xl aspect-video mb-4 bg-gray-100">
+                    <div className="relative overflow-hidden rounded-xl aspect-video mb-4 bg-gray-100 dark:bg-white/5">
                       {post.cover_image && (
                         <img
                           src={post.cover_image}
@@ -231,16 +231,16 @@ export default function BlogListClient({
                         </span>
                       )}
                     </div>
-                    <p className="text-xs text-gray-400 mb-1">
+                    <p className="text-xs text-gray-400 dark:text-white/30 mb-1">
                       {fmtDate(post.published_at)} · {readTime(post.content ?? "")} min read
                     </p>
-                    <h3 className="text-base font-semibold text-gray-900 group-hover:text-black leading-snug line-clamp-2">
+                    <h3 className="text-base font-semibold text-gray-900 dark:text-white group-hover:text-black dark:group-hover:text-white/80 leading-snug line-clamp-2">
                       {post.title}
                     </h3>
                     {post.excerpt && (
-                      <p className="mt-1.5 text-sm text-gray-500 line-clamp-2">{post.excerpt}</p>
+                      <p className="mt-1.5 text-sm text-gray-500 dark:text-white/40 line-clamp-2">{post.excerpt}</p>
                     )}
-                    <span className="mt-3 inline-block text-xs font-semibold text-gray-900 underline underline-offset-2 group-hover:opacity-50 transition-opacity">
+                    <span className="mt-3 inline-block text-xs font-semibold text-gray-900 dark:text-white/60 underline underline-offset-2 group-hover:opacity-50 transition-opacity">
                       Read more →
                     </span>
                   </Link>

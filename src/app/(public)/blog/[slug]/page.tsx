@@ -42,9 +42,9 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   const mins = readTime(post.content ?? "");
 
   return (
-    <div className="bg-white min-h-screen flex flex-col">
+    <div className="bg-white dark:bg-[#05090f] min-h-screen flex flex-col transition-colors">
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 flex-1 flex flex-col">
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1fr_300px] lg:divide-x lg:divide-gray-200 flex-1">
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1fr_300px] lg:divide-x lg:divide-gray-200 dark:lg:divide-white/5 flex-1">
 
           {/* ── Main article ─────────────────────────────────── */}
           <article className="py-12 lg:pr-10">
@@ -53,7 +53,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             {/* Back button */}
             <Link
               href="/blog"
-              className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors mb-6"
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 dark:text-white/40 hover:text-gray-900 dark:hover:text-white transition-colors mb-6"
             >
               <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
@@ -62,12 +62,12 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             </Link>
 
             {/* Meta */}
-            <p className="text-sm text-gray-400 mb-2">
+            <p className="text-sm text-gray-400 dark:text-white/30 mb-2">
               {fmtDate(post.published_at)} · {mins} min read
             </p>
 
             {/* Title */}
-            <h1 className="text-3xl font-bold tracking-tight text-gray-900 leading-tight sm:text-4xl mb-6">
+            <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white leading-tight sm:text-4xl mb-6">
               {post.title}
             </h1>
 
@@ -87,9 +87,9 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             />
 
             {/* Like + share row */}
-            <div className="mt-8 pt-6 border-t border-gray-100 flex items-center gap-3">
+            <div className="mt-8 pt-6 border-t border-gray-100 dark:border-white/5 flex items-center gap-3">
               <PostLike postId={post.id} />
-              <span className="text-sm text-gray-400">If you found this helpful, give it a like!</span>
+              <span className="text-sm text-gray-400 dark:text-white/30">If you found this helpful, give it a like!</span>
             </div>
 
             {/* Comments */}
@@ -104,14 +104,14 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
               {/* Latest posts */}
               {latest.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-bold text-gray-900 mb-4 uppercase tracking-widest">
+                  <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-4 uppercase tracking-widest">
                     Latest Posts
                   </h3>
                   <ul className="space-y-4">
                     {latest.map((p) => (
                       <li key={p.id}>
                         <Link href={`/blog/${p.slug}`} className="group flex gap-3">
-                          <div className="h-16 w-20 shrink-0 overflow-hidden bg-gray-100 ring-2 ring-gray-200">
+                          <div className="h-16 w-20 shrink-0 overflow-hidden bg-gray-100 dark:bg-white/8 ring-2 ring-gray-200 dark:ring-white/5">
                             {p.cover_image && (
                               <img
                                 src={p.cover_image}
@@ -121,11 +121,11 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                             )}
                           </div>
                           <div className="min-w-0">
-                            <p className="text-xs text-gray-400 mb-0.5">{fmtDate(p.published_at)}</p>
-                            <p className="text-sm font-semibold text-gray-900 line-clamp-2 leading-snug group-hover:text-black">
+                            <p className="text-xs text-gray-400 dark:text-white/30 mb-0.5">{fmtDate(p.published_at)}</p>
+                            <p className="text-sm font-semibold text-gray-900 dark:text-white/80 line-clamp-2 leading-snug group-hover:text-black dark:group-hover:text-white">
                               {p.title}
                             </p>
-                            <span className="mt-1 inline-block text-[11px] font-medium text-gray-400 group-hover:text-gray-600 transition-colors">
+                            <span className="mt-1 inline-block text-[11px] font-medium text-gray-400 dark:text-white/30 group-hover:text-gray-600 dark:group-hover:text-white/60 transition-colors">
                               Read more →
                             </span>
                           </div>
