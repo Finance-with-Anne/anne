@@ -78,8 +78,8 @@ export default function BlogListClient({
   return (
     <>
       {/* ── Hero ─────────────────────────────────────────────── */}
-      <section className="bg-[#eef1ff] border-b border-[#dde3f9] px-4 sm:px-6 lg:px-8 pt-8 pb-10">
-        <div className="mx-auto max-w-7xl">
+      <section className="bg-[#eef1ff] border-b border-[#dde3f9] pt-8 pb-10">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
           {!featuredPost ? (
             <p className="text-gray-400 text-sm py-12">No posts yet.</p>
@@ -153,8 +153,8 @@ export default function BlogListClient({
       </section>
 
       {/* ── White section: filter tabs + grid ─────────────────── */}
-      <section className="bg-white px-4 sm:px-6 lg:px-8 py-10">
-        <div className="mx-auto max-w-7xl">
+      <section className="bg-white py-10">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
           {/* Top bar: category filters + search */}
           <div className="flex items-center gap-4 mb-8">
