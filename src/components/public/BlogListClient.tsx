@@ -338,7 +338,7 @@ export default function BlogListClient({
       {/* ── Blog Banner ─────────────────────────────────────────── */}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
         <Image
-          src="/blog banner 3.png"
+          src="/blog-banner-3.png"
           alt="Blog banner"
           width={1200}
           height={300}
