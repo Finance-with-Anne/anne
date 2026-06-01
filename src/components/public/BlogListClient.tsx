@@ -135,8 +135,7 @@ export default function BlogListClient({
       result = result.filter(
         (p) =>
           p.title.toLowerCase().includes(q) ||
-          (p.excerpt ?? "").toLowerCase().includes(q) ||
-          (p.content ?? "").replace(/<[^>]*>/g, "").toLowerCase().includes(q)
+          (p.excerpt ?? "").toLowerCase().includes(q)
       );
     }
     return result;
