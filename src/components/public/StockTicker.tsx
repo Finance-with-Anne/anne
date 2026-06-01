@@ -64,9 +64,9 @@ export default function StockTicker() {
   const items = [...stocks, ...stocks];
 
   return (
-    <div className="w-full bg-[#0822C0] border-b border-white/10 overflow-hidden flex items-stretch h-9 select-none">
+    <div className="w-full bg-[#05148a] border-b border-white/10 overflow-hidden flex items-stretch h-9 select-none">
       {/* NGX LIVE badge */}
-      <div className="flex items-center gap-1.5 px-3.5 shrink-0 bg-[#0619a8] border-r border-white/10 z-10">
+      <div className="flex items-center gap-1.5 px-3.5 shrink-0 bg-[#040f6e] border-r border-white/10 z-10">
         <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
         <span className="text-[10px] font-bold tracking-widest text-white/70 uppercase whitespace-nowrap">NGX Live</span>
       </div>
@@ -74,8 +74,8 @@ export default function StockTicker() {
       {/* Scrolling track */}
       <div className="flex-1 overflow-hidden relative">
         {/* Fade edges */}
-        <div className="pointer-events-none absolute left-0 top-0 h-full w-12 bg-gradient-to-r from-[#0822C0] to-transparent z-10" />
-        <div className="pointer-events-none absolute right-0 top-0 h-full w-12 bg-gradient-to-l from-[#0822C0] to-transparent z-10" />
+        <div className="pointer-events-none absolute left-0 top-0 h-full w-12 bg-gradient-to-r from-[#05148a] to-transparent z-10" />
+        <div className="pointer-events-none absolute right-0 top-0 h-full w-12 bg-gradient-to-l from-[#05148a] to-transparent z-10" />
 
         <div
           ref={trackRef}
@@ -92,7 +92,7 @@ export default function StockTicker() {
       </div>
 
       {/* DELAYED badge */}
-      <div className="flex items-center px-3.5 shrink-0 bg-[#0619a8] border-l border-white/10">
+      <div className="flex items-center px-3.5 shrink-0 bg-[#040f6e] border-l border-white/10">
         <span className="text-[10px] text-white/30 font-medium tracking-wide whitespace-nowrap uppercase">
           Delayed · {delayTime}
         </span>
