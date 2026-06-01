@@ -22,7 +22,7 @@ const otherNav = [
   { label: "Calculators", href: "/admin/calculators", icon: <path strokeLinecap="round" strokeLinejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" /> },
 ];
 
-export default function AdminSidebar({ userRole }: { userRole?: string }) {
+export default function AdminSidebar({ userRole, userName, userEmail }: { userRole?: string; userName?: string; userEmail?: string }) {
   const pathname = usePathname();
   const router = useRouter();
   const supabase = createClient();
@@ -195,12 +195,18 @@ export default function AdminSidebar({ userRole }: { userRole?: string }) {
                 : "bg-gray-100 hover:bg-gray-200/70"
             }`}
           >
-            <img src="/anne-profile.png" alt="Admin" className="h-7 w-7 rounded-full object-cover shrink-0 ring-1 ring-white/10" />
+            {isEditor ? (
+              <div className={`h-7 w-7 rounded-full flex items-center justify-center shrink-0 text-xs font-bold uppercase ${dark ? "bg-white/10 text-white/70" : "bg-brand/10 text-brand"}`}>
+                {(userName ?? "E")[0]}
+              </div>
+            ) : (
+              <img src="/anne-profile.png" alt="Admin" className="h-7 w-7 rounded-full object-cover shrink-0 ring-1 ring-white/10" />
+            )}
             {!collapsed && (
               <>
                 <div className="flex-1 text-left min-w-0">
-                  <p className={`text-xs font-medium truncate ${dark ? "text-white/80" : "text-gray-800"}`}>Finance with Anne</p>
-                  <p className={`text-[10px] truncate ${dark ? "text-white/30" : "text-gray-400"}`}>webtech.fwa@gmail.com</p>
+                  <p className={`text-xs font-medium truncate ${dark ? "text-white/80" : "text-gray-800"}`}>{userName ?? "Finance with Anne"}</p>
+                  <p className={`text-[10px] truncate ${dark ? "text-white/30" : "text-gray-400"}`}>{userEmail ?? "webtech.fwa@gmail.com"}</p>
                 </div>
                 <svg className={`h-3 w-3 shrink-0 transition-transform ${userMenuOpen ? "rotate-180" : ""} ${dark ? "text-white/20" : "text-gray-400"}`} fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
@@ -213,10 +219,16 @@ export default function AdminSidebar({ userRole }: { userRole?: string }) {
             <div className={`absolute bottom-full mb-2 left-0 w-64 rounded-2xl border py-2 z-50 ${dark ? "bg-[#1c1f27] border-white/10 shadow-[0_-6px_16px_rgba(0,0,0,0.25)]" : "bg-white border-gray-200 shadow-lg"}`}>
               {/* Profile header */}
               <div className={`flex items-center gap-3 px-4 py-3 border-b mb-1 ${dark ? "border-white/5" : "border-gray-100"}`}>
-                <img src="/anne-profile.png" alt="Anne" className="h-11 w-11 rounded-full object-cover ring-2 ring-white/10 shrink-0" />
+                {isEditor ? (
+                  <div className={`h-11 w-11 rounded-full flex items-center justify-center shrink-0 text-lg font-bold uppercase ${dark ? "bg-white/10 text-white/70" : "bg-brand/10 text-brand"}`}>
+                    {(userName ?? "E")[0]}
+                  </div>
+                ) : (
+                  <img src="/anne-profile.png" alt="Anne" className="h-11 w-11 rounded-full object-cover ring-2 ring-white/10 shrink-0" />
+                )}
                 <div className="min-w-0">
-                  <p className={`text-sm font-bold truncate ${dark ? "text-white" : "text-gray-900"}`}>Finance with Anne</p>
-                  <p className={`text-xs truncate ${dark ? "text-white/30" : "text-gray-400"}`}>webtech.fwa@gmail.com</p>
+                  <p className={`text-sm font-bold truncate ${dark ? "text-white" : "text-gray-900"}`}>{userName ?? "Finance with Anne"}</p>
+                  <p className={`text-xs truncate ${dark ? "text-white/30" : "text-gray-400"}`}>{userEmail ?? "webtech.fwa@gmail.com"}</p>
                 </div>
               </div>
 
