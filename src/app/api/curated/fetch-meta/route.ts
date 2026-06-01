@@ -68,6 +68,23 @@ async function tryURLMeta(url: string) {
   return { title: j.meta.title ?? "", description: j.meta.description ?? "", image: j.meta.image ?? "", site_name: domainToName(url) };
 }
 
+async function tryJina(url: string) {
+  const res = await fetch(`https://r.jina.ai/${encodeURIComponent(url)}`, {
+    headers: {
+      "Accept": "application/json",
+      "X-Return-Format": "json",
+      "X-No-Cache": "true",
+    },
+    signal: AbortSignal.timeout(12000),
+  });
+  if (!res.ok) return null;
+  const j = await res.json();
+  if (!j.data?.title) return null;
+  const d = j.data;
+  const image = Array.isArray(d.images) && d.images.length > 0 ? d.images[0].url : "";
+  return { title: d.title ?? "", description: d.description ?? "", image: image ?? "", site_name: domainToName(url) };
+}
+
 async function tryDirect(url: string) {
   const res = await fetch(url, {
     headers: {
@@ -99,10 +116,11 @@ export async function POST(req: NextRequest) {
   if (!url?.trim()) return NextResponse.json({ error: "URL is required." }, { status: 400 });
   const cleanUrl = url.trim();
 
-  // Run all three in parallel — first success wins
+  // Run all four in parallel — first success wins
   const results = await Promise.allSettled([
     tryMicrolink(cleanUrl),
     tryURLMeta(cleanUrl),
+    tryJina(cleanUrl),
     tryDirect(cleanUrl),
   ]);
 
