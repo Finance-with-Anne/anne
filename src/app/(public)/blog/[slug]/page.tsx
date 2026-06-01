@@ -42,10 +42,10 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   return (
     <div className="bg-white min-h-screen">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1fr_300px] lg:divide-x lg:divide-gray-100">
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1fr_300px] lg:divide-x lg:divide-gray-200">
 
           {/* ── Main article ─────────────────────────────────── */}
-          <article>
+          <article className="lg:pr-10">
             <ViewTracker postId={post.id} />
 
             {/* Back button */}
@@ -87,7 +87,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           </article>
 
           {/* ── Sidebar ──────────────────────────────────────── */}
-          <aside className="space-y-8 lg:pt-10 lg:pl-10 lg:border-t lg:border-gray-100">
+          <aside className="space-y-8 lg:pt-10 lg:pl-10 lg:border-t lg:border-gray-200">
             <div className="lg:sticky lg:top-24 space-y-8">
 
               {/* Latest posts */}
@@ -125,7 +125,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                 </div>
               )}
 
-              <hr className="border-gray-100" />
+              <hr className="border-gray-200" />
 
               {/* Subscribe banner */}
               <BlogSubscribeBanner />
