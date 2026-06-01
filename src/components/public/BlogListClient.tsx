@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import type { BlogPost, Category } from "@/types";
 
@@ -334,18 +333,6 @@ export default function BlogListClient({
           <Pagination page={postsPage} total={totalPostPages} onChange={setPostsPage} />
         </div>
       </section>
-
-      {/* ── Blog Banner ─────────────────────────────────────────── */}
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-        <Image
-          src="/blog-banner-3.png"
-          alt="Blog banner"
-          width={1200}
-          height={300}
-          className="w-full rounded-2xl object-cover"
-          priority={false}
-        />
-      </div>
 
       {/* ── Curated Sources ─────────────────────────────────────── */}
       {curated.length > 0 && (
