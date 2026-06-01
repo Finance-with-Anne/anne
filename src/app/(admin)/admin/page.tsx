@@ -1,8 +1,11 @@
 import { createClient } from "@/lib/supabase/server";
 import DashboardContent from "@/components/admin/DashboardContent";
+import { redirect } from "next/navigation";
 
 export default async function AdminDashboard() {
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if ((user?.user_metadata?.role as string | undefined) === "editor") redirect("/admin/blog");
 
   const [
     { count: blogCount },
