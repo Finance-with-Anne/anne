@@ -10,10 +10,12 @@ export default function AdminHeader({
   userName,
   userEmail,
   userRole,
+  userAvatar,
 }: {
   userName?: string;
   userEmail?: string;
   userRole?: string;
+  userAvatar?: string;
 }) {
   const router = useRouter();
   const supabase = createClient();
@@ -120,7 +122,9 @@ export default function AdminHeader({
             onClick={() => setProfileOpen(!profileOpen)}
             className={`flex items-center gap-2 rounded-lg px-2 py-1.5 transition-colors ${dark ? "hover:bg-white/5" : "hover:bg-gray-100"}`}
           >
-            {isEditor ? (
+            {userAvatar ? (
+              <img src={userAvatar} alt={displayName} className="h-7 w-7 rounded-full object-cover ring-1 ring-white/10" />
+            ) : isEditor ? (
               <div className={`h-7 w-7 rounded-full flex items-center justify-center text-xs font-bold uppercase ${dark ? "bg-white/10 text-white/70" : "bg-brand/10 text-brand"}`}>
                 {displayName[0]}
               </div>
@@ -136,7 +140,9 @@ export default function AdminHeader({
             <div className={`absolute right-0 top-full mt-2 w-64 rounded-2xl border py-2 z-50 ${dark ? "shadow-[0_6px_16px_rgba(0,0,0,0.25)]" : ""} ${dropdownBg}`}>
               {/* Profile header */}
               <div className={`flex items-center gap-3 px-4 py-3 border-b mb-1 ${dividerColor}`}>
-                {isEditor ? (
+                {userAvatar ? (
+                  <img src={userAvatar} alt={displayName} className="h-11 w-11 rounded-full object-cover ring-2 ring-white/10 shrink-0" />
+                ) : isEditor ? (
                   <div className={`h-11 w-11 rounded-full flex items-center justify-center text-lg font-bold uppercase shrink-0 ${dark ? "bg-white/10 text-white/70" : "bg-brand/10 text-brand"}`}>
                     {displayName[0]}
                   </div>

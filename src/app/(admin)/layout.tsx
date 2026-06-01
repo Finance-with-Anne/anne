@@ -9,20 +9,21 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const userRole = (user?.user_metadata?.role as string | undefined) ?? "admin";
   const userName = (user?.user_metadata?.name as string | undefined) ?? undefined;
   const userEmail = user?.email ?? undefined;
+  const userAvatar = (user?.user_metadata?.avatar_url as string | undefined) ?? undefined;
 
   return (
     <AdminThemeProvider>
-      <AdminLayoutInner userRole={userRole} userName={userName} userEmail={userEmail}>{children}</AdminLayoutInner>
+      <AdminLayoutInner userRole={userRole} userName={userName} userEmail={userEmail} userAvatar={userAvatar}>{children}</AdminLayoutInner>
     </AdminThemeProvider>
   );
 }
 
-function AdminLayoutInner({ children, userRole, userName, userEmail }: { children: React.ReactNode; userRole: string; userName?: string; userEmail?: string }) {
+function AdminLayoutInner({ children, userRole, userName, userEmail, userAvatar }: { children: React.ReactNode; userRole: string; userName?: string; userEmail?: string; userAvatar?: string }) {
   return (
     <AdminLayoutWrapper>
-      <AdminSidebar userRole={userRole} userName={userName} userEmail={userEmail} />
+      <AdminSidebar userRole={userRole} userName={userName} userEmail={userEmail} userAvatar={userAvatar} />
       <div className="flex flex-1 flex-col overflow-hidden">
-        <AdminHeader userName={userName} userEmail={userEmail} userRole={userRole} />
+        <AdminHeader userName={userName} userEmail={userEmail} userRole={userRole} userAvatar={userAvatar} />
         <main className="flex-1 overflow-y-auto p-6">{children}</main>
       </div>
     </AdminLayoutWrapper>

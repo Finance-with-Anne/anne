@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { useAdminTheme } from "@/lib/admin-theme";
@@ -14,13 +14,20 @@ type Props = {
   role: "admin" | "editor";
   editorId: string | null;
   bio: string | null;
+  avatarUrl?: string | null;
 };
 
-export default function ProfilePageClient({ userId, email, name, firstName, lastName, role, editorId, bio: initialBio }: Props) {
+export default function ProfilePageClient({ userId, email, name, firstName, lastName, role, editorId, bio: initialBio, avatarUrl: initialAvatar }: Props) {
   const { dark } = useAdminTheme();
   const router = useRouter();
   const supabase = createClient();
   const isEditor = role === "editor";
+  const avatarInputRef = useRef<HTMLInputElement>(null);
+
+  // Avatar
+  const [avatarUrl, setAvatarUrl] = useState(initialAvatar ?? null);
+  const [avatarUploading, setAvatarUploading] = useState(false);
+  const [avatarError, setAvatarError] = useState("");
 
   // Profile fields
   const [fn, setFn] = useState(firstName || name.split(" ")[0] || "");
@@ -76,6 +83,33 @@ export default function ProfilePageClient({ userId, email, name, firstName, last
     setProfileSaving(false);
   }
 
+  async function handleAvatarUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setAvatarUploading(true); setAvatarError("");
+    const form = new FormData();
+    form.append("file", file);
+    form.append("folder", "avatars");
+    const res = await fetch("/api/upload", { method: "POST", body: form });
+    const data = await res.json();
+    if (!res.ok) { setAvatarError(data.error ?? "Upload failed."); setAvatarUploading(false); return; }
+
+    const url: string = data.url;
+    // Save to auth metadata
+    await supabase.auth.updateUser({ data: { avatar_url: url } });
+    // Save to editors table if editor
+    if (isEditor && editorId) {
+      await fetch(`/api/editors/${editorId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ avatar_url: url }),
+      });
+    }
+    setAvatarUrl(url);
+    router.refresh();
+    setAvatarUploading(false);
+  }
+
   async function handlePasswordChange() {
     if (!newPass) return setPassMsg({ type: "err", text: "Enter a new password." });
     if (newPass.length < 8) return setPassMsg({ type: "err", text: "Password must be at least 8 characters." });
@@ -114,8 +148,34 @@ export default function ProfilePageClient({ userId, email, name, firstName, last
         <div className="p-5 space-y-5">
           {/* Avatar row */}
           <div className="flex items-center gap-4">
-            <div className={`h-16 w-16 rounded-full flex items-center justify-center text-2xl font-bold uppercase shrink-0 ${dark ? "bg-white/10 text-white/70" : "bg-brand/10 text-brand"}`}>
-              {displayName[0] ?? "?"}
+            <div className="relative group shrink-0">
+              {avatarUrl ? (
+                <img src={avatarUrl} alt={displayName} className="h-16 w-16 rounded-full object-cover ring-2 ring-white/10" />
+              ) : (
+                <div className={`h-16 w-16 rounded-full flex items-center justify-center text-2xl font-bold uppercase ${dark ? "bg-white/10 text-white/70" : "bg-brand/10 text-brand"}`}>
+                  {displayName[0] ?? "?"}
+                </div>
+              )}
+              {/* Upload overlay */}
+              <button
+                onClick={() => avatarInputRef.current?.click()}
+                disabled={avatarUploading}
+                className="absolute inset-0 rounded-full flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity disabled:cursor-wait"
+                title="Change photo"
+              >
+                {avatarUploading ? (
+                  <svg className="h-5 w-5 text-white animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                  </svg>
+                ) : (
+                  <svg className="h-5 w-5 text-white" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                )}
+              </button>
+              <input ref={avatarInputRef} type="file" accept="image/*" onChange={handleAvatarUpload} className="hidden" />
             </div>
             <div>
               <p className={`text-sm font-semibold ${heading}`}>{displayName}</p>
@@ -123,6 +183,10 @@ export default function ProfilePageClient({ userId, email, name, firstName, last
               <span className={`inline-block mt-1 text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full ${isEditor ? dark ? "bg-blue-500/15 text-blue-400" : "bg-blue-50 text-blue-600" : dark ? "bg-purple-500/15 text-purple-400" : "bg-purple-50 text-purple-600"}`}>
                 {isEditor ? "Editor" : "Admin"}
               </span>
+              {avatarError && <p className="text-xs text-red-400 mt-1">{avatarError}</p>}
+              <button onClick={() => avatarInputRef.current?.click()} className={`text-xs mt-1 block ${dark ? "text-white/30 hover:text-white/60" : "text-gray-400 hover:text-gray-600"} transition-colors`}>
+                {avatarUrl ? "Change photo" : "Upload photo"}
+              </button>
             </div>
           </div>
 

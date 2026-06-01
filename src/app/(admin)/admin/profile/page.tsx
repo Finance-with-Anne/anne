@@ -29,6 +29,7 @@ export default async function ProfilePage() {
       role={isEditor ? "editor" : "admin"}
       editorId={editorRecord?.id ?? null}
       bio={editorRecord?.bio ?? null}
+      avatarUrl={user.user_metadata?.avatar_url ?? editorRecord?.avatar_url ?? null}
     />
   );
 }
