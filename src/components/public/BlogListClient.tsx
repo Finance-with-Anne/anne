@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import type { BlogPost, Category } from "@/types";
 
@@ -27,34 +27,14 @@ export default function BlogListClient({
 }) {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [search, setSearch] = useState("");
-  const [activeSlide, setActiveSlide] = useState(0);
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  // Latest posts for hero (up to 5)
-  const heroPosts = useMemo(() =>
-    [...posts]
-      .sort((a, b) => new Date(b.published_at ?? 0).getTime() - new Date(a.published_at ?? 0).getTime())
-      .slice(0, 5),
+  // Latest posts sorted by date
+  const latestPosts = useMemo(() =>
+    [...posts].sort((a, b) => new Date(b.published_at ?? 0).getTime() - new Date(a.published_at ?? 0).getTime()),
     [posts]
   );
 
-  function resetTimer() {
-    if (timerRef.current) clearInterval(timerRef.current);
-    timerRef.current = setInterval(() => {
-      setActiveSlide(prev => (prev + 1) % heroPosts.length);
-    }, 5000);
-  }
-
-  useEffect(() => {
-    if (heroPosts.length < 2) return;
-    resetTimer();
-    return () => { if (timerRef.current) clearInterval(timerRef.current); };
-  }, [heroPosts.length]);
-
-  function goTo(i: number) {
-    setActiveSlide(i);
-    resetTimer();
-  }
+  const featuredPost = latestPosts[0] ?? null;
+  const sidebarPosts = latestPosts.slice(1, 5);
 
   const parentCats = categories.filter((c) => !c.parent_id);
 
@@ -108,98 +88,70 @@ export default function BlogListClient({
             Latest Articles
           </p>
 
-          {heroPosts.length === 0 ? (
+          {!featuredPost ? (
             <p className="text-gray-400 text-sm py-12">No posts yet.</p>
           ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-4" style={{ minHeight: "500px" }}>
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-6" style={{ minHeight: "500px" }}>
 
-              {/* ── Left: big slide ── */}
-              <Link
-                href={`/blog/${current.slug}`}
-                className="group relative overflow-hidden rounded-2xl block"
-              >
-                {/* Image */}
-                {current.cover_image ? (
-                  <img
-                    key={current.id}
-                    src={current.cover_image}
-                    alt={current.title}
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
-                ) : (
-                  <div className="absolute inset-0 bg-gradient-to-br from-gray-300 to-gray-400" />
-                )}
-                {/* Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-
-                {/* Content */}
-                <div className="absolute bottom-0 left-0 right-0 p-6">
-                  <p className="text-[11px] text-white/60 mb-2">
-                    {fmtDate(current.published_at)} · {readTime(current.content ?? "")} min read
-                  </p>
-                  <h2 className="text-lg font-bold text-white leading-snug line-clamp-2 mb-3">
-                    {current.title}
-                  </h2>
-                  <span className="inline-flex items-center rounded-full bg-white/15 border border-white/25 backdrop-blur-sm px-3.5 py-1 text-xs font-medium text-white">
-                    Read More
-                  </span>
-                </div>
-
-                {/* Slide dots */}
-                {heroPosts.length > 1 && (
-                  <div className="absolute bottom-5 right-5 flex gap-1.5">
-                    {heroPosts.map((_, i) => (
-                      <button
-                        key={i}
-                        onClick={(e) => { e.preventDefault(); goTo(i); }}
-                        className={`h-1.5 rounded-full transition-all ${
-                          i === activeSlide ? "w-5 bg-white" : "w-1.5 bg-white/40"
-                        }`}
-                      />
-                    ))}
+              {/* ── Left: Featured ── */}
+              <div className="flex flex-col">
+                <h2 className="text-base font-bold text-gray-800 mb-3">Featured</h2>
+                <Link
+                  href={`/blog/${featuredPost.slug}`}
+                  className="group relative overflow-hidden rounded-2xl flex-1 block"
+                >
+                  {featuredPost.cover_image ? (
+                    <img
+                      src={featuredPost.cover_image}
+                      alt={featuredPost.title}
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 bg-gradient-to-br from-gray-300 to-gray-400" />
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-6">
+                    <p className="text-[11px] text-white/60 mb-2">
+                      {fmtDate(featuredPost.published_at)} · {readTime(featuredPost.content ?? "")} min read
+                    </p>
+                    <h3 className="text-xl font-bold text-white leading-snug line-clamp-2 mb-3">
+                      {featuredPost.title}
+                    </h3>
+                    <span className="inline-flex items-center rounded-full bg-white/15 border border-white/25 backdrop-blur-sm px-3.5 py-1 text-xs font-medium text-white">
+                      Read More
+                    </span>
                   </div>
-                )}
-              </Link>
+                </Link>
+              </div>
 
-              {/* ── Right: post list ── */}
-              <div className="flex flex-col gap-2">
-                {heroPosts.map((post, i) => (
-                  <button
-                    key={post.id}
-                    onClick={() => goTo(i)}
-                    className={`flex gap-3 items-start text-left w-full rounded-xl p-2.5 transition-all border ${
-                      i === activeSlide
-                        ? "bg-white border-white shadow-sm"
-                        : "bg-white/40 border-transparent hover:bg-white/60"
-                    }`}
-                  >
-                    {/* Thumbnail */}
-                    <div className="h-14 w-20 shrink-0 overflow-hidden rounded-lg bg-gray-200">
-                      {post.cover_image && (
-                        <img
-                          src={post.cover_image}
-                          alt={post.title}
-                          className="h-full w-full object-cover"
-                        />
-                      )}
-                    </div>
-                    {/* Text */}
-                    <div className="min-w-0 flex-1">
-                      <p className="text-[11px] text-gray-400 mb-0.5">{fmtDate(post.published_at)}</p>
-                      <p className={`text-sm font-semibold leading-snug line-clamp-2 ${
-                        i === activeSlide ? "text-gray-900" : "text-gray-600"
-                      }`}>
-                        {post.title}
-                      </p>
-                    </div>
-                    {/* Active indicator */}
-                    {i === activeSlide && (
-                      <div className="h-full shrink-0 flex items-center">
-                        <div className="h-5 w-1 rounded-full bg-[#0822C0]" />
+              {/* ── Right: Latest Posts ── */}
+              <div className="flex flex-col">
+                <h2 className="text-base font-bold text-gray-800 mb-3">Latest Posts</h2>
+                <div className="flex flex-col gap-2 flex-1">
+                  {sidebarPosts.map((post) => (
+                    <Link
+                      key={post.id}
+                      href={`/blog/${post.slug}`}
+                      className="flex gap-3 items-start rounded-xl p-2.5 bg-white/40 border border-transparent hover:bg-white hover:border-white hover:shadow-sm transition-all group"
+                    >
+                      <div className="h-14 w-20 shrink-0 overflow-hidden rounded-lg bg-gray-200">
+                        {post.cover_image && (
+                          <img
+                            src={post.cover_image}
+                            alt={post.title}
+                            className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                        )}
                       </div>
-                    )}
-                  </button>
-                ))}
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[11px] text-gray-400 mb-0.5">{fmtDate(post.published_at)}</p>
+                        <p className="text-sm font-semibold text-gray-700 leading-snug line-clamp-2 group-hover:text-gray-900">
+                          {post.title}
+                        </p>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
               </div>
 
             </div>
