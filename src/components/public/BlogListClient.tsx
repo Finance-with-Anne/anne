@@ -339,12 +339,12 @@ export default function BlogListClient({
       {curated.length > 0 && (
         <section id="other-sources" className="bg-gray-50 dark:bg-[#070d1a] border-t border-gray-100 dark:border-white/5 py-12">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center gap-3 mb-8">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 mb-8">
               <div className="flex items-center gap-2">
-                <svg className="h-4 w-4 text-gray-400 dark:text-white/30" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <svg className="h-4 w-4 text-gray-400 dark:text-white/30 shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                 </svg>
-                <h2 className="text-lg font-bold text-gray-900 dark:text-white">Other Sources</h2>
+                <h2 className="text-lg font-bold text-gray-900 dark:text-white whitespace-nowrap">Other Sources</h2>
               </div>
               <span className="text-xs text-gray-400 dark:text-white/30">Articles from around the web, curated by Anne</span>
             </div>
