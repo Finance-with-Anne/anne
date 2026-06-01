@@ -20,6 +20,7 @@ type FetchedMeta = {
   image: string;
   site_name: string;
   url: string;
+  partial?: boolean;
 };
 
 function fmtDate(d: string) {
@@ -64,7 +65,7 @@ export default function CuratedLinksClient({ initialLinks }: { initialLinks: Cur
     });
     const data = await res.json();
     if (!res.ok) { setFetchError(data.error ?? "Failed to fetch."); setFetching(false); return; }
-    setPreview(data);
+    setPreview({ ...data, partial: data.partial ?? false });
     setTitle(data.title);
     setExcerpt(data.description);
     setSourceName(data.site_name);
@@ -150,6 +151,14 @@ export default function CuratedLinksClient({ initialLinks }: { initialLinks: Cur
         {/* ── Preview + edit ── */}
         {preview && (
           <div className="space-y-4 pt-2">
+            {preview.partial && (
+              <div className={`rounded-lg px-4 py-3 text-xs flex items-start gap-2.5 ${dark ? "bg-amber-500/8 border border-amber-500/15 text-amber-400" : "bg-amber-50 border border-amber-100 text-amber-700"}`}>
+                <svg className="h-3.5 w-3.5 mt-0.5 shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                </svg>
+                This site blocked automatic fetching. Fill in the details manually below — the title, image URL, and source name are all editable.
+              </div>
+            )}
             <p className={`text-xs font-semibold uppercase tracking-widest ${sub}`}>Preview & Edit</p>
 
             {/* Visual preview card — how it'll look on the frontend */}
