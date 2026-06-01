@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import type { BlogPost, Category } from "@/types";
 
@@ -27,6 +27,19 @@ export default function BlogListClient({
 }) {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [search, setSearch] = useState("");
+  const [heroTab, setHeroTab] = useState<"latest" | "trending">("latest");
+  const [viewCounts, setViewCounts] = useState<Record<string, number>>({});
+
+  useEffect(() => {
+    fetch("/api/blog-views")
+      .then((r) => r.json())
+      .then((data: { post_id: string; count: number }[]) => {
+        const map: Record<string, number> = {};
+        for (const row of data) map[row.post_id] = row.count;
+        setViewCounts(map);
+      })
+      .catch(() => {});
+  }, []);
 
   const parentCats = categories.filter((c) => !c.parent_id);
 
@@ -62,7 +75,16 @@ export default function BlogListClient({
     return result;
   }, [posts, activeCategory, search, postCatMap, subIdsByParent]);
 
-  const trending = posts.slice(0, 3);
+  const heroPosts = useMemo(() => {
+    if (heroTab === "trending") {
+      return [...posts]
+        .sort((a, b) => (viewCounts[b.id] ?? 0) - (viewCounts[a.id] ?? 0))
+        .slice(0, 3);
+    }
+    return [...posts]
+      .sort((a, b) => new Date(b.published_at ?? 0).getTime() - new Date(a.published_at ?? 0).getTime())
+      .slice(0, 3);
+  }, [heroTab, posts, viewCounts]);
 
   function firstCat(postId: string) {
     const ids = postCatMap[postId] ?? [];
@@ -71,15 +93,33 @@ export default function BlogListClient({
 
   return (
     <>
-      {/* ── Dark hero ─────────────────────────────────────────── */}
-      <section className="bg-[#0f1117] px-4 sm:px-6 lg:px-8 pt-12 pb-10">
+      {/* ── Hero ─────────────────────────────────────────────── */}
+      <section className="bg-white border-b border-gray-100 px-4 sm:px-6 lg:px-8 pt-12 pb-12">
         <div className="mx-auto max-w-7xl">
-          {/* Header row: title left, search right */}
-          <div className="flex items-center justify-between gap-4 mb-8">
-            <h1 className="text-2xl font-bold text-white shrink-0">Trending Articles</h1>
+
+          {/* Header row */}
+          <div className="flex items-center justify-between gap-4 mb-6">
+            {/* Tab toggle */}
+            <div className="flex items-center gap-1 bg-gray-100 rounded-full p-1">
+              {(["latest", "trending"] as const).map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setHeroTab(tab)}
+                  className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all capitalize ${
+                    heroTab === tab
+                      ? "bg-white text-gray-900 shadow-sm"
+                      : "text-gray-500 hover:text-gray-700"
+                  }`}
+                >
+                  {tab === "latest" ? "Latest" : "Trending"}
+                </button>
+              ))}
+            </div>
+
+            {/* Search */}
             <div className="relative w-full max-w-xs">
               <svg
-                className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/30 pointer-events-none"
+                className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none"
                 fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"
               >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -89,22 +129,22 @@ export default function BlogListClient({
                 placeholder="Search articles..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full rounded-xl bg-white/5 border border-white/10 pl-9 pr-4 py-2.5 text-sm text-white placeholder-white/30 focus:outline-none focus:border-white/25 transition-colors"
+                className="w-full rounded-full bg-gray-100 border border-gray-200 pl-9 pr-4 py-2 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-gray-300 transition-colors"
               />
             </div>
           </div>
 
-          {/* Trending cards */}
-          {trending.length === 0 ? (
-            <p className="text-white/30 text-sm">No posts yet.</p>
+          {/* Hero cards */}
+          {heroPosts.length === 0 ? (
+            <p className="text-gray-400 text-sm">No posts yet.</p>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {trending.map((post) => (
+              {heroPosts.map((post) => (
                 <Link
                   key={post.id}
                   href={`/blog/${post.slug}`}
                   className="group relative overflow-hidden rounded-2xl"
-                  style={{ minHeight: "220px" }}
+                  style={{ minHeight: "300px" }}
                 >
                   {post.cover_image ? (
                     <img
@@ -113,17 +153,17 @@ export default function BlogListClient({
                       className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                   ) : (
-                    <div className="absolute inset-0 bg-gradient-to-br from-gray-700 to-gray-800" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-gray-200 to-gray-300" />
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-5">
-                    <p className="text-[11px] text-white/50 mb-1.5">
+                    <p className="text-[11px] text-white/60 mb-1.5">
                       {fmtDate(post.published_at)} · {readTime(post.content ?? "")} min read
                     </p>
                     <h3 className="text-sm font-semibold text-white leading-snug line-clamp-2">
                       {post.title}
                     </h3>
-                    <span className="mt-3 inline-flex items-center rounded-full bg-white/10 border border-white/15 backdrop-blur-sm px-3 py-1 text-[11px] font-medium text-white/80">
+                    <span className="mt-3 inline-flex items-center rounded-full bg-white/10 border border-white/20 backdrop-blur-sm px-3 py-1 text-[11px] font-medium text-white/90">
                       Read More
                     </span>
                   </div>
