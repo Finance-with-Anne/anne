@@ -55,33 +55,8 @@ export default async function BookingSessionPage({
     session.price_gbp ? `£${session.price_gbp.toLocaleString()}` : null;
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-20 sm:px-6 lg:px-8">
-      <div className="grid lg:grid-cols-[1fr_420px] gap-12">
-        {/* Left: Session info */}
-        <div>
-          <div className="flex items-center gap-2 mb-4">
-            <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${!session.is_free ? "bg-blue-50 dark:bg-blue-400/10 text-blue-600 dark:text-blue-400" : "bg-green-50 dark:bg-green-400/10 text-green-600 dark:text-green-400"}`}>
-              {session.is_free ? "Free" : "Paid"}
-            </span>
-            <span className="text-xs text-gray-400 dark:text-white/30">{session.duration_minutes} min</span>
-          </div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">{session.title}</h1>
-          {session.description && (
-            <p className="mt-4 text-gray-500 dark:text-white/50 leading-relaxed">{session.description}</p>
-          )}
-          {!session.is_free && displayPrice && (
-            <div className="mt-6">
-              <p className="text-xs font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wide mb-2">Price</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">{displayPrice}</p>
-            </div>
-          )}
-        </div>
-
-        {/* Right: Booking flow */}
-        <div>
-          <BookingFlow session={session} defaultCurrency={currency} />
-        </div>
-      </div>
+    <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
+      <BookingFlow session={session} defaultCurrency={currency} />
     </div>
   );
 }
