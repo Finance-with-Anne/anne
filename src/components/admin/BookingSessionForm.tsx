@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAdminTheme } from "@/lib/admin-theme";
 import type { BookingSession, BookingQuestion, BookingSlot } from "@/types";
@@ -93,6 +93,9 @@ export default function BookingSessionForm({ session }: { session?: BookingSessi
 
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [uploading, setUploading] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const card  = dark ? "bg-[#111318] border-white/5" : "bg-white border-gray-200";
   const heading = dark ? "text-white" : "text-gray-900";
@@ -103,6 +106,24 @@ export default function BookingSessionForm({ session }: { session?: BookingSessi
 
   function setDay(d: number, patch: Partial<DayAvail>) {
     setAvailability(a => ({ ...a, [d]: { ...a[d], ...patch } }));
+  }
+
+  const uploadImage = useCallback(async (file: File) => {
+    if (!file.type.startsWith("image/")) return;
+    setUploading(true);
+    const fd = new FormData();
+    fd.append("file", file);
+    fd.append("folder", "booking-sessions");
+    const res = await fetch("/api/upload", { method: "POST", body: fd });
+    const json = await res.json();
+    if (json.url) setCoverImage(json.url);
+    setUploading(false);
+  }, []);
+
+  function onDrop(e: React.DragEvent) {
+    e.preventDefault(); setDragOver(false);
+    const file = e.dataTransfer.files[0];
+    if (file) uploadImage(file);
   }
 
   function addQuestion() {
@@ -177,14 +198,21 @@ export default function BookingSessionForm({ session }: { session?: BookingSessi
     router.refresh();
   }
 
+  const whatYouGetLines = whatYouGet.split("\n").filter(Boolean);
+  const displayPrice = priceNgn ? `₦${Number(priceNgn).toLocaleString()}` : priceUsd ? `$${priceUsd}` : priceGbp ? `£${priceGbp}` : null;
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
+    <form onSubmit={handleSubmit} className="space-y-6">
       <div className="flex items-center gap-3 mb-2">
         <button type="button" onClick={() => router.back()} className={`text-sm ${sub} hover:opacity-70`}>← Back</button>
         <h1 className={`text-xl font-bold ${heading}`}>{isEdit ? "Edit Package" : "New Booking Package"}</h1>
       </div>
 
       {error && <p className="text-sm text-red-400 rounded-lg bg-red-400/10 px-3 py-2">{error}</p>}
+
+      <div className="flex gap-6 items-start">
+      {/* ── Form column ───────────────────────────────── */}
+      <div className="flex-1 min-w-0 space-y-6">
 
       {/* Basic Info */}
       <div className={`rounded-xl border ${card} p-5 space-y-4`}>
@@ -204,8 +232,33 @@ export default function BookingSessionForm({ session }: { session?: BookingSessi
           </div>
         </div>
         <div>
-          <label className={`block text-xs font-medium mb-1.5 ${label}`}>Cover Image URL</label>
-          <input value={coverImage} onChange={e => setCoverImage(e.target.value)} placeholder="https://…" className={inputCls} />
+          <label className={`block text-xs font-medium mb-1.5 ${label}`}>Cover Image</label>
+          <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) uploadImage(f); }} />
+          {coverImage ? (
+            <div className="relative rounded-xl overflow-hidden aspect-video">
+              <img src={coverImage} alt="Cover" className="w-full h-full object-cover" />
+              <button type="button" onClick={() => setCoverImage("")} className="absolute top-2 right-2 h-7 w-7 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black/80 transition-colors">
+                <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+              </button>
+            </div>
+          ) : (
+            <div
+              onClick={() => fileInputRef.current?.click()}
+              onDragOver={e => { e.preventDefault(); setDragOver(true); }}
+              onDragLeave={() => setDragOver(false)}
+              onDrop={onDrop}
+              className={`rounded-xl border-2 border-dashed px-6 py-10 flex flex-col items-center justify-center cursor-pointer transition-colors ${dragOver ? "border-brand bg-brand/5" : dark ? "border-white/10 hover:border-white/20" : "border-gray-200 hover:border-gray-300"}`}>
+              {uploading ? (
+                <div className={`text-sm ${sub}`}>Uploading…</div>
+              ) : (
+                <>
+                  <svg className={`h-8 w-8 mb-2 ${sub}`} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/></svg>
+                  <p className={`text-sm font-medium ${sub}`}>Drag & drop or <span className="text-brand">browse</span></p>
+                  <p className={`text-xs mt-0.5 ${dark ? "text-white/20" : "text-gray-300"}`}>PNG, JPG, WebP</p>
+                </>
+              )}
+            </div>
+          )}
         </div>
         <div>
           <label className={`block text-xs font-medium mb-1.5 ${label}`}>What You&apos;ll Get <span className={`text-[10px] ${sub}`}>(short bullet copy shown on booking page)</span></label>
@@ -357,6 +410,50 @@ export default function BookingSessionForm({ session }: { session?: BookingSessi
           Cancel
         </button>
       </div>
+
+      </div>{/* end form column */}
+
+      {/* ── Preview column ───────────────────────────── */}
+      <div className="w-72 shrink-0 hidden xl:block">
+        <p className={`text-xs font-semibold uppercase tracking-wide mb-3 ${sub}`}>Preview</p>
+        <div className={`rounded-2xl border overflow-hidden ${card}`}>
+          {coverImage ? (
+            <img src={coverImage} alt="Cover" className="w-full aspect-video object-cover" />
+          ) : (
+            <div className={`w-full aspect-video flex items-center justify-center ${dark ? "bg-white/3" : "bg-gray-50"}`}>
+              <svg className={`h-8 w-8 ${dark ? "text-white/10" : "text-gray-200"}`} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3 21h18M3.75 3h16.5c.414 0 .75.336.75.75v13.5a.75.75 0 01-.75.75H3.75a.75.75 0 01-.75-.75V3.75c0-.414.336-.75.75-.75z"/></svg>
+            </div>
+          )}
+          <div className="p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${isFree ? dark ? "bg-green-400/15 text-green-400" : "bg-green-50 text-green-600" : dark ? "bg-blue-400/15 text-blue-400" : "bg-blue-50 text-blue-600"}`}>
+                {isFree ? "Free" : "Paid"}
+              </span>
+              <span className={`text-[10px] ${sub}`}>{duration} min</span>
+            </div>
+            <div>
+              <p className={`font-semibold text-sm ${heading} leading-snug`}>{title || "Package title"}</p>
+              {description && <p className={`text-xs mt-1 ${sub} line-clamp-2`}>{description}</p>}
+            </div>
+            {!isFree && displayPrice && (
+              <p className={`text-base font-bold ${heading}`}>{displayPrice}</p>
+            )}
+            {whatYouGetLines.length > 0 && (
+              <div className="space-y-1 pt-1">
+                {whatYouGetLines.slice(0, 4).map((line, i) => (
+                  <p key={i} className={`text-xs ${sub}`}>{line}</p>
+                ))}
+              </div>
+            )}
+            <div className={`rounded-lg py-2 text-center text-xs font-semibold text-white bg-brand mt-2`}>
+              Book now →
+            </div>
+          </div>
+        </div>
+        <p className={`text-[10px] mt-2 text-center ${dark ? "text-white/15" : "text-gray-300"}`}>Live preview · updates as you type</p>
+      </div>
+
+      </div>{/* end two-col wrapper */}
     </form>
   );
 }
