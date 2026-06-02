@@ -256,7 +256,7 @@ export default function BookingSessionForm({ session }: { session?: BookingSessi
           <label className={`block text-xs font-medium mb-1.5 ${label}`}>Cover Image</label>
           <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) uploadImage(f); }} />
           {coverImage ? (
-            <div className="relative rounded-xl overflow-hidden aspect-video">
+            <div className="relative rounded-xl overflow-hidden aspect-square">
               <img src={coverImage} alt="Cover" className="w-full h-full object-cover" />
               <button type="button" onClick={() => setCoverImage("")} className="absolute top-2 right-2 h-7 w-7 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black/80 transition-colors">
                 <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
@@ -428,9 +428,9 @@ export default function BookingSessionForm({ session }: { session?: BookingSessi
         <p className={`text-xs font-semibold uppercase tracking-wide mb-3 ${sub}`}>Preview</p>
         <div className={`rounded-2xl border overflow-hidden ${card}`}>
           {coverImage ? (
-            <img src={coverImage} alt="Cover" className="w-full aspect-video object-cover" />
+            <img src={coverImage} alt="Cover" className="w-full aspect-square object-cover" />
           ) : (
-            <div className={`w-full aspect-video flex items-center justify-center ${dark ? "bg-white/3" : "bg-gray-50"}`}>
+            <div className={`w-full aspect-square flex items-center justify-center ${dark ? "bg-white/3" : "bg-gray-50"}`}>
               <svg className={`h-8 w-8 ${dark ? "text-white/10" : "text-gray-200"}`} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3 21h18M3.75 3h16.5c.414 0 .75.336.75.75v13.5a.75.75 0 01-.75.75H3.75a.75.75 0 01-.75-.75V3.75c0-.414.336-.75.75-.75z"/></svg>
             </div>
           )}

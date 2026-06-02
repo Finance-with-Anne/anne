@@ -100,7 +100,7 @@ export default function BookingFlow({ session, defaultCurrency = "NGN" }: { sess
   const InfoPanel = () => (
     <div className="lg:w-64 shrink-0">
       {session.cover_image && (
-        <img src={session.cover_image} alt={session.title} className="w-full aspect-video object-cover rounded-2xl mb-5" />
+        <img src={session.cover_image} alt={session.title} className="w-full aspect-square object-cover rounded-2xl mb-5" />
       )}
       <h1 className="text-xl font-bold text-gray-900 dark:text-white leading-snug mb-4">{session.title}</h1>
 
