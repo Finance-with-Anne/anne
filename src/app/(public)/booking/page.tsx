@@ -62,10 +62,10 @@ export default async function BookingPage() {
                 <Link
                   key={session.id}
                   href={`/booking/${session.slug}?currency=${currency}`}
-                  className="group flex items-center gap-5 bg-white rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow duration-200"
+                  className="group flex items-center gap-6 bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow duration-200"
                 >
                   {/* Duration badge */}
-                  <div className={`${badgeBg} rounded-xl shrink-0 w-24 h-20 flex flex-col items-center justify-center`}>
+                  <div className={`${badgeBg} rounded-xl shrink-0 w-28 h-28 flex flex-col items-center justify-center`}>
                     <span className="text-[10px] font-semibold uppercase tracking-widest text-[#0f1c4d]/50">
                       {session.is_free ? "FREE" : "PAID"}
                     </span>
