@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useAdminTheme } from "@/lib/admin-theme";
 import type { Booking, BookingSession } from "@/types";
@@ -19,7 +19,10 @@ const statusStyle: Record<Status, { dark: string; light: string }> = {
 export default function BookingAdminPage({ bookings, sessions }: { bookings: Booking[]; sessions: BookingSession[] }) {
   const { dark } = useAdminTheme();
   const router = useRouter();
-  const [tab, setTab] = useState<"bookings" | "sessions">("bookings");
+  const searchParams = useSearchParams();
+  const [tab, setTab] = useState<"bookings" | "sessions">(
+    searchParams.get("tab") === "sessions" ? "sessions" : "bookings"
+  );
   const [filter, setFilter] = useState<"all" | Status>("all");
   const [search, setSearch] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
