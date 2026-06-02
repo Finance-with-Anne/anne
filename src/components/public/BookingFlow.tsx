@@ -5,7 +5,7 @@ import type { BookingSession, BookingSlot, BookingQuestion } from "@/types";
 
 type Step = "slot" | "form" | "pay" | "done";
 
-export default function BookingFlow({ session }: { session: BookingSession }) {
+export default function BookingFlow({ session, defaultCurrency = "NGN" }: { session: BookingSession; defaultCurrency?: string }) {
   const slots = (session.slots ?? []).filter((s: BookingSlot) => !s.is_booked).sort((a, b) => {
     const d = a.date.localeCompare(b.date);
     return d !== 0 ? d : a.start_time.localeCompare(b.start_time);
@@ -18,7 +18,7 @@ export default function BookingFlow({ session }: { session: BookingSession }) {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [answers, setAnswers] = useState<Record<string, string>>({});
-  const [currency, setCurrency] = useState("NGN");
+  const [currency, setCurrency] = useState(defaultCurrency);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [bookingId, setBookingId] = useState<string | null>(null);
