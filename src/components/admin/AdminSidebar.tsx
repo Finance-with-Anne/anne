@@ -131,9 +131,10 @@ export default function AdminSidebar({ userRole, userName, userEmail, userAvatar
                 {expandedSection === "/admin/booking" && (
                   <div className={`ml-4 mt-0.5 mb-1 space-y-0.5 border-l pl-3 ${dark ? "border-white/5" : "border-gray-200"}`}>
                     {[
-                      { label: "All Bookings", href: "/admin/booking",          active: pathname === "/admin/booking" && searchParams.get("tab") !== "packages" },
-                      { label: "New Booking",  href: "/admin/booking/new",       active: pathname === "/admin/booking/new" },
+                      { label: "All Bookings", href: "/admin/booking",             active: pathname === "/admin/booking" && searchParams.get("tab") !== "packages" },
+                      { label: "New Booking",  href: "/admin/booking/new",        active: pathname === "/admin/booking/new" },
                       { label: "Packages",     href: "/admin/booking?tab=packages", active: pathname === "/admin/booking" && searchParams.get("tab") === "packages" },
+                      { label: "Settings",     href: "/admin/booking/settings",   active: pathname === "/admin/booking/settings" },
                     ].map((sub) => (
                       <Link key={sub.label} href={sub.href}
                         className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-xs transition-colors ${

@@ -3,6 +3,7 @@ import { supabaseAdmin } from "@/lib/supabase/admin";
 import { resend, EMAIL_FROM } from "@/lib/resend";
 import { BookingConfirmationEmail } from "@/lib/emails/booking-confirmation";
 import { AdminBookingNotifyEmail } from "@/lib/emails/booking-admin-notify";
+import { createMeetEvent } from "@/lib/google-calendar";
 import * as React from "react";
 
 const PAYSTACK_SECRET = process.env.PAYSTACK_SECRET_KEY ?? "";
@@ -39,10 +40,25 @@ export async function POST(req: NextRequest) {
     .update({ is_paid: true, status: "confirmed", payment_ref: reference })
     .eq("id", booking_id);
 
-  const session = booking.session as { title: string; google_meet_link: string | null; questions: { id: string; question: string }[] };
+  const session = booking.session as { title: string; google_meet_link: string | null; duration_minutes?: number; questions: { id: string; question: string }[] };
   const formattedDate = new Date(booking.date).toLocaleDateString("en-GB", {
     weekday: "long", day: "numeric", month: "long", year: "numeric",
   });
+
+  // Auto-create Google Meet; fall back to manually stored link
+  const autoMeetLink = await createMeetEvent({
+    title: session.title,
+    date: booking.date,
+    startTime: booking.time,
+    durationMinutes: session.duration_minutes ?? 60,
+    attendeeEmail: booking.client_email,
+    attendeeName: booking.client_name,
+  }).catch(() => null);
+  const meetLink = autoMeetLink ?? session.google_meet_link ?? undefined;
+
+  if (autoMeetLink) {
+    await supabaseAdmin.from("bookings").update({ notes: autoMeetLink }).eq("id", booking_id);
+  }
 
   // Send emails
   await Promise.allSettled([
@@ -55,7 +71,7 @@ export async function POST(req: NextRequest) {
         service: session.title,
         date: formattedDate,
         time: booking.time,
-        googleMeetLink: session.google_meet_link ?? undefined,
+        googleMeetLink: meetLink,
         answers: booking.answers ?? undefined,
         questions: session.questions ?? [],
         isPaid: true,

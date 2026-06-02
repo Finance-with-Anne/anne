@@ -49,6 +49,30 @@ export default function BookingSessionForm({ session }: { session?: BookingSessi
   const inputCls = `w-full rounded-lg border px-3 py-2 text-sm focus:outline-none transition-colors ${dark ? "bg-white/5 border-white/8 text-white placeholder-white/20 focus:border-white/20" : "bg-white border-gray-200 text-gray-900 placeholder-gray-400 focus:border-gray-300"}`;
   const sectionTitle = `text-xs font-semibold uppercase tracking-wide mb-3 ${sub}`;
 
+  function generateDemoSlots() {
+    const times = ["09:00", "11:00", "14:00", "16:00"];
+    const generated: SlotDraft[] = [];
+    const today = new Date();
+    let day = new Date(today);
+    day.setDate(day.getDate() + 1);
+
+    while (generated.length < 12) {
+      const dow = day.getDay();
+      if (dow !== 0 && dow !== 6) { // skip weekends
+        const dateStr = day.toISOString().split("T")[0];
+        for (const t of times) {
+          if (generated.length < 12) generated.push({ date: dateStr, start_time: t });
+        }
+      }
+      day.setDate(day.getDate() + 1);
+    }
+
+    setSlots(existing => {
+      const existingKeys = new Set(existing.map(s => `${s.date}-${s.start_time}`));
+      return [...existing, ...generated.filter(g => !existingKeys.has(`${g.date}-${g.start_time}`))];
+    });
+  }
+
   function addQuestion() {
     setQuestions(q => [...q, { question: "", type: "text", options: "", required: false }]);
   }
@@ -230,7 +254,12 @@ export default function BookingSessionForm({ session }: { session?: BookingSessi
 
       {/* Available Slots */}
       <div className={`rounded-xl border ${card} p-5 space-y-3`}>
-        <p className={sectionTitle}>Available Dates & Times</p>
+        <div className="flex items-center justify-between">
+          <p className={sectionTitle}>Available Dates & Times</p>
+          <button type="button" onClick={generateDemoSlots} className={`text-xs font-medium ${dark ? "text-white/50 hover:text-white" : "text-gray-400 hover:text-gray-700"} transition-colors`}>
+            + Generate sample slots
+          </button>
+        </div>
         {slots.length === 0 && <p className={`text-xs ${sub}`}>No slots added yet.</p>}
         {slots.length > 0 && (
           <div className="space-y-1.5">
