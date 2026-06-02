@@ -3,6 +3,7 @@ import BookingFlow from "@/components/public/BookingFlow";
 import type { BookingSession } from "@/types";
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
+import Link from "next/link";
 import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
@@ -55,7 +56,11 @@ export default async function BookingSessionPage({
     session.price_gbp ? `£${session.price_gbp.toLocaleString()}` : null;
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-5xl px-4 pt-8 pb-16 sm:px-6 lg:px-8">
+      <Link href="/booking" className="inline-flex items-center gap-1.5 text-sm text-gray-400 dark:text-white/30 hover:opacity-70 mb-8">
+        <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7"/></svg>
+        All sessions
+      </Link>
       <BookingFlow session={session} defaultCurrency={currency} />
     </div>
   );
