@@ -64,6 +64,17 @@ export default async function BookingPage() {
                   href={`/booking/${session.slug}?currency=${currency}`}
                   className="group flex items-center gap-6 bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow duration-200"
                 >
+                  {/* Cover image */}
+                  {session.cover_image && (
+                    <div className="shrink-0 w-28 h-28 rounded-xl overflow-hidden bg-gray-100">
+                      <img
+                        src={session.cover_image}
+                        alt={session.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
+                  )}
+
                   {/* Duration badge */}
                   <div className={`${badgeBg} rounded-xl shrink-0 w-28 h-28 flex flex-col items-center justify-center`}>
                     <span className="text-[10px] font-semibold uppercase tracking-widest text-[#0f1c4d]/50">
