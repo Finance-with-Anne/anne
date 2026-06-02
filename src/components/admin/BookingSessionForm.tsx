@@ -111,8 +111,29 @@ export default function BookingSessionForm({ session }: { session?: BookingSessi
   const uploadImage = useCallback(async (file: File) => {
     if (!file.type.startsWith("image/")) return;
     setUploading(true);
+
+    // Resize to 1080×1080 center-crop before upload
+    const resized = await new Promise<Blob>((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        const size = 1080;
+        const canvas = document.createElement("canvas");
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext("2d")!;
+        const scale = Math.max(size / img.width, size / img.height);
+        const sw = size / scale;
+        const sh = size / scale;
+        const sx = (img.width - sw) / 2;
+        const sy = (img.height - sh) / 2;
+        ctx.drawImage(img, sx, sy, sw, sh, 0, 0, size, size);
+        canvas.toBlob(b => resolve(b!), "image/jpeg", 0.9);
+      };
+      img.src = URL.createObjectURL(file);
+    });
+
     const fd = new FormData();
-    fd.append("file", file);
+    fd.append("file", new File([resized], file.name.replace(/\.[^.]+$/, ".jpg"), { type: "image/jpeg" }));
     fd.append("folder", "booking-sessions");
     const res = await fetch("/api/upload", { method: "POST", body: fd });
     const json = await res.json();
@@ -254,7 +275,7 @@ export default function BookingSessionForm({ session }: { session?: BookingSessi
                 <>
                   <svg className={`h-8 w-8 mb-2 ${sub}`} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/></svg>
                   <p className={`text-sm font-medium ${sub}`}>Drag & drop or <span className="text-brand">browse</span></p>
-                  <p className={`text-xs mt-0.5 ${dark ? "text-white/20" : "text-gray-300"}`}>PNG, JPG, WebP</p>
+                  <p className={`text-xs mt-0.5 ${dark ? "text-white/20" : "text-gray-300"}`}>PNG, JPG, WebP · resized to 1080×1080</p>
                 </>
               )}
             </div>
