@@ -414,7 +414,7 @@ export default function BookingSessionForm({ session }: { session?: BookingSessi
       {/* Save */}
       <div className="flex gap-3">
         <button type="submit" disabled={saving} className="rounded-lg bg-brand px-6 py-2.5 text-sm font-semibold text-white hover:opacity-90 transition-opacity disabled:opacity-50">
-          {saving ? "Saving…" : isEdit ? "Save & Regenerate Slots" : "Create Package"}
+          {saving ? "Saving…" : isEdit ? "Save Changes" : "Create Package"}
         </button>
         <button type="button" onClick={() => router.back()} className={`rounded-lg px-6 py-2.5 text-sm font-medium transition-colors ${dark ? "bg-white/5 text-white/60 hover:bg-white/10" : "bg-gray-100 text-gray-500 hover:bg-gray-200"}`}>
           Cancel
