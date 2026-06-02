@@ -80,6 +80,7 @@ export type BookingSession = {
   price_gbp: number | null;
   google_meet_link: string | null;
   is_active: boolean;
+  availability?: Record<number, { enabled: boolean; start: string; end: string }> | null;
   created_at: string;
   updated_at: string;
   questions?: BookingQuestion[];
