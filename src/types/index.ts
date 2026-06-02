@@ -57,6 +57,53 @@ export type Booking = {
   status: "pending" | "confirmed" | "cancelled" | "completed";
   notes: string | null;
   created_at: string;
+  // new fields
+  session_id?: string | null;
+  slot_id?: string | null;
+  answers?: Record<string, string> | null;
+  phone?: string | null;
+  is_paid?: boolean;
+  payment_ref?: string | null;
+  amount_paid?: number | null;
+  currency?: string | null;
+};
+
+export type BookingSession = {
+  id: string;
+  title: string;
+  slug: string;
+  description: string | null;
+  duration_minutes: number;
+  is_free: boolean;
+  price_ngn: number | null;
+  price_usd: number | null;
+  price_gbp: number | null;
+  google_meet_link: string | null;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+  questions?: BookingQuestion[];
+  slots?: BookingSlot[];
+};
+
+export type BookingQuestion = {
+  id: string;
+  session_id: string;
+  question: string;
+  type: "text" | "textarea" | "select";
+  options: string[] | null;
+  required: boolean;
+  sort_order: number;
+  created_at: string;
+};
+
+export type BookingSlot = {
+  id: string;
+  session_id: string;
+  date: string;
+  start_time: string;
+  is_booked: boolean;
+  created_at: string;
 };
 
 export type Course = {
