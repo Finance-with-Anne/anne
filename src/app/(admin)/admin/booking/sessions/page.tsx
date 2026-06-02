@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
 export default function SessionsPage() {
-  redirect("/admin/booking?tab=sessions");
+  redirect("/admin/booking?tab=packages");
 }

@@ -134,7 +134,7 @@ export default function BookingSessionForm({ session }: { session?: BookingSessi
     <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
       <div className="flex items-center gap-3 mb-2">
         <button type="button" onClick={() => router.back()} className={`text-sm ${sub} hover:opacity-70`}>← Back</button>
-        <h1 className={`text-xl font-bold ${heading}`}>{isEdit ? "Edit Session" : "New Booking Session"}</h1>
+        <h1 className={`text-xl font-bold ${heading}`}>{isEdit ? "Edit Package" : "New Booking Package"}</h1>
       </div>
 
       {error && <p className="text-sm text-red-400">{error}</p>}

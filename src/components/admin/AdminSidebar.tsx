@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useAdminTheme } from "@/lib/admin-theme";
@@ -25,6 +25,7 @@ const otherNav = [
 export default function AdminSidebar({ userRole, userName, userEmail, userAvatar }: { userRole?: string; userName?: string; userEmail?: string; userAvatar?: string }) {
   const pathname = usePathname();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const supabase = createClient();
   const { dark } = useAdminTheme();
   const [search, setSearch] = useState("");
@@ -130,18 +131,18 @@ export default function AdminSidebar({ userRole, userName, userEmail, userAvatar
                 {expandedSection === "/admin/booking" && (
                   <div className={`ml-4 mt-0.5 mb-1 space-y-0.5 border-l pl-3 ${dark ? "border-white/5" : "border-gray-200"}`}>
                     {[
-                      { label: "All Bookings", href: "/admin/booking" },
-                      { label: "New Booking",  href: "/admin/booking/new" },
-                      { label: "Sessions",     href: "/admin/booking/sessions" },
+                      { label: "All Bookings", href: "/admin/booking",          active: pathname === "/admin/booking" && searchParams.get("tab") !== "packages" },
+                      { label: "New Booking",  href: "/admin/booking/new",       active: pathname === "/admin/booking/new" },
+                      { label: "Packages",     href: "/admin/booking?tab=packages", active: pathname === "/admin/booking" && searchParams.get("tab") === "packages" },
                     ].map((sub) => (
-                      <Link key={sub.href} href={sub.href}
+                      <Link key={sub.label} href={sub.href}
                         className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-xs transition-colors ${
-                          pathname === sub.href
+                          sub.active
                             ? dark ? "text-white font-medium" : "text-brand font-medium"
                             : dark ? "text-white/30 hover:text-white/60" : "text-gray-400 hover:text-brand"
                         }`}
                       >
-                        <span className={`h-1 w-1 rounded-full shrink-0 ${pathname === sub.href ? dark ? "bg-blue-400" : "bg-brand" : dark ? "bg-white/20" : "bg-gray-300"}`} />
+                        <span className={`h-1 w-1 rounded-full shrink-0 ${sub.active ? dark ? "bg-blue-400" : "bg-brand" : dark ? "bg-white/20" : "bg-gray-300"}`} />
                         {sub.label}
                       </Link>
                     ))}

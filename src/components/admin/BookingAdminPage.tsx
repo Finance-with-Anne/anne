@@ -20,8 +20,8 @@ export default function BookingAdminPage({ bookings, sessions }: { bookings: Boo
   const { dark } = useAdminTheme();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [tab, setTab] = useState<"bookings" | "sessions">(
-    searchParams.get("tab") === "sessions" ? "sessions" : "bookings"
+  const [tab, setTab] = useState<"bookings" | "packages">(
+    searchParams.get("tab") === "packages" ? "packages" : "bookings"
   );
   const [filter, setFilter] = useState<"all" | Status>("all");
   const [search, setSearch] = useState("");
@@ -81,10 +81,10 @@ export default function BookingAdminPage({ bookings, sessions }: { bookings: Boo
           <p className={`text-sm mt-0.5 ${sub}`}>{bookings.length} total · {counts.pending} pending</p>
         </div>
         <div className="flex items-center gap-2">
-          {tab === "sessions" && (
+          {tab === "packages" && (
             <Link href="/admin/booking/sessions/new" className="flex items-center gap-1.5 rounded-lg bg-brand px-4 py-2 text-sm font-medium text-white hover:opacity-90 transition-opacity">
               <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>
-              New Session
+              New Package
             </Link>
           )}
         </div>
@@ -102,9 +102,9 @@ export default function BookingAdminPage({ bookings, sessions }: { bookings: Boo
 
       {/* Tabs */}
       <div className="flex items-center gap-1">
-        {(["bookings", "sessions"] as const).map(t => (
+        {(["bookings", "packages"] as const).map(t => (
           <button key={t} onClick={() => setTab(t)} className={`rounded-lg px-4 py-2 text-sm font-medium capitalize transition-colors ${tab === t ? tabActive : tabInactive}`}>
-            {t === "bookings" ? `All Bookings (${bookings.length})` : `Sessions (${sessions.length})`}
+            {t === "bookings" ? `All Bookings (${bookings.length})` : `Packages (${sessions.length})`}
           </button>
         ))}
       </div>
@@ -175,11 +175,11 @@ export default function BookingAdminPage({ bookings, sessions }: { bookings: Boo
       )}
 
       {/* Sessions Tab */}
-      {tab === "sessions" && (
+      {tab === "packages" && (
         <div className="space-y-3">
           {sessions.length === 0 ? (
             <div className={`rounded-xl border ${card} py-16 text-center text-sm ${sub}`}>
-              No sessions yet. <Link href="/admin/booking/sessions/new" className="underline ml-1">Create one →</Link>
+              No packages yet. <Link href="/admin/booking/sessions/new" className="underline ml-1">Create one →</Link>
             </div>
           ) : (
             sessions.map(session => (
