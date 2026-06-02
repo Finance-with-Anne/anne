@@ -233,7 +233,7 @@ export default function BookingSessionForm({ session }: { session?: BookingSessi
 
       <div className="flex gap-6 items-start">
       {/* ── Form column ───────────────────────────────── */}
-      <div className="flex-1 min-w-0 space-y-6">
+      <div className="flex-1 min-w-0 max-w-2xl space-y-6">
 
       {/* Basic Info */}
       <div className={`rounded-xl border ${card} p-5 space-y-4`}>
