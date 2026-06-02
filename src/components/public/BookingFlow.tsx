@@ -150,7 +150,7 @@ export default function BookingFlow({ session, defaultCurrency = "NGN" }: { sess
   if (step === "done") return (
     <div className="flex flex-col lg:flex-row gap-8 lg:gap-16">
       <InfoPanel />
-      <div className="flex-1 flex items-center justify-center py-12">
+      <div className="flex-1 flex items-center justify-center min-h-[420px]">
         <div className="text-center space-y-4">
           <div className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-green-50 dark:bg-green-400/10 mb-2">
             <svg className="h-7 w-7 text-green-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/></svg>
@@ -166,7 +166,7 @@ export default function BookingFlow({ session, defaultCurrency = "NGN" }: { sess
   if (step === "pay") return (
     <div className="flex flex-col lg:flex-row gap-8 lg:gap-16">
       <InfoPanel />
-      <div className="flex-1 space-y-5 max-w-sm">
+      <div className="flex-1 space-y-5 max-w-sm min-h-[420px]">
         <button type="button" onClick={() => setStep("form")} className="flex items-center gap-1.5 text-sm text-gray-400 dark:text-white/30 hover:opacity-70 mb-1">
           <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7"/></svg>
           Back
@@ -196,7 +196,7 @@ export default function BookingFlow({ session, defaultCurrency = "NGN" }: { sess
   if (step === "form") return (
     <div className="flex flex-col lg:flex-row gap-8 lg:gap-16">
       <InfoPanel />
-      <form onSubmit={handleSubmit} className="flex-1 space-y-4 max-w-sm">
+      <form onSubmit={handleSubmit} className="flex-1 space-y-4 max-w-sm min-h-[420px]">
         <button type="button" onClick={() => setStep("calendar")} className="flex items-center gap-1.5 text-sm text-gray-400 dark:text-white/30 hover:opacity-70 mb-1">
           <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7"/></svg>
           Back
@@ -242,32 +242,32 @@ export default function BookingFlow({ session, defaultCurrency = "NGN" }: { sess
     <div className="flex flex-col lg:flex-row gap-8 lg:gap-16">
       <InfoPanel />
 
-      <div className="flex-1 min-w-0 flex flex-col sm:flex-row gap-6">
+      <div className="flex-1 min-w-0 flex gap-6 min-h-[420px]">
         {/* Calendar */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between mb-5">
-            <h2 className="text-base font-semibold text-gray-900 dark:text-white">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-sm font-semibold text-gray-900 dark:text-white">
               {MONTH_NAMES[calMonth.getMonth()]} <span className="text-gray-400 dark:text-white/30">{calMonth.getFullYear()}</span>
             </h2>
             <div className="flex gap-1">
-              <button type="button" onClick={prevMonth} className="h-8 w-8 flex items-center justify-center rounded-lg text-gray-400 dark:text-white/30 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
-                <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7"/></svg>
+              <button type="button" onClick={prevMonth} className="h-7 w-7 flex items-center justify-center rounded-lg text-gray-400 dark:text-white/30 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
+                <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7"/></svg>
               </button>
-              <button type="button" onClick={nextMonth} className="h-8 w-8 flex items-center justify-center rounded-lg text-gray-400 dark:text-white/30 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
-                <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"/></svg>
+              <button type="button" onClick={nextMonth} className="h-7 w-7 flex items-center justify-center rounded-lg text-gray-400 dark:text-white/30 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
+                <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"/></svg>
               </button>
             </div>
           </div>
 
-          <div className="grid grid-cols-7 mb-2">
+          <div className="grid grid-cols-7 mb-1">
             {DAY_HEADERS.map(d => (
-              <div key={d} className="text-center text-[10px] font-semibold text-gray-400 dark:text-white/25 py-1">{d}</div>
+              <div key={d} className="text-center text-[9px] font-semibold text-gray-400 dark:text-white/25 py-1">{d}</div>
             ))}
           </div>
 
           <div className="grid grid-cols-7 gap-1">
             {calDays.map((day, i) => {
-              if (!day) return <div key={i} />;
+              if (!day) return <div key={i} className="h-9 w-full" />;
               const dateStr = `${calMonth.getFullYear()}-${String(calMonth.getMonth()+1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
               const isAvail = availableDates.has(dateStr);
               const cellDate = new Date(calMonth.getFullYear(), calMonth.getMonth(), day);
@@ -276,7 +276,7 @@ export default function BookingFlow({ session, defaultCurrency = "NGN" }: { sess
               const isSelected = selectedDate === dateStr;
               return (
                 <button key={i} type="button" disabled={!isAvail || isPast} onClick={() => selectDate(day)}
-                  className={`relative aspect-square flex flex-col items-center justify-center rounded-xl text-sm font-medium transition-all
+                  className={`relative h-9 w-full flex flex-col items-center justify-center rounded-lg text-xs font-medium transition-all
                     ${isSelected ? "bg-brand text-white" :
                       isAvail && !isPast ? "bg-gray-100 dark:bg-white/8 text-gray-900 dark:text-white hover:bg-brand/10 dark:hover:bg-brand/20 hover:text-brand cursor-pointer" :
                       "text-gray-300 dark:text-white/15 cursor-default"}
@@ -284,7 +284,7 @@ export default function BookingFlow({ session, defaultCurrency = "NGN" }: { sess
                   `}>
                   {day}
                   {isAvail && !isPast && !isSelected && (
-                    <span className="absolute bottom-1 left-1/2 -translate-x-1/2 h-1 w-1 rounded-full bg-brand" />
+                    <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 h-0.5 w-0.5 rounded-full bg-brand" />
                   )}
                 </button>
               );
@@ -292,30 +292,32 @@ export default function BookingFlow({ session, defaultCurrency = "NGN" }: { sess
           </div>
 
           {availableSlots.length === 0 && (
-            <p className="mt-6 text-sm text-gray-400 dark:text-white/30">No slots available at the moment.</p>
+            <p className="mt-4 text-sm text-gray-400 dark:text-white/30">No slots available at the moment.</p>
           )}
         </div>
 
-        {/* Time slots — appear to the right when a date is selected */}
-        {selectedDate && (
-          <div className="sm:w-40 shrink-0">
-            <p className="text-xs font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wide mb-3">
-              {new Date(selectedDate).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" })}
-            </p>
-            {slotsForDate.length === 0 ? (
-              <p className="text-sm text-gray-400 dark:text-white/30">No slots.</p>
-            ) : (
-              <div className="flex flex-col gap-2">
-                {slotsForDate.map(slot => (
-                  <button key={slot.id} type="button" onClick={() => { setSelectedSlot(slot); setStep("form"); }}
-                    className="w-full rounded-xl border border-gray-200 dark:border-white/8 px-3 py-2.5 text-sm font-medium text-gray-700 dark:text-white/60 hover:border-brand hover:text-brand dark:hover:border-brand dark:hover:text-white transition-colors text-center">
-                    {slot.start_time}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
+        {/* Time slots — fixed-width column, always present to avoid layout shift */}
+        <div className="w-32 shrink-0">
+          {selectedDate && (
+            <>
+              <p className="text-[10px] font-semibold text-gray-400 dark:text-white/30 uppercase tracking-wide mb-2">
+                {new Date(selectedDate).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" })}
+              </p>
+              {slotsForDate.length === 0 ? (
+                <p className="text-xs text-gray-400 dark:text-white/30">No slots.</p>
+              ) : (
+                <div className="flex flex-col gap-1.5 overflow-y-auto max-h-[380px] pr-0.5">
+                  {slotsForDate.map(slot => (
+                    <button key={slot.id} type="button" onClick={() => { setSelectedSlot(slot); setStep("form"); }}
+                      className="w-full rounded-lg border border-gray-200 dark:border-white/8 px-2 py-2 text-xs font-medium text-gray-700 dark:text-white/60 hover:border-brand hover:text-brand dark:hover:border-brand dark:hover:text-white transition-colors text-center">
+                      {slot.start_time}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
