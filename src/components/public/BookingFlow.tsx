@@ -173,17 +173,12 @@ export default function BookingFlow({ session, defaultCurrency = "NGN" }: { sess
         </button>
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Complete Payment</h2>
         <p className="text-sm text-gray-500 dark:text-white/40">Your slot is reserved. Pay to confirm and receive your Meet link.</p>
-        <div>
-          <p className="text-xs font-medium text-gray-400 dark:text-white/30 mb-2">Pay in</p>
-          <div className="flex gap-2">
-            {[session.price_ngn ? { code:"NGN", label:`₦${session.price_ngn.toLocaleString()}` } : null, session.price_usd ? { code:"USD", label:`$${session.price_usd}` } : null, session.price_gbp ? { code:"GBP", label:`£${session.price_gbp}` } : null].filter(Boolean).map(c => (
-              <button key={c!.code} type="button" onClick={() => setCurrency(c!.code)}
-                className={`rounded-xl border px-4 py-2.5 text-sm font-medium transition-colors ${currency === c!.code ? "border-brand bg-brand text-white" : "border-gray-200 dark:border-white/8 text-gray-700 dark:text-white/60 hover:border-brand"}`}>
-                {c!.label}
-              </button>
-            ))}
+        {price && (
+          <div className="rounded-xl border border-gray-100 dark:border-white/8 bg-gray-50 dark:bg-white/3 px-4 py-3">
+            <p className="text-xs text-gray-400 dark:text-white/30 mb-0.5">Amount due</p>
+            <p className="text-2xl font-bold text-gray-900 dark:text-white">{price}</p>
           </div>
-        </div>
+        )}
         {error && <p className="text-sm text-red-400">{error}</p>}
         <button onClick={handlePay} disabled={submitting} className="w-full rounded-xl bg-brand py-3 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50 transition-opacity">
           {submitting ? "Redirecting…" : "Pay with Paystack →"}
