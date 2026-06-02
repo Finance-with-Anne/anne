@@ -79,6 +79,8 @@ export type BookingSession = {
   price_usd: number | null;
   price_gbp: number | null;
   google_meet_link: string | null;
+  cover_image: string | null;
+  what_you_get: string | null;
   is_active: boolean;
   availability?: Record<number, { enabled: boolean; start: string; end: string }> | null;
   created_at: string;

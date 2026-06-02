@@ -73,6 +73,8 @@ export default function BookingSessionForm({ session }: { session?: BookingSessi
   const [priceUsd, setPriceUsd] = useState(session?.price_usd?.toString() ?? "");
   const [priceGbp, setPriceGbp] = useState(session?.price_gbp?.toString() ?? "");
   const [meetLink, setMeetLink] = useState(session?.google_meet_link ?? "");
+  const [coverImage, setCoverImage] = useState(session?.cover_image ?? "");
+  const [whatYouGet, setWhatYouGet] = useState(session?.what_you_get ?? "");
   const [isActive, setIsActive] = useState(session?.is_active ?? true);
   const [availability, setAvailability] = useState<Availability>(
     parseAvailability((session as BookingSession & { availability?: unknown })?.availability)
@@ -133,6 +135,8 @@ export default function BookingSessionForm({ session }: { session?: BookingSessi
       price_usd: !isFree && priceUsd ? Number(priceUsd) : null,
       price_gbp: !isFree && priceGbp ? Number(priceGbp) : null,
       google_meet_link: meetLink.trim() || null,
+      cover_image: coverImage.trim() || null,
+      what_you_get: whatYouGet.trim() || null,
       is_active: isActive,
       availability,
       questions: questions.map((q, i) => ({
@@ -198,6 +202,14 @@ export default function BookingSessionForm({ session }: { session?: BookingSessi
             <label className={`block text-xs font-medium mb-1.5 ${label}`}>Duration (minutes)</label>
             <input type="number" value={duration} onChange={e => setDuration(Number(e.target.value))} min={15} step={15} className={inputCls} />
           </div>
+        </div>
+        <div>
+          <label className={`block text-xs font-medium mb-1.5 ${label}`}>Cover Image URL</label>
+          <input value={coverImage} onChange={e => setCoverImage(e.target.value)} placeholder="https://…" className={inputCls} />
+        </div>
+        <div>
+          <label className={`block text-xs font-medium mb-1.5 ${label}`}>What You&apos;ll Get <span className={`text-[10px] ${sub}`}>(short bullet copy shown on booking page)</span></label>
+          <textarea value={whatYouGet} onChange={e => setWhatYouGet(e.target.value)} placeholder="• Personalised financial plan&#10;• 1-hour deep-dive session&#10;• Follow-up resources" rows={4} className={inputCls} />
         </div>
         <div>
           <label className={`block text-xs font-medium mb-1.5 ${label}`}>Google Meet Link <span className={`text-[10px] ${sub}`}>(fallback if Calendar not connected)</span></label>
