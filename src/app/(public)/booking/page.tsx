@@ -2,6 +2,7 @@ import { supabaseAdmin } from "@/lib/supabase/admin";
 import Link from "next/link";
 import type { BookingSession } from "@/types";
 
+export const dynamic = "force-dynamic";
 export const metadata = { title: "Book a Session — Finance with Anne" };
 
 export default async function BookingPage() {
