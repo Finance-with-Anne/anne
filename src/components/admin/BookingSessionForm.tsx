@@ -79,7 +79,7 @@ export default function BookingSessionForm({ session }: { session?: BookingSessi
   const [availability, setAvailability] = useState<Availability>(
     parseAvailability((session as BookingSession & { availability?: unknown })?.availability)
   );
-  const [weeksAhead, setWeeksAhead] = useState(4);
+  const weeksAhead = 52; // always generate 1 year ahead
 
   // Existing booked slots (edit mode — read-only display)
   const bookedSlots = (session?.slots ?? []).filter((s: BookingSlot) => s.is_booked);
@@ -340,7 +340,7 @@ export default function BookingSessionForm({ session }: { session?: BookingSessi
       <div className={`rounded-xl border ${card} p-5 space-y-4`}>
         <div className="flex items-center justify-between">
           <p className={sectionTitle}>Availability</p>
-          <span className={`text-xs ${sub}`}>{previewCount} slots will be generated</span>
+          <span className={`text-xs ${sub}`}>{previewCount} slots · 1 year ahead</span>
         </div>
 
         <div className="space-y-2">
@@ -382,17 +382,6 @@ export default function BookingSessionForm({ session }: { session?: BookingSessi
           })}
         </div>
 
-        <div className="flex items-center gap-3 pt-1">
-          <span className={`text-xs font-medium ${label}`}>Generate for</span>
-          <div className="flex gap-1.5">
-            {[2, 4, 6, 8].map(w => (
-              <button key={w} type="button" onClick={() => setWeeksAhead(w)}
-                className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${weeksAhead === w ? "bg-brand text-white" : dark ? "bg-white/5 text-white/50 hover:bg-white/10 hover:text-white" : "bg-gray-100 text-gray-500 hover:bg-gray-200"}`}>
-                {w} weeks
-              </button>
-            ))}
-          </div>
-        </div>
 
         {isEdit && bookedSlots.length > 0 && (
           <p className={`text-xs ${sub}`}>
