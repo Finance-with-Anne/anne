@@ -49,6 +49,20 @@ export default function BookingAdminPage({ bookings, sessions }: { bookings: Boo
     cancelled: bookings.filter(b => b.status === "cancelled").length,
   };
 
+  const now = new Date();
+  const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+  const thisMonth = bookings.filter(b => b.created_at >= thisMonthStart).length;
+
+  const upcoming = bookings.filter(b =>
+    (b.status === "confirmed" || b.status === "pending") &&
+    new Date(b.date) >= new Date(now.toISOString().split("T")[0])
+  ).length;
+
+  const revenueNGN = bookings.filter(b => b.is_paid && b.currency === "NGN" && b.amount_paid).reduce((s, b) => s + (b.amount_paid ?? 0), 0);
+  const revenueUSD = bookings.filter(b => b.is_paid && b.currency === "USD" && b.amount_paid).reduce((s, b) => s + (b.amount_paid ?? 0), 0);
+  const revenueGBP = bookings.filter(b => b.is_paid && b.currency === "GBP" && b.amount_paid).reduce((s, b) => s + (b.amount_paid ?? 0), 0);
+  const paidCount  = bookings.filter(b => b.is_paid).length;
+
   const filtered = bookings.filter(b => {
     const matchF = filter === "all" || b.status === filter;
     const matchS = !search || b.client_name.toLowerCase().includes(search.toLowerCase()) || b.service.toLowerCase().includes(search.toLowerCase());
@@ -90,14 +104,30 @@ export default function BookingAdminPage({ bookings, sessions }: { bookings: Boo
         </div>
       </div>
 
-      {/* Stats row */}
-      <div className="grid grid-cols-4 gap-3">
-        {(["pending", "confirmed", "completed", "cancelled"] as Status[]).map(s => (
-          <div key={s} className={`rounded-xl border px-4 py-3 text-center ${card}`}>
-            <p className={`text-xs capitalize ${sub}`}>{s}</p>
-            <p className={`text-xl font-bold mt-0.5 ${heading}`}>{counts[s]}</p>
-          </div>
-        ))}
+      {/* Metrics */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className={`rounded-xl border px-4 py-4 ${card}`}>
+          <p className={`text-xs ${sub}`}>Total Bookings</p>
+          <p className={`text-2xl font-bold mt-1 ${heading}`}>{bookings.length}</p>
+          <p className={`text-xs mt-1 ${sub}`}>{thisMonth} this month</p>
+        </div>
+        <div className={`rounded-xl border px-4 py-4 ${card}`}>
+          <p className={`text-xs ${sub}`}>Upcoming</p>
+          <p className={`text-2xl font-bold mt-1 ${heading}`}>{upcoming}</p>
+          <p className={`text-xs mt-1 ${sub}`}>{counts.pending} pending</p>
+        </div>
+        <div className={`rounded-xl border px-4 py-4 ${card}`}>
+          <p className={`text-xs ${sub}`}>Paid Sessions</p>
+          <p className={`text-2xl font-bold mt-1 ${heading}`}>{paidCount}</p>
+          <p className={`text-xs mt-1 ${sub}`}>{counts.completed} completed</p>
+        </div>
+        <div className={`rounded-xl border px-4 py-4 ${card}`}>
+          <p className={`text-xs ${sub}`}>Revenue</p>
+          {revenueNGN > 0 && <p className={`text-xl font-bold mt-1 ${heading}`}>₦{revenueNGN.toLocaleString()}</p>}
+          {revenueUSD > 0 && <p className={`text-base font-semibold ${heading}`}>${revenueUSD.toLocaleString()}</p>}
+          {revenueGBP > 0 && <p className={`text-base font-semibold ${heading}`}>£{revenueGBP.toLocaleString()}</p>}
+          {revenueNGN === 0 && revenueUSD === 0 && revenueGBP === 0 && <p className={`text-2xl font-bold mt-1 ${heading}`}>—</p>}
+        </div>
       </div>
 
       {/* Tabs */}
