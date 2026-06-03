@@ -42,7 +42,7 @@ export default function HeroSlider() {
       <h1 className="text-5xl sm:text-6xl lg:text-[3.75rem] font-bold text-gray-900 dark:text-white leading-[1.08] tracking-tight">
         {slide.headline}
       </h1>
-      <p className="mt-6 text-gray-500 dark:text-white/45 text-base leading-relaxed max-w-[420px]">
+      <p className="mt-6 text-gray-500 dark:text-white/45 text-base leading-relaxed max-w-[520px]">
         {slide.sub}
       </p>
     </div>
