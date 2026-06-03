@@ -25,7 +25,7 @@ export default async function HomePage() {
         <div className="overflow-hidden rounded-2xl grid lg:grid-cols-2 min-h-[660px] bg-white dark:bg-[#0d1220] shadow-sm">
 
           {/* Left — text */}
-          <div className="flex flex-col justify-center py-16 px-10 lg:px-14">
+          <div className="flex flex-col justify-center py-16 pl-16 pr-10 lg:pl-24 lg:pr-14">
             <div className="w-full max-w-lg">
             <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-gray-400 dark:text-white/30 mb-6">
               Finance with Anne
