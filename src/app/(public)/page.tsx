@@ -20,20 +20,20 @@ export default async function HomePage() {
       {/* ══════════════════════════════════════
           HERO
       ══════════════════════════════════════ */}
-      <section className="w-full px-6 sm:px-10 lg:px-16 py-16 sm:py-24">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+      <section className="w-full overflow-hidden bg-[#eef1ff] dark:bg-[#070d1a]">
+        <div className="grid lg:grid-cols-2 min-h-[640px]">
 
-          {/* Left */}
-          <div>
+          {/* Left — text */}
+          <div className="flex flex-col justify-center px-8 sm:px-12 lg:px-16 py-20">
             <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-gray-400 dark:text-white/30 mb-6">
               Finance with Anne
             </p>
 
-            <h1 className="text-[2.75rem] sm:text-5xl lg:text-[3.25rem] font-bold text-gray-900 dark:text-white leading-[1.1] tracking-tight">
+            <h1 className="text-5xl sm:text-6xl lg:text-[3.75rem] font-bold text-gray-900 dark:text-white leading-[1.08] tracking-tight">
               Take control of your financial future
             </h1>
 
-            <p className="mt-5 text-gray-500 dark:text-white/45 text-base leading-relaxed max-w-md">
+            <p className="mt-6 text-gray-500 dark:text-white/45 text-base leading-relaxed max-w-[420px]">
               Personalised 1:1 coaching, courses, and a supportive community to help you build lasting wealth and achieve financial freedom.
             </p>
 
@@ -46,19 +46,15 @@ export default async function HomePage() {
                       key={t.id}
                       src={t.image_url!}
                       alt={t.name}
-                      className="w-9 h-9 rounded-full border-2 border-white dark:border-[#0a0d14] object-cover"
+                      className="w-9 h-9 rounded-full border-2 border-[#eef1ff] dark:border-[#070d1a] object-cover"
                     />
                   ))
                 ) : (
                   ["#d4c5b0", "#b0c5d4", "#c5d4b0", "#d4b0c5"].map((bg, i) => (
-                    <div
-                      key={i}
-                      className="w-9 h-9 rounded-full border-2 border-white dark:border-[#0a0d14]"
-                      style={{ backgroundColor: bg }}
-                    />
+                    <div key={i} className="w-9 h-9 rounded-full border-2 border-[#eef1ff] dark:border-[#070d1a]" style={{ backgroundColor: bg }} />
                   ))
                 )}
-                <div className="w-9 h-9 rounded-full border-2 border-white dark:border-[#0a0d14] bg-gray-900 dark:bg-white flex items-center justify-center">
+                <div className="w-9 h-9 rounded-full border-2 border-[#eef1ff] dark:border-[#070d1a] bg-gray-900 dark:bg-white flex items-center justify-center">
                   <span className="text-white dark:text-gray-900 text-[9px] font-bold">1K+</span>
                 </div>
               </div>
@@ -71,42 +67,56 @@ export default async function HomePage() {
             <div className="mt-10 flex items-center gap-3">
               <Link
                 href="/booking"
-                className="rounded-full bg-gray-900 dark:bg-white px-7 py-3 text-sm font-semibold text-white dark:text-gray-900 hover:opacity-80 transition-opacity"
+                className="rounded-full px-8 py-3.5 text-sm font-semibold text-white hover:opacity-85 transition-opacity"
+                style={{ backgroundColor: "#0822C0" }}
               >
                 Book a Session
               </Link>
               <Link
-                href="/booking"
-                aria-label="Book a session"
-                className="w-11 h-11 rounded-full bg-gray-900 dark:bg-white flex items-center justify-center text-white dark:text-gray-900 hover:opacity-80 transition-opacity"
+                href="/about"
+                className="rounded-full px-8 py-3.5 text-sm font-semibold text-gray-700 dark:text-white bg-white dark:bg-white/10 border border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/15 transition-colors"
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                </svg>
+                Learn More
               </Link>
             </div>
           </div>
 
-          {/* Right — portrait image with floating stat card */}
-          <div className="relative">
-            <div className="rounded-2xl overflow-hidden bg-[#e8d9c4] dark:bg-[#1a1510] aspect-[4/5]">
+          {/* Right — image bleeding to edge */}
+          <div className="relative hidden lg:block">
+            <div className="absolute inset-0 bg-[#dde3f9] dark:bg-[#0f1628]">
               {heroImage && (
-                <img src={heroImage} alt="Finance with Anne" className="w-full h-full object-cover" />
+                <img
+                  src={heroImage}
+                  alt="Finance with Anne"
+                  className="w-full h-full object-cover object-top"
+                />
               )}
             </div>
 
             {/* Floating stat card */}
-            <div className="absolute bottom-6 left-6 bg-white dark:bg-[#111827] rounded-xl shadow-xl p-4 w-44">
+            <div className="absolute bottom-10 left-8 bg-white dark:bg-[#111827] rounded-2xl shadow-2xl p-4 w-48">
               <p className="text-[11px] text-gray-400 dark:text-white/40 font-medium">Sessions booked</p>
               <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">500+</p>
               <div className="mt-2 flex items-end gap-0.5 h-7">
                 {[35, 55, 40, 70, 50, 85, 65].map((h, i) => (
-                  <div
-                    key={i}
-                    className="flex-1 rounded-sm bg-brand"
-                    style={{ height: `${h}%` }}
-                  />
+                  <div key={i} className="flex-1 rounded-sm" style={{ height: `${h}%`, backgroundColor: "#0822C0" }} />
                 ))}
+              </div>
+            </div>
+
+            {/* Floating rating badge */}
+            <div className="absolute top-10 right-10 bg-white dark:bg-[#111827] rounded-2xl shadow-2xl px-4 py-3 flex items-center gap-3">
+              <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-bold shrink-0" style={{ backgroundColor: "#0822C0" }}>A</div>
+              <div>
+                <p className="text-[11px] font-semibold text-gray-900 dark:text-white">Finance with Anne</p>
+                <div className="flex items-center gap-0.5 mt-0.5">
+                  {[1,2,3,4,5].map((s) => (
+                    <svg key={s} className="w-3 h-3 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  ))}
+                  <span className="text-[11px] text-gray-400 ml-1">4.9</span>
+                </div>
               </div>
             </div>
           </div>
