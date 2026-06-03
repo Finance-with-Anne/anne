@@ -157,16 +157,16 @@ export default function Navbar() {
   }
 
   return (
-    <header className="w-full border-b border-gray-200 dark:border-white/5 bg-white/95 dark:bg-[#050910]/95 backdrop-blur transition-colors duration-200">
+    <header className="relative w-full border-b border-gray-200 dark:border-white/5 bg-white/95 dark:bg-[#050910]/95 backdrop-blur transition-colors duration-200">
       <div className="flex h-16 w-full items-center justify-between px-6 sm:px-10 lg:px-16">
-        <div className="flex items-center gap-8">
-          <Link href="/" className="flex items-center gap-2.5 shrink-0">
-            <img src="/fwa-light.svg" alt="Finance with Anne" className="h-8 w-8" />
-            <span className="text-sm font-bold tracking-wide dark:text-white" style={{ color: dark ? undefined : "#0822C0" }}>FINANCE WITH ANNE</span>
-          </Link>
+        {/* Logo */}
+        <Link href="/" className="flex items-center gap-2.5 shrink-0">
+          <img src="/fwa-light.svg" alt="Finance with Anne" className="h-8 w-8" />
+          <span className="text-sm font-bold tracking-wide dark:text-white" style={{ color: dark ? undefined : "#0822C0" }}>FINANCE WITH ANNE</span>
+        </Link>
 
-          {/* Desktop nav */}
-          <nav className="hidden items-center gap-6 lg:flex">
+        {/* Desktop nav — centred */}
+        <nav className="absolute left-1/2 -translate-x-1/2 hidden items-center gap-6 lg:flex">
           {topLinks.map((link) => (
             <Link
               key={link.href}
@@ -319,7 +319,6 @@ export default function Navbar() {
             )}
           </div>
         </nav>
-        </div>
 
         <div className="hidden lg:flex items-center gap-2">
           {/* Dark mode toggle */}
