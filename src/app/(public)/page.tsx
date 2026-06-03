@@ -46,8 +46,13 @@ export default async function HomePage() {
                     />
                   ))
                 ) : (
-                  ["#d4c5b0", "#b0c5d4", "#c5d4b0", "#d4b0c5"].map((bg, i) => (
-                    <div key={i} className="w-9 h-9 rounded-full border-2 border-white dark:border-[#0d1220]" style={{ backgroundColor: bg }} />
+                  [
+                    "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=80&h=80&fit=crop&crop=face&auto=format",
+                    "https://images.unsplash.com/photo-1531384441138-2736e62e0919?w=80&h=80&fit=crop&crop=face&auto=format",
+                    "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=80&h=80&fit=crop&crop=face&auto=format",
+                    "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&h=80&fit=crop&crop=face&auto=format",
+                  ].map((src, i) => (
+                    <img key={i} src={src} alt="Client" className="w-9 h-9 rounded-full border-2 border-white dark:border-[#0d1220] object-cover" />
                   ))
                 )}
                 <div className="w-9 h-9 rounded-full border-2 border-white dark:border-[#0d1220] bg-gray-900 dark:bg-white flex items-center justify-center">
