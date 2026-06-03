@@ -80,7 +80,7 @@ export default async function HomePage() {
 
           {/* Right — image bleeding to edge */}
           <div className="relative hidden lg:block">
-            <div className="absolute inset-0 bg-[#dde3f9] dark:bg-[#0f1628]" />
+            <div className="absolute inset-0 bg-white dark:bg-[#0f1628]" />
 
             {/* Floating stat card */}
             <div className="absolute bottom-10 left-8 bg-white dark:bg-[#111827] rounded-2xl shadow-2xl p-4 w-48">
