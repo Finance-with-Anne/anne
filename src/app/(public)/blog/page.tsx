@@ -3,7 +3,7 @@ import { supabaseAdmin } from "@/lib/supabase/admin";
 import type { BlogPost, Category } from "@/types";
 import BlogListClient from "@/components/public/BlogListClient";
 
-export const metadata = { title: "Blog — Finance with Anne" };
+export const metadata = { title: "Money Talks — Finance with Anne" };
 
 export default async function BlogPage() {
   const supabase = await createClient();

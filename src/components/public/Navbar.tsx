@@ -30,13 +30,7 @@ function IconStar() {
     </svg>
   );
 }
-function IconBag() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-5 w-5">
-      <path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-    </svg>
-  );
-}
+
 function IconLayers() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-5 w-5">
@@ -74,9 +68,9 @@ const leftLinks = [
 ];
 
 const rightLinks = [
-  { label: "Shop", href: "/shop", desc: "Books, tools and resources", icon: <IconBag />, bg: "bg-orange-100 text-orange-600" },
   { label: "Products & Services", href: "/products-services", desc: "Work with Anne", icon: <IconLayers />, bg: "bg-rose-100 text-rose-600" },
   { label: "Book a Session", href: "/booking", desc: "Schedule time with Anne", icon: <IconCalendar />, bg: "bg-indigo-100 text-indigo-600" },
+  { label: "Contact", href: "/contact", desc: "Get in touch", icon: <IconQuestion />, bg: "bg-blue-100 text-blue-600" },
   { label: "Privacy & Terms", href: "/policy", desc: "Legal policies and terms", icon: <IconPolicy />, bg: "bg-gray-100 text-gray-600" },
 ];
 
@@ -84,7 +78,8 @@ const rightLinks = [
 const topLinks = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about" },
-  { label: "Contact", href: "/contact" },
+  { label: "Money Talks", href: "/blog" },
+  { label: "Shop", href: "/shop" },
 ];
 
 // ── Component ─────────────────────────────────────────────────────────────────
