@@ -158,7 +158,7 @@ export default function Navbar() {
 
   return (
     <header className="relative w-full border-b border-gray-200 dark:border-white/5 bg-white/95 dark:bg-[#050910]/95 backdrop-blur transition-colors duration-200">
-      <div className="flex h-16 w-full items-center justify-between px-4 sm:px-6 lg:px-20">
+      <div className="flex h-16 w-full items-center justify-between px-4 sm:px-6 lg:px-32">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5 shrink-0">
           <img src="/fwa-light.svg" alt="Finance with Anne" className="h-8 w-8" />
