@@ -410,7 +410,7 @@ export default function Navbar() {
             {mobileResourcesOpen && (
               <div className="ml-3 border-l-2 border-gray-100 pl-3">
                 <p className="py-1 text-xs font-semibold uppercase tracking-widest text-gray-400">Content</p>
-                {leftLinks.map((item) => (
+                {col1Links.map((item) => (
                   <Link
                     key={item.href}
                     href={item.href}
@@ -423,8 +423,22 @@ export default function Navbar() {
                     {item.label}
                   </Link>
                 ))}
-                <p className="mt-2 py-1 text-xs font-semibold uppercase tracking-widest text-gray-400">Explore</p>
-                {rightLinks.map((item) => (
+                <p className="mt-2 py-1 text-xs font-semibold uppercase tracking-widest text-gray-400">Buy</p>
+                {col2Links.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => { setMobileOpen(false); setMobileResourcesOpen(false); }}
+                    className="flex items-center gap-2.5 rounded-lg px-2 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-black"
+                  >
+                    <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md ${item.bg}`}>
+                      {item.icon}
+                    </span>
+                    {item.label}
+                  </Link>
+                ))}
+                <p className="mt-2 py-1 text-xs font-semibold uppercase tracking-widest text-gray-400">Quick Links</p>
+                {col3Links.map((item) => (
                   <Link
                     key={item.href}
                     href={item.href}
