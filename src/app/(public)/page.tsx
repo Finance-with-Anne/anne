@@ -20,7 +20,7 @@ export default async function HomePage() {
       {/* ══════════════════════════════════════
           HERO
       ══════════════════════════════════════ */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+      <section className="w-full px-6 sm:px-10 lg:px-16 py-16 sm:py-24">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
 
           {/* Left */}
