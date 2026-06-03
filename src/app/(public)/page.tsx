@@ -21,7 +21,7 @@ export default async function HomePage() {
       {/* ══════════════════════════════════════
           HERO
       ══════════════════════════════════════ */}
-      <section className="w-full bg-[#eef1ff] dark:bg-[#070d1a] p-6 sm:p-10 lg:p-16">
+      <section className="w-full bg-[#eef1ff] dark:bg-[#070d1a] p-4 sm:p-6 lg:p-8">
         <div className="overflow-hidden rounded-2xl grid lg:grid-cols-2 min-h-[660px] bg-white dark:bg-[#0d1220] shadow-sm">
 
           {/* Left — text */}
