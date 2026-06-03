@@ -24,7 +24,7 @@ export default async function HomePage() {
         <div className="grid lg:grid-cols-2 min-h-[640px]">
 
           {/* Left — text */}
-          <div className="flex flex-col justify-center px-8 sm:px-12 lg:px-16 py-20">
+          <div className="flex flex-col justify-center px-4 sm:px-6 lg:px-32 py-20">
             <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-gray-400 dark:text-white/30 mb-6">
               Finance with Anne
             </p>
