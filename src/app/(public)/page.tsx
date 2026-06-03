@@ -21,7 +21,7 @@ export default async function HomePage() {
           HERO
       ══════════════════════════════════════ */}
       <section className="w-full bg-[#eef1ff] dark:bg-[#070d1a] p-6 sm:p-10 lg:p-16">
-        <div className="overflow-hidden rounded-2xl grid lg:grid-cols-2 min-h-[600px] bg-white dark:bg-[#0d1220] shadow-sm">
+        <div className="overflow-hidden rounded-2xl grid lg:grid-cols-2 min-h-[780px] bg-white dark:bg-[#0d1220] shadow-sm">
 
           {/* Left — text */}
           <div className="flex flex-col justify-center py-16 px-10 lg:px-14">
