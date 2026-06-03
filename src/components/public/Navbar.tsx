@@ -62,7 +62,7 @@ function IconChevron({ open }: { open: boolean }) {
 
 // ── Mega menu data ────────────────────────────────────────────────────────────
 const leftLinks = [
-  { label: "Money Talks", href: "/blog", desc: "Financial conversations and advice", icon: <IconMoney />, bg: "bg-green-100 text-green-600" },
+  { label: "Money-Talks", href: "/blog", desc: "Financial conversations and advice", icon: <IconMoney />, bg: "bg-green-100 text-green-600" },
   { label: "FAQ", href: "/faq", desc: "Common questions answered", icon: <IconQuestion />, bg: "bg-blue-100 text-blue-600" },
   { label: "Testimonials", href: "/testimonials", desc: "What my clients say", icon: <IconStar />, bg: "bg-yellow-100 text-yellow-600" },
 ];
@@ -78,7 +78,7 @@ const rightLinks = [
 const topLinks = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about" },
-  { label: "Money Talks", href: "/blog" },
+  { label: "Money-Talks", href: "/blog" },
   { label: "Shop", href: "/shop" },
 ];
 
