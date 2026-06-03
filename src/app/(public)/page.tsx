@@ -20,12 +20,12 @@ export default async function HomePage() {
       {/* ══════════════════════════════════════
           HERO
       ══════════════════════════════════════ */}
-      <section className="w-full overflow-hidden bg-[#eef1ff] dark:bg-[#070d1a]">
-        <div className="grid lg:grid-cols-2 min-h-[640px]">
+      <section className="w-full bg-[#eef1ff] dark:bg-[#070d1a] px-6 sm:px-10 lg:px-16 py-8">
+        <div className="overflow-hidden rounded-2xl grid lg:grid-cols-2 min-h-[600px] bg-white dark:bg-[#0d1220] shadow-sm">
 
           {/* Left — text */}
-          <div className="flex flex-col justify-center py-20">
-            <div className="mx-auto w-full max-w-xl px-6 lg:px-0 lg:ml-auto lg:mr-16 xl:mr-24">
+          <div className="flex flex-col justify-center py-16 px-10 lg:px-14">
+            <div className="w-full max-w-lg">
             <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-gray-400 dark:text-white/30 mb-6">
               Finance with Anne
             </p>
@@ -47,15 +47,15 @@ export default async function HomePage() {
                       key={t.id}
                       src={t.image_url!}
                       alt={t.name}
-                      className="w-9 h-9 rounded-full border-2 border-[#eef1ff] dark:border-[#070d1a] object-cover"
+                      className="w-9 h-9 rounded-full border-2 border-white dark:border-[#0d1220] object-cover"
                     />
                   ))
                 ) : (
                   ["#d4c5b0", "#b0c5d4", "#c5d4b0", "#d4b0c5"].map((bg, i) => (
-                    <div key={i} className="w-9 h-9 rounded-full border-2 border-[#eef1ff] dark:border-[#070d1a]" style={{ backgroundColor: bg }} />
+                    <div key={i} className="w-9 h-9 rounded-full border-2 border-white dark:border-[#0d1220]" style={{ backgroundColor: bg }} />
                   ))
                 )}
-                <div className="w-9 h-9 rounded-full border-2 border-[#eef1ff] dark:border-[#070d1a] bg-gray-900 dark:bg-white flex items-center justify-center">
+                <div className="w-9 h-9 rounded-full border-2 border-white dark:border-[#0d1220] bg-gray-900 dark:bg-white flex items-center justify-center">
                   <span className="text-white dark:text-gray-900 text-[9px] font-bold">1K+</span>
                 </div>
               </div>
