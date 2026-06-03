@@ -1,4 +1,5 @@
 import Link from "next/link";
+import HeroSlider from "@/components/public/HeroSlider";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import type { Testimonial, BookingSession } from "@/types";
 
@@ -30,13 +31,7 @@ export default async function HomePage() {
               Finance with Anne
             </p>
 
-            <h1 className="text-5xl sm:text-6xl lg:text-[3.75rem] font-bold text-gray-900 dark:text-white leading-[1.08] tracking-tight">
-              Take control of your financial future
-            </h1>
-
-            <p className="mt-6 text-gray-500 dark:text-white/45 text-base leading-relaxed max-w-[420px]">
-              Personalised 1:1 coaching, courses, and a supportive community to help you build lasting wealth and achieve financial freedom.
-            </p>
+            <HeroSlider />
 
             {/* Social proof */}
             <div className="mt-8 flex items-center gap-3">
