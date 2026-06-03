@@ -8,13 +8,7 @@ import { usePublicTheme } from "@/components/public/PublicThemeProvider";
 type Post = { id: string; title: string; slug: string; excerpt: string | null; cover_image: string | null; published_at: string | null };
 
 // ── Icons ─────────────────────────────────────────────────────────────────────
-function IconBook() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-5 w-5">
-      <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-    </svg>
-  );
-}
+
 function IconMoney() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-5 w-5">
@@ -74,8 +68,7 @@ function IconChevron({ open }: { open: boolean }) {
 
 // ── Mega menu data ────────────────────────────────────────────────────────────
 const leftLinks = [
-  { label: "Blog", href: "/blog", desc: "Insights, tips and strategies", icon: <IconBook />, bg: "bg-purple-100 text-purple-600" },
-  { label: "Money Talks", href: "/money-talks", desc: "Financial conversations and advice", icon: <IconMoney />, bg: "bg-green-100 text-green-600" },
+  { label: "Money Talks", href: "/blog", desc: "Financial conversations and advice", icon: <IconMoney />, bg: "bg-green-100 text-green-600" },
   { label: "FAQ", href: "/faq", desc: "Common questions answered", icon: <IconQuestion />, bg: "bg-blue-100 text-blue-600" },
   { label: "Testimonials", href: "/testimonials", desc: "What my clients say", icon: <IconStar />, bg: "bg-yellow-100 text-yellow-600" },
 ];
@@ -91,7 +84,6 @@ const rightLinks = [
 const topLinks = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about" },
-  { label: "Money Talks", href: "/money-talks" },
   { label: "Contact", href: "/contact" },
 ];
 
