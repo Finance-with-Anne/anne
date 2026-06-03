@@ -111,7 +111,7 @@ const col1Links = [
 
 const col2Links = [
   { label: "Products & Services", href: "/products-services", desc: "Work with Anne", icon: <IconLayers />, bg: "bg-rose-100 text-rose-600" },
-  { label: "Templates", href: "/shop?type=templates", desc: "Ready-made financial templates", icon: <IconTemplate />, bg: "bg-orange-100 text-orange-600" },
+  { label: "Templates", href: "/shop?type=templates", desc: "Ready made templates", icon: <IconTemplate />, bg: "bg-orange-100 text-orange-600" },
   { label: "Calculators", href: "/calculators", desc: "Free financial calculators", icon: <IconCalculator />, bg: "bg-teal-100 text-teal-600" },
   { label: "Testimonials", href: "/testimonials", desc: "What my clients say", icon: <IconStar />, bg: "bg-yellow-100 text-yellow-600" },
 ];
