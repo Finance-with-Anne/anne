@@ -83,10 +83,73 @@ export default async function HomePage() {
             </div>
           </div>
 
-          {/* Right — image bleeding to edge */}
-          <div className="relative hidden lg:block">
-            <div className="absolute inset-0 bg-white dark:bg-[#0f1628]" />
+          {/* Right — hero collage */}
+          <div className="relative hidden lg:block overflow-hidden">
+            <div className="absolute inset-0 bg-[#f4f5f7] dark:bg-[#0f1628]" />
 
+            {/* Image 1 — sage green bg, top-left */}
+            <div
+              className="absolute rounded-2xl overflow-hidden bg-[#b5c9a0] dark:bg-[#2a3d20]"
+              style={{ top: "8%", left: "5%", width: "43%", height: "49%", zIndex: 1 }}
+            >
+              <img
+                src={heroImage ?? "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=340&h=460&fit=crop&crop=top&auto=format"}
+                alt=""
+                className="w-full h-full object-cover object-top"
+              />
+            </div>
+
+            {/* Stats card — dark, top-right, overlapping img1 */}
+            <div
+              className="absolute rounded-2xl p-4"
+              style={{ top: "5%", right: "5%", width: "44%", zIndex: 3, backgroundColor: "#0d1117" }}
+            >
+              <p className="text-[10px] tracking-wide text-white/40 mb-1">Total Clients</p>
+              <div className="flex items-baseline gap-2">
+                <span className="text-[22px] font-bold text-white leading-none">1,200</span>
+                <span className="text-[10px] text-white/35">View more</span>
+              </div>
+              <div className="mt-3 pt-2.5 border-t border-white/10 flex items-center gap-1.5">
+                <span className="text-[10px] text-white/35">Source:</span>
+                <span className="text-[10px] font-semibold text-white/55">Finance with Anne</span>
+              </div>
+            </div>
+
+            {/* Image 2 — lavender bg, bottom-right, taller */}
+            <div
+              className="absolute overflow-hidden bg-[#c0b0e8] dark:bg-[#2a1f4a] rounded-tl-2xl"
+              style={{ top: "30%", right: 0, bottom: 0, width: "53%", zIndex: 2 }}
+            >
+              <img
+                src="https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?w=380&h=520&fit=crop&crop=top&auto=format"
+                alt=""
+                className="w-full h-full object-cover object-top"
+              />
+            </div>
+
+            {/* Orange Z-shape — in the gap below img1, left of img2 */}
+            <div
+              className="absolute pointer-events-none"
+              style={{ bottom: "26%", left: "10%", width: 158, height: 70, zIndex: 4 }}
+            >
+              <div
+                className="absolute bg-orange-500"
+                style={{ width: 132, height: 34, borderRadius: 3, transform: "rotate(-8deg)", top: 0, left: 0 }}
+              />
+              <div
+                className="absolute bg-orange-500"
+                style={{ width: 132, height: 34, borderRadius: 3, transform: "rotate(-8deg)", top: 23, left: 20 }}
+              />
+            </div>
+
+            {/* 500+ badge — overlapping img2 */}
+            <div
+              className="absolute rounded-full flex flex-col items-center justify-center text-white text-center leading-tight"
+              style={{ width: 70, height: 70, bottom: "28%", right: "9%", backgroundColor: "#0822C0", zIndex: 10 }}
+            >
+              <span className="text-[15px] font-bold leading-none">500+</span>
+              <span className="text-[10px] mt-0.5">Clients</span>
+            </div>
           </div>
 
         </div>
