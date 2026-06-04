@@ -1,5 +1,6 @@
 import Link from "next/link";
 import HeroSlider from "@/components/public/HeroSlider";
+import CoreFeatures from "@/components/public/CoreFeatures";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import type { Testimonial, BookingSession } from "@/types";
 
@@ -96,53 +97,9 @@ export default async function HomePage() {
       </section>
 
       {/* ══════════════════════════════════════
-          CORE FEATURES — dark section
+          CORE FEATURES — dark blue section
       ══════════════════════════════════════ */}
-      <section className="bg-[#152a1c] dark:bg-[#0d1f13] px-4 sm:px-6 lg:px-8 py-20">
-        <div className="mx-auto max-w-6xl">
-
-          {/* Top row: label left + 2×2 feature grid right */}
-          <div className="grid lg:grid-cols-2 gap-12 items-start">
-            <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/35">
-                What we offer
-              </p>
-            </div>
-
-            <div className="grid grid-cols-2 gap-x-10 gap-y-10">
-              {[
-                { n: "01", title: "1:1 Coaching", desc: "Personalised sessions tailored to your financial situation and goals." },
-                { n: "02", title: "Money Talks", desc: "A live community where we talk money, mindset, and wealth." },
-                { n: "03", title: "Courses & Resources", desc: "Self-paced learning to sharpen your financial knowledge." },
-                { n: "04", title: "Financial Planning", desc: "Custom roadmaps to help you reach your money milestones faster." },
-              ].map((f) => (
-                <div key={f.n}>
-                  <p className="text-xs font-semibold text-white/25 mb-2">{f.n}</p>
-                  <h3 className="text-[15px] font-semibold text-white leading-snug">{f.title}</h3>
-                  <p className="mt-2 text-sm text-white/45 leading-relaxed">{f.desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Bottom row: large heading left + image right */}
-          <div className="mt-20 grid lg:grid-cols-2 gap-12 items-end">
-            <div>
-              <h2 className="text-3xl sm:text-4xl font-bold text-white leading-snug">
-                Everything you need to transform your finances
-              </h2>
-              <p className="mt-4 text-sm text-white/45 leading-relaxed max-w-sm">
-                From coaching to community, we give you the tools, knowledge, and support to take control of your money for good.
-              </p>
-            </div>
-
-            <div className="rounded-2xl overflow-hidden bg-[#1e3d28] aspect-video">
-              {/* Placeholder — swap for a real photo */}
-            </div>
-          </div>
-
-        </div>
-      </section>
+      <CoreFeatures />
 
       {/* ══════════════════════════════════════
           ABOUT / EMPOWERING
