@@ -7,7 +7,7 @@ export default async function EditCoursePage({ params }: { params: Promise<{ id:
   const [{ data: course }, { data: categories }, { data: tags }, { data: tagAssignments }] = await Promise.all([
     supabaseAdmin
       .from("courses")
-      .select("*, lessons(*), sections:course_sections(*, lessons(*))")
+      .select("*, curriculum, sections:course_sections(*, lessons(*))")
       .eq("id", id)
       .single(),
     supabaseAdmin.from("course_categories").select("*").order("name"),
@@ -23,7 +23,7 @@ export default async function EditCoursePage({ params }: { params: Promise<{ id:
     <CourseWizard
       categories={categories ?? []}
       tags={tags ?? []}
-      initialData={{ ...course, lessons: course.lessons ?? [], tag_ids }}
+      initialData={{ ...course, lessons: (course as any).lessons ?? [], tag_ids }}
     />
   );
 }

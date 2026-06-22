@@ -39,8 +39,8 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ i
       .from("courses")
       .select(`
         *,
+        curriculum,
         category:course_categories(id, name, color),
-        sections:course_sections(*, lessons(*)),
         tags:course_tag_assignments(tag:course_tags(id, name, slug))
       `)
       .eq("id", id)
@@ -57,11 +57,26 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ i
 
   if (!course) notFound();
 
-  const sections = (course.sections ?? [])
-    .sort((a: any, b: any) => a.sort_order - b.sort_order)
+  // Read curriculum from JSONB field; fall back to empty
+  const rawCurriculum: any[] = Array.isArray((course as any).curriculum)
+    ? (course as any).curriculum
+    : [];
+
+  const sections = rawCurriculum
+    .sort((a: any, b: any) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
     .map((s: any) => ({
-      ...s,
-      lessons: (s.lessons ?? []).sort((a: any, b: any) => a.order - b.order),
+      id: s.id,
+      title: s.title,
+      sort_order: s.sort_order ?? 0,
+      lessons: (s.lessons ?? [])
+        .sort((a: any, b: any) => (a.order ?? 0) - (b.order ?? 0))
+        .map((l: any) => ({
+          id: l.id,
+          title: l.title,
+          type: l.type ?? "video",
+          duration: l.duration ?? 0,
+          order: l.order ?? 0,
+        })),
     }));
 
   const tags = (course.tags ?? []).map((t: any) => t.tag).filter(Boolean);

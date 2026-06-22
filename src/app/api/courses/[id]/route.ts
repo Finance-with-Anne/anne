@@ -45,7 +45,9 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorised." }, { status: 401 });
 
-  const { sections, tag_ids, ...courseData } = await req.json();
+  const { tag_ids, ...courseData } = await req.json();
+
+  // curriculum is included in courseData as a JSONB field — just update it
   const { data, error } = await supabase
     .from("courses")
     .update({ ...courseData, updated_at: new Date().toISOString() })
@@ -53,27 +55,6 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     .select()
     .single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-
-  if (sections !== undefined) {
-    // Delete and recreate all sections + lessons using admin client (bypasses RLS)
-    await supabaseAdmin.from("lessons").delete().eq("course_id", id);
-    await supabaseAdmin.from("course_sections").delete().eq("course_id", id);
-    for (const section of sections) {
-      const { lessons, ...sectionData } = section;
-      const { data: sec, error: secErr } = await supabaseAdmin
-        .from("course_sections")
-        .insert({ ...sectionData, id: undefined, course_id: id })
-        .select()
-        .single();
-      if (secErr) { console.error("section insert error:", secErr.message); continue; }
-      if (lessons?.length) {
-        const { error: lessonErr } = await supabaseAdmin.from("lessons").insert(
-          lessons.map((l: any) => ({ ...l, id: undefined, course_id: id, section_id: sec.id }))
-        );
-        if (lessonErr) console.error("lesson insert error:", lessonErr.message);
-      }
-    }
-  }
 
   if (tag_ids !== undefined) {
     await supabaseAdmin.from("course_tag_assignments").delete().eq("course_id", id);
@@ -95,8 +76,6 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorised." }, { status: 401 });
 
-  await supabaseAdmin.from("lessons").delete().eq("course_id", id);
-  await supabaseAdmin.from("course_sections").delete().eq("course_id", id);
   await supabaseAdmin.from("course_tag_assignments").delete().eq("course_id", id);
   await supabaseAdmin.from("products").delete().eq("source_type", "course").eq("source_id", id);
   const { error } = await supabase.from("courses").delete().eq("id", id);

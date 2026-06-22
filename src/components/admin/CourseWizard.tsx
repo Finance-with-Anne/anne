@@ -54,33 +54,54 @@ export default function CourseWizard({ categories, tags, initialData }: CourseWi
   const [dragOver, setDragOver] = useState(false);
   const dragCounter = useRef(0);
 
-  // Step 2
+  // Step 2 — load from JSONB curriculum field (source of truth going forward)
   const [sections, setSections] = useState<WizardSection[]>(() => {
-    if (initialData?.sections?.length) {
-      return initialData.sections.map(s => ({
-        id: s.id,
-        title: s.title,
-        lessons: (s.lessons ?? []).map(l => ({
-          id: l.id,
-          title: l.title,
-          type: l.type,
+    const raw: any = (initialData as any)?.curriculum;
+    // curriculum JSONB field takes priority
+    if (Array.isArray(raw) && raw.length > 0) {
+      return raw.map((s: any) => ({
+        id: s.id ?? tmpId(),
+        title: s.title ?? "",
+        lessons: (s.lessons ?? []).map((l: any) => ({
+          id: l.id ?? tmpId(),
+          title: l.title ?? "",
+          type: l.type ?? "video",
           video_url: l.video_url ?? "",
           content: l.content ?? "",
-          duration: l.duration,
+          duration: l.duration ?? 0,
         })),
       }));
     }
+    // Fallback: old sections relation (pre-JSONB courses)
+    if (initialData?.sections?.length) {
+      const hasLessons = initialData.sections.some((s: any) => s.lessons?.length > 0);
+      if (hasLessons) {
+        return initialData.sections.map((s: any) => ({
+          id: s.id,
+          title: s.title,
+          lessons: (s.lessons ?? []).map((l: any) => ({
+            id: l.id,
+            title: l.title,
+            type: l.type ?? "video",
+            video_url: l.video_url ?? "",
+            content: l.content ?? "",
+            duration: l.duration ?? 0,
+          })),
+        }));
+      }
+    }
+    // Fallback: flat lessons (original schema)
     if (initialData?.lessons?.length) {
       return [{
         id: tmpId(),
         title: "Section 1",
-        lessons: initialData.lessons.map(l => ({
+        lessons: initialData.lessons.map((l: any) => ({
           id: l.id,
           title: l.title,
-          type: l.type,
+          type: l.type ?? "video",
           video_url: l.video_url ?? "",
           content: l.content ?? "",
-          duration: l.duration,
+          duration: l.duration ?? 0,
         })),
       }];
     }
@@ -195,7 +216,8 @@ export default function CourseWizard({ categories, tags, initialData }: CourseWi
       language,
       thumbnail_url: thumbnail || null,
       tag_ids: selectedTags,
-      sections: sections.map((s, si) => ({
+      // Curriculum stored as JSONB — no separate course_sections/lessons inserts needed
+      curriculum: sections.map((s, si) => ({
         id: s.id,
         title: s.title,
         sort_order: si,

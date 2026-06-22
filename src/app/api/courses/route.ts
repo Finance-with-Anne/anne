@@ -45,28 +45,15 @@ export async function POST(req: NextRequest) {
   if (!user) return NextResponse.json({ error: "Unauthorised." }, { status: 401 });
 
   const body = await req.json();
-  const { sections, tag_ids, ...courseData } = body;
+  const { tag_ids, ...courseData } = body;
 
-  const { data: course, error } = await supabase.from("courses").insert(courseData).select().single();
+  // curriculum is stored as JSONB directly on the courses row
+  const { data: course, error } = await supabase
+    .from("courses")
+    .insert(courseData)
+    .select()
+    .single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-
-  if (sections?.length) {
-    for (const section of sections) {
-      const { lessons, ...sectionData } = section;
-      const { data: sec, error: secErr } = await supabaseAdmin
-        .from("course_sections")
-        .insert({ ...sectionData, id: undefined, course_id: course.id })
-        .select()
-        .single();
-      if (secErr) { console.error("section insert error:", secErr.message); continue; }
-      if (lessons?.length) {
-        const { error: lessonErr } = await supabaseAdmin.from("lessons").insert(
-          lessons.map((l: any) => ({ ...l, id: undefined, course_id: course.id, section_id: sec.id }))
-        );
-        if (lessonErr) console.error("lesson insert error:", lessonErr.message);
-      }
-    }
-  }
 
   if (tag_ids?.length) {
     await supabaseAdmin.from("course_tag_assignments").insert(
