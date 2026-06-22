@@ -135,8 +135,8 @@ export default function AdminSidebar({ userRole, userName, userEmail, userAvatar
                   <div className={`ml-4 mt-0.5 mb-1 space-y-0.5 border-l pl-3 ${dark ? "border-white/5" : "border-gray-200"}`}>
                     {[
                       { label: "All Products", href: "/admin/products/all" },
-                      { label: "Categories",   href: "/admin/products/categories" },
                       { label: "Add New",      href: "/admin/products/new" },
+                      { label: "Categories",   href: "/admin/products/categories" },
                     ].map((sub) => (
                       <Link key={sub.href} href={sub.href}
                         className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-xs transition-colors ${
