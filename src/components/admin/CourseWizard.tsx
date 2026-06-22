@@ -37,6 +37,8 @@ export default function CourseWizard({ categories, tags, initialData }: CourseWi
   const [saving, setSaving] = useState(false);
   const [autoSaving, setAutoSaving] = useState(false);
   const [savedAt, setSavedAt] = useState<Date | null>(null);
+  const [justSaved, setJustSaved] = useState(false);
+  const [fetchingDuration, setFetchingDuration] = useState<string | null>(null);
   const [error, setError] = useState("");
   const courseIdRef = useRef<string | undefined>(initialData?.id);
 
@@ -214,8 +216,23 @@ export default function CourseWizard({ categories, tags, initialData }: CourseWi
       const data = await res.json();
       if (!courseIdRef.current) courseIdRef.current = data.id;
       setSavedAt(new Date());
+      setJustSaved(true);
+      setTimeout(() => setJustSaved(false), 2500);
     }
     setAutoSaving(false);
+  }
+
+  async function handleVideoUrlBlur(sid: string, lid: string, url: string) {
+    if (!url.trim() || fetchingDuration === lid) return;
+    setFetchingDuration(lid);
+    try {
+      const res = await fetch(`/api/video-info?url=${encodeURIComponent(url)}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.duration) updateLesson(sid, lid, "duration", data.duration);
+      }
+    } catch {}
+    setFetchingDuration(null);
   }
 
   async function handleStepClick(targetStep: number) {
@@ -466,6 +483,9 @@ export default function CourseWizard({ categories, tags, initialData }: CourseWi
                           placeholder="Lesson title"
                           className={`flex-1 rounded-lg border px-3 py-2 text-sm focus:outline-none transition-colors ${inputClass}`}
                         />
+                        {justSaved && (
+                          <span className="shrink-0 text-[10px] font-medium text-green-400 animate-pulse">✓ saved</span>
+                        )}
                         {/* Type picker */}
                         <div className="flex gap-0.5 shrink-0">
                           {(["video", "text", "quiz"] as const).map(t => (
@@ -514,16 +534,23 @@ export default function CourseWizard({ categories, tags, initialData }: CourseWi
                             type="text"
                             value={lesson.video_url}
                             onChange={e => updateLesson(section.id, lesson.id, "video_url", e.target.value)}
+                            onBlur={e => handleVideoUrlBlur(section.id, lesson.id, e.target.value)}
                             placeholder="YouTube / Vimeo URL"
                             className={`rounded-lg border px-3 py-2 text-xs focus:outline-none transition-colors ${inputClass}`}
                           />
-                          <input
-                            type="number"
-                            value={lesson.duration || ""}
-                            onChange={e => updateLesson(section.id, lesson.id, "duration", parseInt(e.target.value) || 0)}
-                            placeholder="Duration (mins)"
-                            className={`rounded-lg border px-3 py-2 text-xs focus:outline-none transition-colors ${inputClass}`}
-                          />
+                          <div className="relative">
+                            <input
+                              type="number"
+                              value={lesson.duration || ""}
+                              onChange={e => updateLesson(section.id, lesson.id, "duration", parseInt(e.target.value) || 0)}
+                              placeholder={fetchingDuration === lesson.id ? "Detecting…" : "Duration (mins)"}
+                              disabled={fetchingDuration === lesson.id}
+                              className={`w-full rounded-lg border px-3 py-2 text-xs focus:outline-none transition-colors ${inputClass} ${fetchingDuration === lesson.id ? "opacity-50" : ""}`}
+                            />
+                            {fetchingDuration === lesson.id && (
+                              <span className={`absolute right-2.5 top-1/2 -translate-y-1/2 text-[9px] font-medium ${sub}`}>●</span>
+                            )}
+                          </div>
                         </div>
                       )}
 
