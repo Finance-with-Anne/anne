@@ -222,8 +222,9 @@ export default function CourseWizard({ categories, tags, initialData }: CourseWi
     setAutoSaving(false);
   }
 
-  async function handleVideoUrlBlur(sid: string, lid: string, url: string) {
+  async function fetchVideoInfo(sid: string, lid: string, url: string) {
     if (!url.trim() || fetchingDuration === lid) return;
+    if (!url.includes("youtu")) return;
     setFetchingDuration(lid);
     try {
       const res = await fetch(`/api/video-info?url=${encodeURIComponent(url)}`);
@@ -534,22 +535,42 @@ export default function CourseWizard({ categories, tags, initialData }: CourseWi
                             type="text"
                             value={lesson.video_url}
                             onChange={e => updateLesson(section.id, lesson.id, "video_url", e.target.value)}
-                            onBlur={e => handleVideoUrlBlur(section.id, lesson.id, e.target.value)}
+                            onBlur={e => fetchVideoInfo(section.id, lesson.id, e.target.value)}
+                            onPaste={e => {
+                              const pasted = e.clipboardData.getData("text");
+                              setTimeout(() => fetchVideoInfo(section.id, lesson.id, pasted), 50);
+                            }}
                             placeholder="YouTube / Vimeo URL"
                             className={`rounded-lg border px-3 py-2 text-xs focus:outline-none transition-colors ${inputClass}`}
                           />
-                          <div className="relative">
+                          <div className="relative flex gap-1">
                             <input
                               type="number"
                               value={lesson.duration || ""}
                               onChange={e => updateLesson(section.id, lesson.id, "duration", parseInt(e.target.value) || 0)}
                               placeholder={fetchingDuration === lesson.id ? "Detecting…" : "Duration (mins)"}
                               disabled={fetchingDuration === lesson.id}
-                              className={`w-full rounded-lg border px-3 py-2 text-xs focus:outline-none transition-colors ${inputClass} ${fetchingDuration === lesson.id ? "opacity-50" : ""}`}
+                              className={`flex-1 rounded-lg border px-3 py-2 text-xs focus:outline-none transition-colors ${inputClass} ${fetchingDuration === lesson.id ? "opacity-50" : ""}`}
                             />
-                            {fetchingDuration === lesson.id && (
-                              <span className={`absolute right-2.5 top-1/2 -translate-y-1/2 text-[9px] font-medium ${sub}`}>●</span>
-                            )}
+                            <button
+                              type="button"
+                              onClick={() => fetchVideoInfo(section.id, lesson.id, lesson.video_url)}
+                              disabled={!lesson.video_url || fetchingDuration === lesson.id}
+                              title="Auto-detect duration"
+                              className={`shrink-0 h-[34px] w-[34px] rounded-lg border flex items-center justify-center transition-colors
+                                ${dark ? "border-white/5 text-white/30 hover:text-white/60 hover:bg-white/5 disabled:opacity-20" : "border-gray-200 text-gray-400 hover:text-gray-600 hover:bg-gray-100 disabled:opacity-30"}`}
+                            >
+                              {fetchingDuration === lesson.id ? (
+                                <svg className="h-3 w-3 animate-spin" fill="none" viewBox="0 0 24 24">
+                                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
+                                </svg>
+                              ) : (
+                                <svg className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                                </svg>
+                              )}
+                            </button>
                           </div>
                         </div>
                       )}
