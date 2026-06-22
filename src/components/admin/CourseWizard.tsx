@@ -35,7 +35,10 @@ export default function CourseWizard({ categories, tags, initialData }: CourseWi
   const router = useRouter();
   const [step, setStep] = useState(0);
   const [saving, setSaving] = useState(false);
+  const [autoSaving, setAutoSaving] = useState(false);
+  const [savedAt, setSavedAt] = useState<Date | null>(null);
   const [error, setError] = useState("");
+  const courseIdRef = useRef<string | undefined>(initialData?.id);
 
   // Step 1
   const [title, setTitle] = useState(initialData?.title ?? "");
@@ -163,10 +166,8 @@ export default function CourseWizard({ categories, tags, initialData }: CourseWi
     set(arr.map((x, idx) => idx === i ? val : x));
   }
 
-  async function handleSave(saveAsDraft: boolean) {
-    if (!title.trim()) { setError("Course title is required."); setStep(0); return; }
-    setSaving(true); setError("");
-    const body = {
+  function buildBody(draft: boolean) {
+    return {
       title,
       description,
       category_id: categoryId || null,
@@ -195,13 +196,49 @@ export default function CourseWizard({ categories, tags, initialData }: CourseWi
       what_you_learn: whatYouLearn.filter(Boolean),
       requirements: requirements.filter(Boolean),
       certificate,
-      published: saveAsDraft ? false : published,
+      published: draft ? false : published,
     };
-    const endpoint = initialData?.id ? `/api/courses/${initialData.id}` : "/api/courses";
-    const method = initialData?.id ? "PATCH" : "POST";
-    const res = await fetch(endpoint, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+  }
+
+  async function autoSave() {
+    if (!title.trim()) return;
+    setAutoSaving(true);
+    const endpoint = courseIdRef.current ? `/api/courses/${courseIdRef.current}` : "/api/courses";
+    const method = courseIdRef.current ? "PATCH" : "POST";
+    const res = await fetch(endpoint, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(buildBody(true)),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (!courseIdRef.current) courseIdRef.current = data.id;
+      setSavedAt(new Date());
+    }
+    setAutoSaving(false);
+  }
+
+  async function handleStepClick(targetStep: number) {
+    if (targetStep === step) return;
+    if (targetStep > 0 && !title.trim()) { setError("Add a course title before continuing."); return; }
+    setError("");
+    await autoSave();
+    setStep(targetStep);
+  }
+
+  async function handleSave(saveAsDraft: boolean) {
+    if (!title.trim()) { setError("Course title is required."); setStep(0); return; }
+    setSaving(true); setError("");
+    const endpoint = courseIdRef.current ? `/api/courses/${courseIdRef.current}` : "/api/courses";
+    const method = courseIdRef.current ? "PATCH" : "POST";
+    const res = await fetch(endpoint, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(buildBody(saveAsDraft)),
+    });
     const data = await res.json();
     if (!res.ok) { setError(data.error ?? "Failed to save."); setSaving(false); return; }
+    if (!courseIdRef.current) courseIdRef.current = data.id;
     router.push("/admin/courses/all");
   }
 
@@ -210,24 +247,38 @@ export default function CourseWizard({ categories, tags, initialData }: CourseWi
   return (
     <div className="max-w-4xl">
       {/* Step indicator */}
-      <div className="flex items-center mb-8">
-        {STEPS.map((s, i) => (
-          <div key={i} className="flex items-center">
-            <button
-              onClick={() => i < step ? setStep(i) : undefined}
-              className={`flex items-center gap-2 px-1 py-1 rounded-lg transition-colors ${i < step ? "cursor-pointer" : "cursor-default"}`}
-            >
-              <span className={`h-7 w-7 rounded-full flex items-center justify-center text-xs font-bold transition-colors
-                ${i < step ? "bg-green-500 text-white" : i === step ? "bg-[#0822C0] text-white" : dark ? "bg-white/10 text-white/30" : "bg-gray-100 text-gray-400"}`}>
-                {i < step ? "✓" : i + 1}
-              </span>
-              <span className={`text-sm font-medium ${i === step ? heading : sub}`}>{s}</span>
-            </button>
-            {i < STEPS.length - 1 && (
-              <div className={`mx-3 h-px w-10 ${dark ? "bg-white/10" : "bg-gray-200"}`} />
-            )}
-          </div>
-        ))}
+      <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center">
+          {STEPS.map((s, i) => (
+            <div key={i} className="flex items-center">
+              <button
+                onClick={() => handleStepClick(i)}
+                className="flex items-center gap-2 px-1 py-1 rounded-lg cursor-pointer group"
+              >
+                <span className={`h-7 w-7 rounded-full flex items-center justify-center text-xs font-bold transition-colors
+                  ${i === step
+                    ? "bg-[#0822C0] text-white"
+                    : dark ? "bg-white/10 text-white/40 group-hover:bg-white/20 group-hover:text-white/70" : "bg-gray-100 text-gray-400 group-hover:bg-gray-200 group-hover:text-gray-600"}`}>
+                  {i + 1}
+                </span>
+                <span className={`text-sm font-medium transition-colors
+                  ${i === step ? heading : `${sub} group-hover:${dark ? "text-white/70" : "text-gray-600"}`}`}>{s}</span>
+              </button>
+              {i < STEPS.length - 1 && (
+                <div className={`mx-3 h-px w-10 ${dark ? "bg-white/10" : "bg-gray-200"}`} />
+              )}
+            </div>
+          ))}
+        </div>
+        {/* Save status */}
+        <div className="text-xs shrink-0 ml-4">
+          {autoSaving && <span className={sub}>Saving…</span>}
+          {!autoSaving && savedAt && (
+            <span className={dark ? "text-green-400/60" : "text-green-600/70"}>
+              Saved {savedAt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+            </span>
+          )}
+        </div>
       </div>
 
       {error && (
@@ -363,10 +414,7 @@ export default function CourseWizard({ categories, tags, initialData }: CourseWi
 
           <div className="flex justify-end">
             <button
-              onClick={() => {
-                if (!title.trim()) { setError("Title is required."); return; }
-                setError(""); setStep(1);
-              }}
+              onClick={() => handleStepClick(1)}
               className="px-6 py-2.5 rounded-lg text-sm font-semibold bg-[#0822C0] text-white hover:bg-[#061aa0] transition-colors"
             >
               Continue to Curriculum →
@@ -519,11 +567,11 @@ export default function CourseWizard({ categories, tags, initialData }: CourseWi
 
           <div className="flex justify-between">
             <button
-              onClick={() => setStep(0)}
+              onClick={() => handleStepClick(0)}
               className={`px-4 py-2.5 rounded-lg text-sm font-medium border transition-colors ${dark ? "border-white/10 text-white/60 hover:bg-white/5" : "border-gray-200 text-gray-600 hover:bg-gray-50"}`}
             >← Back</button>
             <button
-              onClick={() => { setError(""); setStep(2); }}
+              onClick={() => handleStepClick(2)}
               className="px-6 py-2.5 rounded-lg text-sm font-semibold bg-[#0822C0] text-white hover:bg-[#061aa0] transition-colors"
             >Continue to Pricing →</button>
           </div>
@@ -641,7 +689,7 @@ export default function CourseWizard({ categories, tags, initialData }: CourseWi
 
           <div className="flex items-center justify-between gap-3">
             <button
-              onClick={() => setStep(1)}
+              onClick={() => handleStepClick(1)}
               className={`px-4 py-2.5 rounded-lg text-sm font-medium border transition-colors ${dark ? "border-white/10 text-white/60 hover:bg-white/5" : "border-gray-200 text-gray-600 hover:bg-gray-50"}`}
             >← Back</button>
             <div className="flex gap-2">
