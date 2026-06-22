@@ -78,7 +78,13 @@ export default function CourseList({ courses }: { courses: any[] }) {
                 </div>
                 <div className="flex items-center justify-between text-xs">
                   <span className={tSub}>{course.lessons?.[0]?.count ?? 0} lessons</span>
-                  <span className={`font-bold ${tText}`}>£{Number(course.price).toFixed(2)}</span>
+                  <span className={`font-bold ${tText}`}>
+                    {course.price_ngn != null ? `₦${Number(course.price_ngn).toLocaleString()}`
+                      : course.price_gbp != null ? `£${Number(course.price_gbp).toLocaleString()}`
+                      : course.price_usd != null ? `$${Number(course.price_usd).toLocaleString()}`
+                      : Number(course.price) > 0 ? `£${Number(course.price).toFixed(2)}`
+                      : "Free"}
+                  </span>
                 </div>
                 <div className="flex items-center gap-2 pt-1">
                   <Link href={`/admin/courses/${course.id}`} className="flex-1 text-center rounded-lg py-1.5 text-xs font-medium bg-brand text-white hover:bg-brand-hover transition-colors">Edit</Link>
