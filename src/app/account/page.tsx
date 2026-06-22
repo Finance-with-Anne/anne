@@ -56,11 +56,13 @@ export default async function AccountPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-          {enrollments.map((e: any) => {
+          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+          {(enrollments as any[]).map((e) => {
             const course = e.course;
             if (!course) return null;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const lessonCount = (course.curriculum ?? []).reduce(
-              (sum: number, s: any) => sum + (s.lessons?.length ?? 0), 0
+              (sum: number, s: { lessons?: unknown[] }) => sum + (s.lessons?.length ?? 0), 0
             );
             return (
               <Link

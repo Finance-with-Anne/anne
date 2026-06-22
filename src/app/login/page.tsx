@@ -1,7 +1,7 @@
 "use client";
 
 import { createClient } from "@/lib/supabase/client";
-import { useState, useEffect, useCallback, Suspense } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 
@@ -124,7 +124,7 @@ function AuthForm() {
           {/* Anne quote */}
           <div className="mt-auto pt-8 border-t border-white/10">
             <p className="text-white/60 text-sm italic leading-relaxed">
-              "Your money is a reflection of your beliefs. Change how you think about wealth, and you'll change what's possible."
+              &ldquo;Your money is a reflection of your beliefs. Change how you think about wealth, and you&apos;ll change what&apos;s possible.&rdquo;
             </p>
             <div className="flex items-center gap-3 mt-4">
               <img src="/anne-profile.png" alt="Anne" onError={e => { (e.target as HTMLImageElement).src = "/fwa-light.svg"; }} className="h-9 w-9 rounded-full object-cover ring-2 ring-white/20" />
@@ -190,7 +190,7 @@ function AuthForm() {
                 </form>
 
                 <p className="mt-6 text-center text-sm text-gray-400">
-                  Don't have an account?{" "}
+                  Don&apos;t have an account?{" "}
                   <button onClick={() => { reset(); setView("signup"); }} className="text-[#0822C0] font-semibold hover:underline">Sign up free</button>
                 </p>
               </div>
@@ -256,7 +256,7 @@ function AuthForm() {
                 </div>
                 <h2 className="text-xl font-black text-gray-900">Check your inbox</h2>
                 <p className="text-sm text-gray-400 mt-2 leading-relaxed">
-                  We've sent a confirmation link to <span className="font-semibold text-gray-600">{email}</span>. Click it to activate your account.
+                  We&apos;ve sent a confirmation link to <span className="font-semibold text-gray-600">{email}</span>. Click it to activate your account.
                 </p>
                 <button onClick={() => { reset(); setSignupSuccess(false); setView("signin"); }} className="mt-6 text-sm text-[#0822C0] font-semibold hover:underline">
                   Back to sign in
@@ -273,7 +273,7 @@ function AuthForm() {
                 </button>
                 <div className="mb-7">
                   <h1 className="text-2xl font-black text-gray-900 tracking-tight">Forgot password?</h1>
-                  <p className="text-sm text-gray-400 mt-1.5">Enter your email and we'll send a reset link.</p>
+                  <p className="text-sm text-gray-400 mt-1.5">Enter your email and we&apos;ll send a reset link.</p>
                 </div>
                 <form onSubmit={handleForgot} className="space-y-4">
                   <div>
