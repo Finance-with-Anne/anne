@@ -181,6 +181,8 @@ export default function AdminSidebar({ userRole, userName, userEmail, userAvatar
                       { label: "Add New",     href: "/admin/courses/new" },
                       { label: "Categories",  href: "/admin/courses/categories" },
                       { label: "Tags",        href: "/admin/courses/tags" },
+                      { label: "Students",    href: "/admin/courses/students" },
+                      { label: "Reports",     href: "/admin/courses/reports" },
                     ].map(sub => (
                       <Link key={sub.href} href={sub.href}
                         className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-xs transition-colors ${
