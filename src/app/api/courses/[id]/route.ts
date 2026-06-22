@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import type { SupabaseClient } from "@supabase/supabase-js";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 
-async function syncCourseProduct(supabase: SupabaseClient, course: any) {
-  const { data: cat } = await supabase
+async function syncCourseProduct(course: any) {
+  const { data: cat } = await supabaseAdmin
     .from("product_categories")
     .select("id")
     .eq("slug", "course")
@@ -19,13 +19,13 @@ async function syncCourseProduct(supabase: SupabaseClient, course: any) {
     image_url: course.thumbnail_url ?? null,
     category_id: cat?.id ?? null,
     stock: 9999,
-    active: course.published ?? false,
+    active: true,
     source_type: "course",
     source_id: course.id,
     updated_at: new Date().toISOString(),
   };
 
-  const { data: existing } = await supabase
+  const { data: existing } = await supabaseAdmin
     .from("products")
     .select("id")
     .eq("source_type", "course")
@@ -33,9 +33,9 @@ async function syncCourseProduct(supabase: SupabaseClient, course: any) {
     .maybeSingle();
 
   if (existing) {
-    await supabase.from("products").update(productData).eq("id", existing.id);
+    await supabaseAdmin.from("products").update(productData).eq("id", existing.id);
   } else {
-    await supabase.from("products").insert(productData);
+    await supabaseAdmin.from("products").insert(productData);
   }
 }
 
@@ -82,7 +82,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     }
   }
 
-  await syncCourseProduct(supabase, data);
+  await syncCourseProduct(data);
 
   return NextResponse.json(data);
 }
@@ -96,8 +96,7 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
   await supabase.from("lessons").delete().eq("course_id", id);
   await supabase.from("course_sections").delete().eq("course_id", id);
   await supabase.from("course_tag_assignments").delete().eq("course_id", id);
-  // Remove linked product
-  await supabase.from("products").delete().eq("source_type", "course").eq("source_id", id);
+  await supabaseAdmin.from("products").delete().eq("source_type", "course").eq("source_id", id);
   const { error } = await supabase.from("courses").delete().eq("id", id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ success: true });
