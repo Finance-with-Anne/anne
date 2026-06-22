@@ -131,17 +131,7 @@ export default function CourseDetailClient({ course, related, currency, totalLes
     <div className="bg-gray-50 dark:bg-[#05090f] min-h-screen">
 
       {/* ── Hero ── */}
-      <div className="relative overflow-hidden" style={{ minHeight: 300 }}>
-        {/* Background image */}
-        {course.thumbnail_url && (
-          <img
-            src={course.thumbnail_url}
-            alt=""
-            className="absolute inset-0 w-full h-full object-cover"
-          />
-        )}
-        {/* Dark overlay */}
-        <div className="absolute inset-0" style={{ backgroundColor: "#070F1Eee" }} />
+      <div className="relative overflow-hidden" style={{ minHeight: 300, backgroundColor: "#070F1E" }}>
 
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 lg:py-14">
           <div className="flex items-start justify-between gap-10">
