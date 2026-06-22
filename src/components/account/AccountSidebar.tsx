@@ -56,7 +56,7 @@ export default function AccountSidebar({
   async function handleSignOut() {
     setSigningOut(true);
     await supabase.auth.signOut();
-    router.push("/login");
+    router.push("/auth");
   }
 
   function isActive(href: string, exact: boolean) {

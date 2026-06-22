@@ -41,7 +41,7 @@ interface FileItem {
 export default async function AccountFilesPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  if (!user) redirect("/auth");
 
   const { data } = await supabase
     .from("course_enrollments")

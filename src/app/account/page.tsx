@@ -8,7 +8,7 @@ export const metadata = { title: "Dashboard — Finance with Anne" };
 export default async function AccountDashboardPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  if (!user) redirect("/auth");
 
   const [profileRes, enrollmentsRes, bookingsRes] = await Promise.all([
     supabase.from("profiles").select("full_name").eq("id", user.id).single(),

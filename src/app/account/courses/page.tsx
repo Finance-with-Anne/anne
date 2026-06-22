@@ -8,7 +8,7 @@ export const metadata = { title: "My Courses — Finance with Anne" };
 export default async function AccountCoursesPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  if (!user) redirect("/auth");
 
   const { data: enrollments } = await supabase
     .from("course_enrollments")

@@ -15,7 +15,7 @@ const STATUS_STYLES: Record<string, string> = {
 export default async function AccountBookingsPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  if (!user) redirect("/auth");
 
   const { data } = await supabase
     .from("bookings")

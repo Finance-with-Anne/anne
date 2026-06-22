@@ -2,10 +2,12 @@ import AdminSidebar from "@/components/admin/AdminSidebar";
 import AdminHeader from "@/components/admin/AdminHeader";
 import { AdminThemeProvider } from "@/lib/admin-theme";
 import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/admin-login");
   const userRole = (user?.user_metadata?.role as string | undefined) ?? "admin";
   const userName = (user?.user_metadata?.name as string | undefined) ?? undefined;
   const userEmail = user?.email ?? undefined;

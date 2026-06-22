@@ -15,7 +15,7 @@ export default async function CoursePlayerPage({ params, searchParams }: Props) 
 
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  if (!user) redirect("/auth");
 
   // Check enrollment
   const { data: enrollment } = await supabase
