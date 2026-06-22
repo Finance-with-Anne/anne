@@ -108,7 +108,7 @@ export default function ProductForm({ initialData }: ProductFormProps) {
     const body: Record<string, unknown> = {
       name,
       description,
-      price: parseFloat(priceGbp || priceUsd || priceNgn || "0"),
+      price: parseFloat(priceNgn || priceGbp || priceUsd || "0"),
       price_ngn: priceNgn ? parseFloat(priceNgn) : null,
       price_usd: priceUsd ? parseFloat(priceUsd) : null,
       price_gbp: priceGbp ? parseFloat(priceGbp) : null,
