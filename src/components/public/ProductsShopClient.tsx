@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import type { Product, ProductCategory } from "@/types";
 
 type Currency = "NGN" | "USD" | "GBP";
@@ -154,12 +155,17 @@ export default function ProductsShopClient({ products, categories, currency }: P
                 {filtered.map(product => {
                   const priceStr = formatPrice(product, currency);
                   const cat = product.category;
+                  const isCourse = product.source_type === "course" && product.source_id;
+                  const cardHref = isCourse ? `/courses/${product.source_id}` : null;
+                  const Wrapper = cardHref
+                    ? ({ children }: { children: React.ReactNode }) => (
+                        <Link href={cardHref} className="group relative rounded-2xl overflow-hidden block" style={{ aspectRatio: "4/3" }}>{children}</Link>
+                      )
+                    : ({ children }: { children: React.ReactNode }) => (
+                        <div className="group relative rounded-2xl overflow-hidden cursor-pointer" style={{ aspectRatio: "4/3" }}>{children}</div>
+                      );
                   return (
-                    <div
-                      key={product.id}
-                      className="group relative rounded-2xl overflow-hidden cursor-pointer"
-                      style={{ aspectRatio: "4/3" }}
-                    >
+                    <Wrapper key={product.id}>
                       {/* Background image / fallback */}
                       {product.image_url ? (
                         <img
@@ -195,14 +201,14 @@ export default function ProductsShopClient({ products, categories, currency }: P
 
                       {/* Hover CTA */}
                       <div className="absolute bottom-0 left-0 right-0 px-4 pb-4 flex gap-2 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                        <button className="flex-1 rounded-xl bg-white text-gray-900 text-xs font-bold py-2.5 hover:bg-gray-100 transition-colors">
-                          Buy Now
-                        </button>
-                        <button className="flex-1 rounded-xl bg-white/20 backdrop-blur text-white text-xs font-bold py-2.5 border border-white/30 hover:bg-white/30 transition-colors">
-                          Learn More
-                        </button>
+                        <span className="flex-1 text-center rounded-xl bg-white text-gray-900 text-xs font-bold py-2.5">
+                          {isCourse ? "Enroll Now" : "Buy Now"}
+                        </span>
+                        <span className="flex-1 text-center rounded-xl bg-white/20 backdrop-blur text-white text-xs font-bold py-2.5 border border-white/30">
+                          {isCourse ? "View Course" : "Learn More"}
+                        </span>
                       </div>
-                    </div>
+                    </Wrapper>
                   );
                 })}
               </div>
