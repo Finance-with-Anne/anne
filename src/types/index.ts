@@ -35,16 +35,30 @@ export type BlogPost = {
   updated_at: string;
 };
 
+export type ProductCategory = {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  color: string;
+  created_at: string;
+};
+
 export type Product = {
   id: string;
   name: string;
   description: string;
   price: number;
   image_url: string | null;
-  category: string;
+  category_id: string | null;
+  category?: { id: string; name: string; color: string } | null;
   stock: number;
   active: boolean;
+  download_url: string | null;
+  source_type: "manual" | "course" | "booking" | null;
+  source_id: string | null;
   created_at: string;
+  updated_at: string;
 };
 
 export type Booking = {
