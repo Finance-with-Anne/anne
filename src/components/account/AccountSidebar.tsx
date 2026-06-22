@@ -1,9 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { usePathname } from "next/navigation";
 
 const nav = [
   {
@@ -42,22 +40,16 @@ export default function AccountSidebar({
   userName,
   userEmail,
   userAvatar,
+  mobileOpen,
+  setMobileOpen,
 }: {
   userName: string;
   userEmail: string;
   userAvatar: string | null;
+  mobileOpen: boolean;
+  setMobileOpen: (v: boolean) => void;
 }) {
   const pathname = usePathname();
-  const router = useRouter();
-  const supabase = createClient();
-  const [signingOut, setSigningOut] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
-
-  async function handleSignOut() {
-    setSigningOut(true);
-    await supabase.auth.signOut();
-    router.push("/auth");
-  }
 
   function isActive(href: string, exact: boolean) {
     return exact ? pathname === href : pathname.startsWith(href);
@@ -106,7 +98,7 @@ export default function AccountSidebar({
 
   const UserFooter = () => (
     <div className="border-t border-gray-100 p-3">
-      <div className="flex items-center gap-3 rounded-xl bg-gray-50 px-3 py-2.5 mb-2">
+      <div className="flex items-center gap-3 rounded-xl bg-gray-50 px-3 py-2.5">
         {userAvatar ? (
           <img src={userAvatar} alt={userName} className="h-8 w-8 rounded-full object-cover shrink-0" />
         ) : (
@@ -119,16 +111,6 @@ export default function AccountSidebar({
           <p className="text-[10px] text-gray-400 truncate">{userEmail}</p>
         </div>
       </div>
-      <button
-        onClick={handleSignOut}
-        disabled={signingOut}
-        className="w-full flex items-center gap-2 rounded-lg px-3 py-2 text-xs text-red-400 hover:bg-red-50 transition-colors disabled:opacity-50"
-      >
-        <svg className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-        </svg>
-        {signingOut ? "Signing out…" : "Sign out"}
-      </button>
     </div>
   );
 
@@ -146,26 +128,15 @@ export default function AccountSidebar({
         <UserFooter />
       </aside>
 
-      {/* Mobile top bar */}
-      <div className="md:hidden fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-4 h-14 bg-white border-b border-gray-100">
-        <div className="flex items-center gap-2">
-          <img src="/fwa-dark.svg" alt="Finance with Anne" className="h-6 w-auto" />
-          <span className="text-xs font-semibold text-gray-700">Student Portal</span>
-        </div>
-        <button onClick={() => setMobileOpen(!mobileOpen)} className="p-2 text-gray-400 hover:text-gray-600">
-          <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-            {mobileOpen
-              ? <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              : <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />}
-          </svg>
-        </button>
-      </div>
-
-      {/* Mobile drawer */}
+      {/* Mobile drawer (controlled by AccountShell via props) */}
       {mobileOpen && (
-        <div className="md:hidden fixed inset-0 z-30" onClick={() => setMobileOpen(false)}>
+        <div className="md:hidden fixed inset-0 z-40" onClick={() => setMobileOpen(false)}>
           <div className="absolute inset-0 bg-black/20" />
-          <div className="absolute top-14 left-0 bottom-0 w-64 bg-white flex flex-col" onClick={e => e.stopPropagation()}>
+          <div className="absolute top-0 left-0 bottom-0 w-64 bg-white flex flex-col shadow-xl" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center gap-2.5 px-4 h-14 border-b border-gray-100">
+              <img src="/fwa-dark.svg" alt="Finance with Anne" className="h-7 w-auto" />
+              <span className="text-xs font-semibold text-gray-700">Student Portal</span>
+            </div>
             <nav className="flex-1 px-2 py-4 space-y-0.5 overflow-y-auto">
               <NavLinks />
             </nav>

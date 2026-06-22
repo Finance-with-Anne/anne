@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import AccountSidebar from "@/components/account/AccountSidebar";
+import AccountShell from "@/components/account/AccountShell";
 
 export default async function AccountLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
@@ -14,15 +14,12 @@ export default async function AccountLayout({ children }: { children: React.Reac
     .single();
 
   return (
-    <div className="min-h-screen flex bg-gray-50">
-      <AccountSidebar
-        userName={profile?.full_name ?? user.email ?? "Student"}
-        userEmail={user.email ?? ""}
-        userAvatar={profile?.avatar_url ?? null}
-      />
-      <main className="flex-1 min-w-0 p-6 lg:p-8">
-        {children}
-      </main>
-    </div>
+    <AccountShell
+      userName={profile?.full_name ?? user.email ?? "Student"}
+      userEmail={user.email ?? ""}
+      userAvatar={profile?.avatar_url ?? null}
+    >
+      {children}
+    </AccountShell>
   );
 }
