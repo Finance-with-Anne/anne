@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
 import { usePublicTheme } from "@/components/public/PublicThemeProvider";
+import { createClient } from "@/lib/supabase/client";
 
 type Post = { id: string; title: string; slug: string; excerpt: string | null; cover_image: string | null; published_at: string | null };
 
@@ -134,12 +135,58 @@ const topLinks = [
 // ── Component ─────────────────────────────────────────────────────────────────
 export default function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
   const { dark, toggle } = usePublicTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileResourcesOpen, setMobileResourcesOpen] = useState(false);
   const [megaOpen, setMegaOpen] = useState(false);
   const [latestPosts, setLatestPosts] = useState<Post[]>([]);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Auth state
+  const supabase = createClient();
+  const [user, setUser] = useState<{ email: string; name: string; avatar: string | null } | null>(null);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const profileRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    async function loadUser() {
+      const { data: { user: u } } = await supabase.auth.getUser();
+      if (!u) { setUser(null); return; }
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("full_name, avatar_url")
+        .eq("id", u.id)
+        .single();
+      setUser({
+        email: u.email ?? "",
+        name: profile?.full_name || u.email?.split("@")[0] || "Student",
+        avatar: profile?.avatar_url ?? null,
+      });
+    }
+    loadUser();
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => loadUser());
+    return () => subscription.unsubscribe();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
+        setProfileOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
+  async function handleSignOut() {
+    await supabase.auth.signOut();
+    setUser(null);
+    setProfileOpen(false);
+    router.push("/");
+    router.refresh();
+  }
 
   useEffect(() => {
     fetch("/api/blog?limit=2")
@@ -348,15 +395,68 @@ export default function Navbar() {
             <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-[#0822C0]" />
           </button>
 
-          <div className="mx-1 h-5 w-px bg-gray-200" />
+          <div className="mx-1 h-5 w-px bg-gray-200 dark:bg-white/10" />
 
-          {/* Login */}
-          <Link
-            href="/auth"
-            className="rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 transition-colors"
-          >
-            Login
-          </Link>
+          {/* Auth area */}
+          {user ? (
+            <div className="relative" ref={profileRef}>
+              <button
+                onClick={() => setProfileOpen(v => !v)}
+                className="flex items-center gap-2 rounded-xl px-2 py-1.5 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
+              >
+                {user.avatar ? (
+                  <img src={user.avatar} alt={user.name} className="h-8 w-8 rounded-full object-cover" />
+                ) : (
+                  <div className="h-8 w-8 rounded-full bg-[#0822C0] text-white flex items-center justify-center text-xs font-bold uppercase">
+                    {user.name[0]}
+                  </div>
+                )}
+                <span className="text-sm font-medium text-gray-700 dark:text-white/80 max-w-[100px] truncate">{user.name.split(" ")[0]}</span>
+                <IconChevron open={profileOpen} />
+              </button>
+
+              {profileOpen && (
+                <div className="absolute right-0 top-full mt-2 w-56 rounded-2xl border border-gray-100 dark:border-white/10 bg-white dark:bg-[#0d1220] shadow-xl overflow-hidden z-50">
+                  <div className="px-4 py-3 border-b border-gray-100 dark:border-white/10">
+                    <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">{user.name}</p>
+                    <p className="text-xs text-gray-400 dark:text-white/40 truncate">{user.email}</p>
+                  </div>
+                  <div className="py-1">
+                    {[
+                      { label: "My Dashboard", href: "/account" },
+                      { label: "My Courses", href: "/account/courses" },
+                      { label: "Bookings", href: "/account/bookings" },
+                      { label: "Profile", href: "/account/profile" },
+                    ].map(item => (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        onClick={() => setProfileOpen(false)}
+                        className="block px-4 py-2 text-sm text-gray-700 dark:text-white/70 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
+                      >
+                        {item.label}
+                      </Link>
+                    ))}
+                  </div>
+                  <div className="border-t border-gray-100 dark:border-white/10 py-1">
+                    <button
+                      onClick={handleSignOut}
+                      className="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
+                    >
+                      Sign out
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <Link
+              href="/auth"
+              className="rounded-lg px-4 py-2 text-sm font-medium text-gray-700 dark:text-white/60 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
+            >
+              Login
+            </Link>
+          )}
 
           {/* Book a Session */}
           <Link
