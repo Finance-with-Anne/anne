@@ -89,7 +89,10 @@ function AuthForm() {
     const { error } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { full_name: fullName } },
+      options: {
+        data: { full_name: fullName },
+        emailRedirectTo: `${location.origin}/auth/callback`,
+      },
     });
     if (error) { setError(error.message); setLoading(false); }
     else { setLoading(false); setSignupSuccess(true); }
