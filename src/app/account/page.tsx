@@ -98,7 +98,7 @@ export default async function AccountDashboardPage() {
   ];
 
   return (
-    <div className="space-y-6 max-w-6xl">
+    <div className="space-y-6">
 
       {/* Page header */}
       <div className="flex items-start justify-between gap-4">
