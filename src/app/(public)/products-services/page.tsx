@@ -1,28 +1,46 @@
-export const metadata = { title: "Products & Services — ANNE" };
+import { headers } from "next/headers";
+import { supabaseAdmin } from "@/lib/supabase/admin";
+import ProductsShopClient from "@/components/public/ProductsShopClient";
+import type { Product, ProductCategory } from "@/types";
 
-const services = [
-  { title: "1-on-1 Coaching", desc: "Personalised financial coaching sessions tailored to your goals." },
-  { title: "Group Programme", desc: "Join a cohort of like-minded individuals on a structured finance programme." },
-  { title: "Courses", desc: "Self-paced online courses covering budgeting, investing, and more." },
-  { title: "Digital Products", desc: "Templates, trackers, and guides available for immediate download." },
-];
+export const dynamic = "force-dynamic";
+export const metadata = { title: "Products & Services — Finance with Anne" };
 
-export default function ProductsServicesPage() {
+type Currency = "NGN" | "USD" | "GBP";
+
+function detectCurrency(country: string | null): Currency {
+  if (!country) return "NGN";
+  if (country === "GB") return "GBP";
+  if (country === "US" || country === "CA" || country === "AU") return "USD";
+  return "NGN";
+}
+
+export default async function ProductsServicesPage() {
+  const headersList = await headers();
+  const country = headersList.get("x-vercel-ip-country");
+  const currency = detectCurrency(country);
+
+  const [{ data: products }, { data: categories }] = await Promise.all([
+    supabaseAdmin
+      .from("products")
+      .select("*, category:product_categories(id, name, color)")
+      .eq("active", true)
+      .order("created_at", { ascending: false }),
+    supabaseAdmin
+      .from("product_categories")
+      .select("*")
+      .order("name"),
+  ]);
+
+  // Only return categories that have at least one active product
+  const usedCategoryIds = new Set((products ?? []).map((p: Record<string, unknown>) => p.category_id).filter(Boolean));
+  const filteredCategories = (categories ?? []).filter((c: ProductCategory) => usedCategoryIds.has(c.id));
+
   return (
-    <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-      <h1 className="text-4xl font-bold tracking-tight text-gray-900">Products & Services</h1>
-      <p className="mt-4 text-lg text-gray-600 max-w-2xl">
-        Everything you need to take control of your finances and build lasting wealth.
-      </p>
-
-      <div className="mt-12 grid grid-cols-1 gap-8 sm:grid-cols-2">
-        {services.map((service) => (
-          <div key={service.title} className="rounded-xl border border-gray-200 p-8">
-            <h2 className="text-xl font-semibold text-gray-900">{service.title}</h2>
-            <p className="mt-3 text-gray-500 leading-relaxed">{service.desc}</p>
-          </div>
-        ))}
-      </div>
-    </div>
+    <ProductsShopClient
+      products={(products ?? []) as Product[]}
+      categories={filteredCategories as ProductCategory[]}
+      currency={currency}
+    />
   );
 }
