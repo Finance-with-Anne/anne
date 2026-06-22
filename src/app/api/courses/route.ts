@@ -3,7 +3,6 @@ import { createClient } from "@/lib/supabase/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
 async function syncCourseProduct(course: any) {
-  // Resolve the "Course" product category id once
   const { data: cat } = await supabaseAdmin
     .from("product_categories")
     .select("id")
@@ -54,22 +53,23 @@ export async function POST(req: NextRequest) {
   if (sections?.length) {
     for (const section of sections) {
       const { lessons, ...sectionData } = section;
-      const { data: sec, error: secErr } = await supabase
+      const { data: sec, error: secErr } = await supabaseAdmin
         .from("course_sections")
         .insert({ ...sectionData, id: undefined, course_id: course.id })
         .select()
         .single();
-      if (secErr) continue;
+      if (secErr) { console.error("section insert error:", secErr.message); continue; }
       if (lessons?.length) {
-        await supabase.from("lessons").insert(
+        const { error: lessonErr } = await supabaseAdmin.from("lessons").insert(
           lessons.map((l: any) => ({ ...l, id: undefined, course_id: course.id, section_id: sec.id }))
         );
+        if (lessonErr) console.error("lesson insert error:", lessonErr.message);
       }
     }
   }
 
   if (tag_ids?.length) {
-    await supabase.from("course_tag_assignments").insert(
+    await supabaseAdmin.from("course_tag_assignments").insert(
       tag_ids.map((tag_id: string) => ({ course_id: course.id, tag_id }))
     );
   }

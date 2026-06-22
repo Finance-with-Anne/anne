@@ -55,28 +55,30 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
   if (sections !== undefined) {
-    await supabase.from("lessons").delete().eq("course_id", id);
-    await supabase.from("course_sections").delete().eq("course_id", id);
+    // Delete and recreate all sections + lessons using admin client (bypasses RLS)
+    await supabaseAdmin.from("lessons").delete().eq("course_id", id);
+    await supabaseAdmin.from("course_sections").delete().eq("course_id", id);
     for (const section of sections) {
       const { lessons, ...sectionData } = section;
-      const { data: sec, error: secErr } = await supabase
+      const { data: sec, error: secErr } = await supabaseAdmin
         .from("course_sections")
         .insert({ ...sectionData, id: undefined, course_id: id })
         .select()
         .single();
-      if (secErr) continue;
+      if (secErr) { console.error("section insert error:", secErr.message); continue; }
       if (lessons?.length) {
-        await supabase.from("lessons").insert(
+        const { error: lessonErr } = await supabaseAdmin.from("lessons").insert(
           lessons.map((l: any) => ({ ...l, id: undefined, course_id: id, section_id: sec.id }))
         );
+        if (lessonErr) console.error("lesson insert error:", lessonErr.message);
       }
     }
   }
 
   if (tag_ids !== undefined) {
-    await supabase.from("course_tag_assignments").delete().eq("course_id", id);
+    await supabaseAdmin.from("course_tag_assignments").delete().eq("course_id", id);
     if (tag_ids.length) {
-      await supabase.from("course_tag_assignments").insert(
+      await supabaseAdmin.from("course_tag_assignments").insert(
         tag_ids.map((tag_id: string) => ({ course_id: id, tag_id }))
       );
     }
@@ -93,9 +95,9 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorised." }, { status: 401 });
 
-  await supabase.from("lessons").delete().eq("course_id", id);
-  await supabase.from("course_sections").delete().eq("course_id", id);
-  await supabase.from("course_tag_assignments").delete().eq("course_id", id);
+  await supabaseAdmin.from("lessons").delete().eq("course_id", id);
+  await supabaseAdmin.from("course_sections").delete().eq("course_id", id);
+  await supabaseAdmin.from("course_tag_assignments").delete().eq("course_id", id);
   await supabaseAdmin.from("products").delete().eq("source_type", "course").eq("source_id", id);
   const { error } = await supabase.from("courses").delete().eq("id", id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });

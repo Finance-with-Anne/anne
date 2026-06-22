@@ -114,7 +114,9 @@ export default function CourseWizard({ categories, tags, initialData }: CourseWi
     }, 2000);
     return () => clearTimeout(saveTimerRef.current);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [title, description, sections, priceNGN, priceUSD, priceGBP, certificate, published, selectedTags, categoryId, level, language, thumbnail]);
+  // NOTE: `published` and `certificate` intentionally excluded — auto-save always drafts (published:false),
+  // so including them would overwrite the publish toggle. Only the explicit save buttons persist publish state.
+  }, [title, description, sections, priceNGN, priceUSD, priceGBP, selectedTags, categoryId, level, language, thumbnail]);
 
   const card = dark ? "bg-[#111318] border-white/5" : "bg-white border-gray-200";
   const heading = dark ? "text-white" : "text-gray-900";
@@ -261,6 +263,7 @@ export default function CourseWizard({ categories, tags, initialData }: CourseWi
   }
 
   async function handleSave(saveAsDraft: boolean) {
+    clearTimeout(saveTimerRef.current); // cancel any pending auto-save to prevent race condition
     if (!title.trim()) { setError("Course title is required."); setStep(0); return; }
     setSaving(true); setError("");
     const endpoint = courseIdRef.current ? `/api/courses/${courseIdRef.current}` : "/api/courses";
