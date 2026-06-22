@@ -141,7 +141,12 @@ export default function ProductList({ products }: { products: Product[] }) {
                       <span className={`text-xs ${tSub}`}>—</span>
                     )}
                   </td>
-                  <td className={`px-5 py-4 font-medium ${tText}`}>£{product.price.toFixed(2)}</td>
+                  <td className={`px-5 py-4 font-medium ${tText}`}>
+                    {product.price_gbp != null ? `£${product.price_gbp.toFixed(2)}`
+                      : product.price_usd != null ? `$${product.price_usd.toFixed(2)}`
+                      : product.price_ngn != null ? `₦${product.price_ngn.toLocaleString()}`
+                      : `£${product.price.toFixed(2)}`}
+                  </td>
                   <td className={`px-5 py-4 ${tSub}`}>{product.stock === 0 ? "∞" : product.stock}</td>
                   <td className="px-5 py-4">
                     <button

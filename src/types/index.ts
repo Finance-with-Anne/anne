@@ -49,6 +49,9 @@ export type Product = {
   name: string;
   description: string;
   price: number;
+  price_ngn: number | null;
+  price_usd: number | null;
+  price_gbp: number | null;
   image_url: string | null;
   category_id: string | null;
   category?: { id: string; name: string; color: string } | null;

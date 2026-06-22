@@ -10,6 +10,9 @@ interface InitialData {
   name?: string;
   description?: string;
   price?: number;
+  price_ngn?: number | null;
+  price_usd?: number | null;
+  price_gbp?: number | null;
   image_url?: string | null;
   category_id?: string | null;
   stock?: number;
@@ -30,7 +33,9 @@ export default function ProductForm({ initialData }: ProductFormProps) {
   const [categories, setCategories] = useState<ProductCategory[]>([]);
   const [name, setName] = useState(initialData?.name ?? "");
   const [description, setDescription] = useState(initialData?.description ?? "");
-  const [price, setPrice] = useState(initialData?.price?.toString() ?? "");
+  const [priceNgn, setPriceNgn] = useState(initialData?.price_ngn?.toString() ?? "");
+  const [priceUsd, setPriceUsd] = useState(initialData?.price_usd?.toString() ?? "");
+  const [priceGbp, setPriceGbp] = useState(initialData?.price_gbp?.toString() ?? (initialData?.price?.toString() ?? ""));
   const [categoryId, setCategoryId] = useState(initialData?.category_id ?? "");
   const [stock, setStock] = useState(initialData?.stock?.toString() ?? "0");
   const [active, setActive] = useState(initialData?.active ?? true);
@@ -97,12 +102,16 @@ export default function ProductForm({ initialData }: ProductFormProps) {
   }
 
   async function handleSave() {
-    if (!name || !price) return setError("Name and price are required.");
+    if (!name) return setError("Name is required.");
+    if (!priceNgn && !priceUsd && !priceGbp) return setError("At least one price is required.");
     setSaving(true); setError("");
     const body: Record<string, unknown> = {
       name,
       description,
-      price: parseFloat(price),
+      price: parseFloat(priceGbp || priceUsd || priceNgn || "0"),
+      price_ngn: priceNgn ? parseFloat(priceNgn) : null,
+      price_usd: priceUsd ? parseFloat(priceUsd) : null,
+      price_gbp: priceGbp ? parseFloat(priceGbp) : null,
       category_id: categoryId || null,
       stock: parseInt(stock),
       active,
@@ -232,15 +241,40 @@ export default function ProductForm({ initialData }: ProductFormProps) {
 
           <div className="space-y-4">
             <div className={`rounded-xl border p-5 space-y-4 ${card}`}>
+              <p className={`text-xs font-semibold uppercase tracking-wide ${labelClass}`}>Pricing</p>
               <div>
-                <label className={`block text-xs font-semibold uppercase tracking-wide mb-2 ${labelClass}`}>Price (£)</label>
+                <label className={`block text-xs font-medium mb-1.5 ${labelClass}`}>NGN ₦</label>
                 <input
                   type="number"
-                  value={price}
-                  onChange={e => setPrice(e.target.value)}
+                  value={priceNgn}
+                  onChange={e => setPriceNgn(e.target.value)}
+                  min="0"
+                  step="1"
+                  placeholder="e.g. 50000"
+                  className={`w-full rounded-lg border px-3 py-2.5 text-sm focus:outline-none transition-colors ${inputClass}`}
+                />
+              </div>
+              <div>
+                <label className={`block text-xs font-medium mb-1.5 ${labelClass}`}>USD $</label>
+                <input
+                  type="number"
+                  value={priceUsd}
+                  onChange={e => setPriceUsd(e.target.value)}
                   min="0"
                   step="0.01"
-                  placeholder="0.00"
+                  placeholder="e.g. 29.99"
+                  className={`w-full rounded-lg border px-3 py-2.5 text-sm focus:outline-none transition-colors ${inputClass}`}
+                />
+              </div>
+              <div>
+                <label className={`block text-xs font-medium mb-1.5 ${labelClass}`}>GBP £</label>
+                <input
+                  type="number"
+                  value={priceGbp}
+                  onChange={e => setPriceGbp(e.target.value)}
+                  min="0"
+                  step="0.01"
+                  placeholder="e.g. 24.99"
                   className={`w-full rounded-lg border px-3 py-2.5 text-sm focus:outline-none transition-colors ${inputClass}`}
                 />
               </div>
