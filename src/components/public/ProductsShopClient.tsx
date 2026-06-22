@@ -22,47 +22,103 @@ function formatPrice(product: Product, currency: Currency): string {
 
 export default function ProductsShopClient({ products, categories, currency }: Props) {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
 
-  const filtered = activeCategory
-    ? products.filter(p => p.category_id === activeCategory)
-    : products;
+  const filtered = products.filter(p => {
+    const matchCat = !activeCategory || p.category_id === activeCategory;
+    const matchSearch = !search || p.name.toLowerCase().includes(search.toLowerCase());
+    return matchCat && matchSearch;
+  });
+
+  const activeLabel = activeCategory
+    ? (categories.find(c => c.id === activeCategory)?.name ?? "All")
+    : "All";
 
   return (
     <div className="bg-white dark:bg-[#05090f] min-h-screen">
 
-      {/* ── Hero ── */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0822C0] to-[#05148a]" />
-        <div className="absolute inset-0 opacity-10"
-          style={{ backgroundImage: "radial-gradient(circle at 20% 80%, #fff 1px, transparent 1px), radial-gradient(circle at 80% 20%, #fff 1px, transparent 1px)", backgroundSize: "60px 60px" }}
-        />
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
-          <div className="max-w-2xl">
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-medium text-white/80 mb-5">
-              <span className="h-1.5 w-1.5 rounded-full bg-green-400" />
-              {products.length} product{products.length !== 1 ? "s" : ""} available
-            </span>
-            <h1 className="text-5xl sm:text-6xl font-black text-white leading-tight tracking-tight">
-              Products &<br />Services
-            </h1>
-            <p className="mt-5 text-lg text-white/60 leading-relaxed max-w-lg">
-              Templates, ebooks, courses and coaching — everything you need to take control of your finances and build lasting wealth.
-            </p>
-          </div>
+      {/* ── Page header ── */}
+      <div className="border-b border-gray-100 dark:border-white/5">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
+          <h1 className="text-3xl sm:text-4xl font-black text-gray-900 dark:text-white tracking-tight">
+            Products & Services
+          </h1>
+          <p className="mt-2 text-gray-500 dark:text-white/40 text-sm max-w-xl">
+            Templates, ebooks, courses and coaching — everything you need to take control of your finances.
+          </p>
         </div>
-      </section>
+      </div>
 
-      {/* ── Category filter ── */}
-      {categories.length > 0 && (
-        <div className="sticky top-[88px] z-30 bg-white/90 dark:bg-[#05090f]/90 backdrop-blur border-b border-gray-100 dark:border-white/5">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center gap-2 py-3 overflow-x-auto scrollbar-hide">
+      {/* ── Two-panel layout ── */}
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex gap-8 items-start">
+
+          {/* ── Sidebar ── */}
+          <aside className="hidden lg:flex flex-col w-48 shrink-0 sticky top-28">
+            {/* Search */}
+            <div className="relative mb-4">
+              <svg className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400 dark:text-white/30" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <input
+                type="text"
+                placeholder="Search..."
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                className="w-full rounded-xl border border-gray-100 dark:border-white/5 bg-gray-50 dark:bg-white/5 pl-9 pr-3 py-2 text-xs text-gray-700 dark:text-white/60 placeholder-gray-400 dark:placeholder-white/20 focus:outline-none focus:border-[#0822C0]/40"
+              />
+            </div>
+
+            {/* Category list */}
+            <nav className="space-y-0.5">
               <button
                 onClick={() => setActiveCategory(null)}
-                className={`shrink-0 rounded-full px-4 py-1.5 text-xs font-semibold transition-all ${
+                className={`w-full text-left rounded-xl px-3 py-2.5 text-sm font-medium transition-colors ${
+                  activeCategory === null
+                    ? "bg-[#0822C0]/10 text-[#0822C0] dark:bg-[#0822C0]/20 dark:text-blue-400"
+                    : "text-gray-600 dark:text-white/40 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white"
+                }`}
+              >
+                All
+                <span className={`ml-2 text-xs ${activeCategory === null ? "text-[#0822C0]/60 dark:text-blue-400/60" : "text-gray-400 dark:text-white/20"}`}>
+                  {products.length}
+                </span>
+              </button>
+
+              {categories.map(cat => {
+                const count = products.filter(p => p.category_id === cat.id).length;
+                const isActive = activeCategory === cat.id;
+                return (
+                  <button
+                    key={cat.id}
+                    onClick={() => setActiveCategory(isActive ? null : cat.id)}
+                    className={`w-full text-left flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors ${
+                      isActive
+                        ? "bg-[#0822C0]/10 dark:bg-[#0822C0]/20"
+                        : "text-gray-600 dark:text-white/40 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white"
+                    }`}
+                    style={isActive ? { color: cat.color } : {}}
+                  >
+                    <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: cat.color }} />
+                    <span className="flex-1 truncate">{cat.name}</span>
+                    <span className={`text-xs shrink-0 ${isActive ? "opacity-60" : "text-gray-400 dark:text-white/20"}`}>{count}</span>
+                  </button>
+                );
+              })}
+            </nav>
+          </aside>
+
+          {/* ── Main content ── */}
+          <div className="flex-1 min-w-0">
+
+            {/* Mobile category scroll */}
+            <div className="flex lg:hidden gap-2 mb-6 overflow-x-auto pb-1 scrollbar-hide">
+              <button
+                onClick={() => setActiveCategory(null)}
+                className={`shrink-0 rounded-full px-4 py-1.5 text-xs font-semibold transition-colors ${
                   activeCategory === null
                     ? "bg-[#0822C0] text-white"
-                    : "bg-gray-100 dark:bg-white/5 text-gray-500 dark:text-white/40 hover:bg-gray-200 dark:hover:bg-white/10"
+                    : "bg-gray-100 dark:bg-white/5 text-gray-500 dark:text-white/40"
                 }`}
               >
                 All
@@ -71,93 +127,89 @@ export default function ProductsShopClient({ products, categories, currency }: P
                 <button
                   key={cat.id}
                   onClick={() => setActiveCategory(activeCategory === cat.id ? null : cat.id)}
-                  className={`shrink-0 flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-semibold transition-all ${
-                    activeCategory === cat.id
-                      ? "text-white"
-                      : "bg-gray-100 dark:bg-white/5 text-gray-500 dark:text-white/40 hover:bg-gray-200 dark:hover:bg-white/10"
-                  }`}
-                  style={activeCategory === cat.id ? { backgroundColor: cat.color } : {}}
+                  className="shrink-0 flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-semibold transition-colors"
+                  style={activeCategory === cat.id
+                    ? { backgroundColor: cat.color, color: "#fff" }
+                    : { backgroundColor: "transparent", border: "1px solid #e5e7eb", color: "#6b7280" }
+                  }
                 >
-                  <span className="h-1.5 w-1.5 rounded-full shrink-0" style={{ backgroundColor: activeCategory === cat.id ? "#fff" : cat.color }} />
                   {cat.name}
                 </button>
               ))}
             </div>
+
+            {/* Section label */}
+            <div className="flex items-center justify-between mb-5">
+              <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-white/30">
+                {activeLabel} <span className="normal-case font-normal">— {filtered.length} item{filtered.length !== 1 ? "s" : ""}</span>
+              </p>
+            </div>
+
+            {filtered.length === 0 ? (
+              <div className="py-24 text-center rounded-2xl border border-dashed border-gray-200 dark:border-white/5">
+                <p className="text-sm text-gray-400 dark:text-white/20">No products found.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+                {filtered.map(product => {
+                  const priceStr = formatPrice(product, currency);
+                  const cat = product.category;
+                  return (
+                    <div
+                      key={product.id}
+                      className="group relative rounded-2xl overflow-hidden cursor-pointer"
+                      style={{ aspectRatio: "4/3" }}
+                    >
+                      {/* Background image / fallback */}
+                      {product.image_url ? (
+                        <img
+                          src={product.image_url}
+                          alt={product.name}
+                          className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                      ) : (
+                        <div
+                          className="absolute inset-0"
+                          style={{ backgroundColor: cat?.color ? cat.color + "33" : "#0822C033" }}
+                        />
+                      )}
+
+                      {/* Always-visible gradient + text */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+
+                      {/* Category badge */}
+                      {cat && (
+                        <span
+                          className="absolute top-3 left-3 rounded-full px-2.5 py-1 text-[10px] font-bold text-white uppercase tracking-wide"
+                          style={{ backgroundColor: cat.color + "cc" }}
+                        >
+                          {cat.name}
+                        </span>
+                      )}
+
+                      {/* Bottom info */}
+                      <div className="absolute bottom-0 left-0 right-0 p-4 transition-transform duration-300 group-hover:-translate-y-12">
+                        <p className="text-white font-bold text-base leading-tight line-clamp-2">{product.name}</p>
+                        <p className="text-white/70 text-xs mt-1 font-semibold">{priceStr}</p>
+                      </div>
+
+                      {/* Hover CTA */}
+                      <div className="absolute bottom-0 left-0 right-0 px-4 pb-4 flex gap-2 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                        <button className="flex-1 rounded-xl bg-white text-gray-900 text-xs font-bold py-2.5 hover:bg-gray-100 transition-colors">
+                          Buy Now
+                        </button>
+                        <button className="flex-1 rounded-xl bg-white/20 backdrop-blur text-white text-xs font-bold py-2.5 border border-white/30 hover:bg-white/30 transition-colors">
+                          Learn More
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
-      )}
-
-      {/* ── Product grid ── */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14">
-        {filtered.length === 0 ? (
-          <div className="py-24 text-center">
-            <p className="text-gray-400 dark:text-white/30 text-sm">No products in this category yet.</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filtered.map(product => {
-              const priceStr = formatPrice(product, currency);
-              const cat = product.category;
-              return (
-                <div
-                  key={product.id}
-                  className="group rounded-2xl border border-gray-100 dark:border-white/5 bg-white dark:bg-[#0d1117] overflow-hidden hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
-                >
-                  {/* Image */}
-                  <div className="relative h-52 overflow-hidden">
-                    {product.image_url ? (
-                      <img
-                        src={product.image_url}
-                        alt={product.name}
-                        className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                    ) : (
-                      <div
-                        className="h-full w-full flex items-center justify-center"
-                        style={{ backgroundColor: cat?.color ? cat.color + "22" : "#0822C022" }}
-                      >
-                        <svg className="h-12 w-12 opacity-30" style={{ color: cat?.color ?? "#0822C0" }} fill="none" stroke="currentColor" strokeWidth={1.2} viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                        </svg>
-                      </div>
-                    )}
-                    {/* Category badge */}
-                    {cat && (
-                      <span
-                        className="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold text-white"
-                        style={{ backgroundColor: cat.color + "dd" }}
-                      >
-                        {cat.name}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Content */}
-                  <div className="p-5">
-                    <h3 className="font-bold text-gray-900 dark:text-white text-base leading-snug line-clamp-2">
-                      {product.name}
-                    </h3>
-                    {product.description && (
-                      <p className="mt-2 text-sm text-gray-500 dark:text-white/40 line-clamp-2 leading-relaxed">
-                        {product.description}
-                      </p>
-                    )}
-
-                    <div className="mt-5 flex items-center justify-between gap-3">
-                      <span className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">
-                        {priceStr}
-                      </span>
-                      <button className="shrink-0 rounded-xl bg-[#0822C0] hover:bg-[#061aa0] text-white text-xs font-semibold px-4 py-2.5 transition-colors">
-                        Get It Now
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </section>
+      </div>
     </div>
   );
 }
