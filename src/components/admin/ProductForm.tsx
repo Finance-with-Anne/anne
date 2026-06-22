@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useAdminTheme } from "@/lib/admin-theme";
 import type { ProductCategory } from "@/types";
@@ -37,6 +37,8 @@ export default function ProductForm({ initialData }: ProductFormProps) {
   const [imageUrl, setImageUrl] = useState(initialData?.image_url ?? "");
   const [downloadUrl, setDownloadUrl] = useState(initialData?.download_url ?? "");
   const [uploading, setUploading] = useState(false);
+  const [dragging, setDragging] = useState(false);
+  const dragCounter = useRef(0);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -53,9 +55,8 @@ export default function ProductForm({ initialData }: ProductFormProps) {
     ? "bg-white/5 border-white/5 text-white placeholder-white/20 focus:border-white/20"
     : "bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400 focus:border-gray-300";
 
-  async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  async function uploadFile(file: File) {
+    if (!file.type.startsWith("image/")) return;
     setUploading(true);
     const form = new FormData();
     form.append("file", file);
@@ -64,6 +65,35 @@ export default function ProductForm({ initialData }: ProductFormProps) {
     const data = await res.json();
     if (data.url) setImageUrl(data.url);
     setUploading(false);
+  }
+
+  function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (file) uploadFile(file);
+  }
+
+  function handleDragEnter(e: React.DragEvent) {
+    e.preventDefault();
+    dragCounter.current++;
+    setDragging(true);
+  }
+
+  function handleDragLeave(e: React.DragEvent) {
+    e.preventDefault();
+    dragCounter.current--;
+    if (dragCounter.current === 0) setDragging(false);
+  }
+
+  function handleDragOver(e: React.DragEvent) {
+    e.preventDefault();
+  }
+
+  function handleDrop(e: React.DragEvent) {
+    e.preventDefault();
+    dragCounter.current = 0;
+    setDragging(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) uploadFile(file);
   }
 
   async function handleSave() {
@@ -162,11 +192,26 @@ export default function ProductForm({ initialData }: ProductFormProps) {
                   </button>
                 </div>
               ) : (
-                <label className={`flex flex-col items-center justify-center h-40 rounded-lg border-2 border-dashed cursor-pointer transition-colors ${dark ? "border-white/10 hover:border-white/20" : "border-gray-200 hover:border-gray-300"}`}>
-                  <svg className={`h-8 w-8 mb-2 ${labelClass}`} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                <label
+                  onDragEnter={handleDragEnter}
+                  onDragLeave={handleDragLeave}
+                  onDragOver={handleDragOver}
+                  onDrop={handleDrop}
+                  className={`flex flex-col items-center justify-center h-40 rounded-lg border-2 border-dashed cursor-pointer transition-all ${
+                    dragging
+                      ? dark ? "border-blue-400/60 bg-blue-400/5" : "border-[#0822C0]/50 bg-[#0822C0]/5"
+                      : dark ? "border-white/10 hover:border-white/20" : "border-gray-200 hover:border-gray-300"
+                  }`}
+                >
+                  <svg className={`h-8 w-8 mb-2 transition-colors ${dragging ? dark ? "text-blue-400" : "text-[#0822C0]" : labelClass}`} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
-                  <span className={`text-sm ${labelClass}`}>{uploading ? "Uploading…" : "Click to upload image"}</span>
+                  <span className={`text-sm font-medium transition-colors ${dragging ? dark ? "text-blue-400" : "text-[#0822C0]" : labelClass}`}>
+                    {uploading ? "Uploading…" : dragging ? "Drop image here" : "Drag & drop or click to upload"}
+                  </span>
+                  {!uploading && !dragging && (
+                    <span className={`text-xs mt-1 ${dark ? "text-white/20" : "text-gray-300"}`}>PNG, JPG, WEBP</span>
+                  )}
                   <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
                 </label>
               )}
