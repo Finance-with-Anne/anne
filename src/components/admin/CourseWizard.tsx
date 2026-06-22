@@ -119,7 +119,6 @@ export default function CourseWizard({ categories, tags, initialData }: CourseWi
     initialData?.requirements?.length ? initialData.requirements : [""]
   );
   const [certificate, setCertificate] = useState(initialData?.certificate ?? false);
-  const [published, setPublished] = useState(initialData?.published ?? false);
 
   // Always point to the latest autoSave closure so the debounce effect never goes stale
   const autoSaveFnRef = useRef<() => Promise<void>>(async () => {});
@@ -238,7 +237,7 @@ export default function CourseWizard({ categories, tags, initialData }: CourseWi
       what_you_learn: whatYouLearn.filter(Boolean),
       requirements: requirements.filter(Boolean),
       certificate,
-      published: draft ? false : published,
+      published: !draft,
     };
   }
 
@@ -761,19 +760,6 @@ export default function CourseWizard({ categories, tags, initialData }: CourseWi
                 <span className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${certificate ? "translate-x-4" : "translate-x-0"}`} />
               </button>
             </div>
-            <div className={`border-t ${divider}`} />
-            <div className="flex items-center justify-between">
-              <div>
-                <p className={`text-sm font-semibold ${heading}`}>Published</p>
-                <p className={`text-xs mt-0.5 ${sub}`}>{published ? "Visible to students" : "Hidden (draft)"}</p>
-              </div>
-              <button
-                onClick={() => setPublished(!published)}
-                className={`relative h-5 w-9 rounded-full transition-colors ${published ? "bg-green-500" : dark ? "bg-white/10" : "bg-gray-200"}`}
-              >
-                <span className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${published ? "translate-x-4" : "translate-x-0"}`} />
-              </button>
-            </div>
           </div>
 
           <div className="flex items-center justify-between gap-3">
@@ -795,7 +781,7 @@ export default function CourseWizard({ categories, tags, initialData }: CourseWi
                 disabled={saving}
                 className="px-6 py-2.5 rounded-lg text-sm font-semibold bg-[#0822C0] text-white hover:bg-[#061aa0] transition-colors disabled:opacity-50"
               >
-                {saving ? "Saving…" : published ? "Publish Course" : "Save Course"}
+                {saving ? "Saving…" : "Publish Course"}
               </button>
             </div>
           </div>
