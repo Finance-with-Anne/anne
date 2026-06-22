@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAdminTheme } from "@/lib/admin-theme";
 import type { CourseCategory, CourseTag, Course } from "@/types";
@@ -99,6 +99,22 @@ export default function CourseWizard({ categories, tags, initialData }: CourseWi
   );
   const [certificate, setCertificate] = useState(initialData?.certificate ?? false);
   const [published, setPublished] = useState(initialData?.published ?? false);
+
+  // Always point to the latest autoSave closure so the debounce effect never goes stale
+  const autoSaveFnRef = useRef<() => Promise<void>>(async () => {});
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  autoSaveFnRef.current = autoSave; // update every render
+
+  // Debounce: fire auto-save 2s after the last edit to any key field
+  useEffect(() => {
+    if (!title.trim()) return;
+    clearTimeout(saveTimerRef.current);
+    saveTimerRef.current = setTimeout(() => {
+      autoSaveFnRef.current?.();
+    }, 2000);
+    return () => clearTimeout(saveTimerRef.current);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [title, description, sections, priceNGN, priceUSD, priceGBP, certificate, published, selectedTags, categoryId, level, language, thumbnail]);
 
   const card = dark ? "bg-[#111318] border-white/5" : "bg-white border-gray-200";
   const heading = dark ? "text-white" : "text-gray-900";
