@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 type Currency = "NGN" | "USD" | "GBP";
@@ -47,6 +48,8 @@ interface Props {
   currency: Currency;
   totalLessons: number;
   totalMinutes: number;
+  isLoggedIn: boolean;
+  isEnrolled: boolean;
 }
 
 const LEVEL_COLORS: Record<string, string> = {
@@ -100,14 +103,42 @@ function TypeIcon({ type }: { type: "video" | "text" | "quiz" }) {
 
 type Tab = "description" | "curriculum";
 
-export default function CourseDetailClient({ course, related, currency, totalLessons, totalMinutes }: Props) {
+export default function CourseDetailClient({ course, related, currency, totalLessons, totalMinutes, isLoggedIn, isEnrolled: initialEnrolled }: Props) {
+  const router = useRouter();
   const [tab, setTab] = useState<Tab>("description");
+  const [enrolling, setEnrolling] = useState(false);
+  const [enrolled, setEnrolled] = useState(initialEnrolled);
   const [openSections, setOpenSections] = useState<Set<string>>(
     new Set(course.sections.slice(0, 1).map(s => s.id))
   );
 
   const priceStr = formatPrice(course, currency);
   const isFree = priceStr === "Free";
+
+  async function handleEnroll() {
+    if (!isLoggedIn) {
+      router.push(`/auth?next=/courses/${course.id}`);
+      return;
+    }
+    if (enrolled) {
+      router.push(`/account/courses/${course.id}`);
+      return;
+    }
+    setEnrolling(true);
+    try {
+      const res = await fetch("/api/enroll", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ courseId: course.id }),
+      });
+      if (res.ok) {
+        setEnrolled(true);
+        router.push(`/account/courses/${course.id}`);
+      }
+    } finally {
+      setEnrolling(false);
+    }
+  }
   const levelColor = LEVEL_COLORS[course.level] ?? "#6B7280";
   const allLessons = course.sections.flatMap(s => s.lessons);
   const videoCount = allLessons.filter(l => l.type === "video").length;
@@ -387,16 +418,42 @@ export default function CourseDetailClient({ course, related, currency, totalLes
               </ul>
 
               <button
-                className="w-full flex items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-bold text-white transition-opacity hover:opacity-90 active:opacity-80"
+                onClick={handleEnroll}
+                disabled={enrolling}
+                className="w-full flex items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-bold text-white transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-60"
                 style={{ backgroundColor: "#0822C0" }}
               >
-                {isFree ? "Start for Free" : "Start Course"}
-                <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                </svg>
+                {enrolling ? (
+                  <>
+                    <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                    </svg>
+                    Enrolling…
+                  </>
+                ) : enrolled ? (
+                  <>
+                    Go to course
+                    <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                    </svg>
+                  </>
+                ) : (
+                  <>
+                    {isFree ? "Start for Free" : `Enroll — ${priceStr}`}
+                    <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                    </svg>
+                  </>
+                )}
               </button>
 
-              {!isFree && (
+              {!isLoggedIn && (
+                <p className="text-center text-xs text-gray-400 dark:text-white/25 mt-3">
+                  You&apos;ll be asked to sign in or create a free account.
+                </p>
+              )}
+              {!isFree && isLoggedIn && !enrolled && (
                 <p className="text-center text-xs text-gray-400 dark:text-white/25 mt-3">30-day money-back guarantee</p>
               )}
 

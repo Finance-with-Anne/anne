@@ -91,7 +91,7 @@ function AuthForm() {
       password,
       options: {
         data: { full_name: fullName },
-        emailRedirectTo: `${location.origin}/auth/callback`,
+        emailRedirectTo: `${location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
       },
     });
     if (error) { setError(error.message); setLoading(false); }

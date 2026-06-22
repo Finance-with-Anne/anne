@@ -29,10 +29,10 @@ export async function proxy(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser();
 
-  // Not logged in → redirect to admin login
+  // Not logged in → send to home (don't reveal admin exists)
   if (!user && pathname.startsWith("/admin")) {
     const url = request.nextUrl.clone();
-    url.pathname = "/admin-login";
+    url.pathname = "/";
     return NextResponse.redirect(url);
   }
 

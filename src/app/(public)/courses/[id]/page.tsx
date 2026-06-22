@@ -1,5 +1,6 @@
 import { headers } from "next/headers";
 import { supabaseAdmin } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import CourseDetailClient from "@/components/public/CourseDetailClient";
 
@@ -34,7 +35,11 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ i
   const country = headersList.get("x-vercel-ip-country");
   const currency = detectCurrency(country);
 
-  const [{ data: course }, { data: relatedRaw }] = await Promise.all([
+  // Check if user is logged in and already enrolled
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  const [{ data: course }, { data: relatedRaw }, { data: enrollment }] = await Promise.all([
     supabaseAdmin
       .from("courses")
       .select(`
@@ -53,6 +58,14 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ i
       .neq("id", id)
       .order("created_at", { ascending: false })
       .limit(3),
+    user
+      ? supabase
+          .from("course_enrollments")
+          .select("enrolled_at")
+          .eq("user_id", user.id)
+          .eq("course_id", id)
+          .maybeSingle()
+      : Promise.resolve({ data: null, error: null }),
   ]);
 
   if (!course) notFound();
@@ -93,6 +106,8 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ i
       currency={currency}
       totalLessons={totalLessons}
       totalMinutes={totalMinutes}
+      isLoggedIn={!!user}
+      isEnrolled={!!enrollment}
     />
   );
 }
