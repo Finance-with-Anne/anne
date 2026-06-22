@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAdminTheme } from "@/lib/admin-theme";
-import ProductsSubNav from "./ProductsSubNav";
 import type { ProductCategory } from "@/types";
 
 const PALETTE = [
@@ -89,8 +88,6 @@ export default function ProductCategoriesPage({ categories: initial }: { categor
 
   return (
     <div className="space-y-5">
-      <ProductsSubNav />
-
       <div className="flex items-center justify-between gap-4">
         <div>
           <h1 className={`text-xl font-bold ${heading}`}>Categories</h1>

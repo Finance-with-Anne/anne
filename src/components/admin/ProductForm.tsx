@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAdminTheme } from "@/lib/admin-theme";
-import ProductsSubNav from "./ProductsSubNav";
 import type { ProductCategory } from "@/types";
 
 interface InitialData {
@@ -22,10 +21,9 @@ interface InitialData {
 
 interface ProductFormProps {
   initialData?: InitialData;
-  showSubNav?: boolean;
 }
 
-export default function ProductForm({ initialData, showSubNav = true }: ProductFormProps) {
+export default function ProductForm({ initialData }: ProductFormProps) {
   const { dark } = useAdminTheme();
   const router = useRouter();
 
@@ -92,10 +90,7 @@ export default function ProductForm({ initialData, showSubNav = true }: ProductF
   }
 
   return (
-    <div className="space-y-4">
-      {showSubNav && <ProductsSubNav />}
-
-      <div className="max-w-4xl space-y-4">
+    <div className="max-w-4xl space-y-4">
         <div className="flex items-center justify-between">
           <div>
             <h1 className={`text-xl font-bold ${heading}`}>{initialData?.id ? "Edit Product" : "New Product"}</h1>
@@ -246,7 +241,6 @@ export default function ProductForm({ initialData, showSubNav = true }: ProductF
             </div>
           </div>
         </div>
-      </div>
     </div>
   );
 }

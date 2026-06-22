@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useAdminTheme } from "@/lib/admin-theme";
-import ProductsSubNav from "./ProductsSubNav";
 import ProductForm from "./ProductForm";
 import type { Course, BookingSession } from "@/types";
 
@@ -35,12 +34,7 @@ export default function ProductSourcePicker({ courses, sessions }: Props) {
 
   // If source picker is done and item is selected (or manual chosen), show the form
   if (source === "manual") {
-    return (
-      <ProductForm
-        initialData={{ source_type: "manual" }}
-        showSubNav
-      />
-    );
+    return <ProductForm initialData={{ source_type: "manual" }} />;
   }
 
   if (selected) {
@@ -63,12 +57,7 @@ export default function ProductSourcePicker({ courses, sessions }: Props) {
           source_id: selected.id,
         };
 
-    return (
-      <ProductForm
-        initialData={prefill}
-        showSubNav
-      />
-    );
+    return <ProductForm initialData={prefill} />;
   }
 
   const filteredCourses = courses.filter(c =>
@@ -80,8 +69,6 @@ export default function ProductSourcePicker({ courses, sessions }: Props) {
 
   return (
     <div className="space-y-5">
-      <ProductsSubNav />
-
       <div>
         <h1 className={`text-xl font-bold ${heading}`}>Add New Product</h1>
         <p className={`text-sm mt-0.5 ${sub}`}>Create manually or import from an existing Course or Booking Session.</p>

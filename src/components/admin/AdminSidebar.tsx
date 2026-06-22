@@ -31,7 +31,10 @@ export default function AdminSidebar({ userRole, userName, userEmail, userAvatar
   const [search, setSearch] = useState("");
   const [collapsed, setCollapsed] = useState(false);
   const [expandedSection, setExpandedSection] = useState<string | null>(
-    pathname.startsWith("/admin/blog") ? "/admin/blog" : pathname.startsWith("/admin/booking") ? "/admin/booking" : null
+    pathname.startsWith("/admin/blog") ? "/admin/blog"
+    : pathname.startsWith("/admin/booking") ? "/admin/booking"
+    : pathname.startsWith("/admin/products") ? "/admin/products"
+    : null
   );
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
@@ -107,7 +110,49 @@ export default function AdminSidebar({ userRole, userName, userEmail, userAvatar
           .map((item) => !filtered || filtered.includes(item) ? (
           <div key={item.href}>
             {/* Blog gets a toggle instead of direct nav */}
-            {item.href === "/admin/booking" && !collapsed ? (
+            {item.href === "/admin/products" && !collapsed ? (
+              <div>
+                <button
+                  onClick={() => setExpandedSection(expandedSection === "/admin/products" ? null : "/admin/products")}
+                  className={`relative w-full flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-all ${
+                    isActive("/admin/products")
+                      ? dark ? "text-white" : "text-brand"
+                      : dark ? "text-white/40 hover:text-white/70 hover:bg-white/5" : "text-gray-400 hover:text-brand hover:bg-brand/5"
+                  }`}
+                >
+                  {isActive("/admin/products") && (
+                    <span className={`absolute inset-0 rounded-lg ${dark ? "bg-gradient-to-r from-blue-600/30 to-brand/40 border border-white/10" : "bg-gradient-to-r from-blue-100/80 to-brand/10 border border-brand/20"}`} />
+                  )}
+                  <span className={`relative shrink-0 ${isActive("/admin/products") ? dark ? "text-blue-400" : "text-brand" : ""}`}>
+                    <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">{item.icon}</svg>
+                  </span>
+                  <span className="relative text-xs font-medium flex-1 text-left">{item.label}</span>
+                  <svg className={`relative h-3 w-3 transition-transform ${expandedSection === "/admin/products" ? "rotate-180" : ""} ${dark ? "text-white/20" : "text-gray-300"}`} fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                {expandedSection === "/admin/products" && (
+                  <div className={`ml-4 mt-0.5 mb-1 space-y-0.5 border-l pl-3 ${dark ? "border-white/5" : "border-gray-200"}`}>
+                    {[
+                      { label: "All Products", href: "/admin/products/all" },
+                      { label: "Categories",   href: "/admin/products/categories" },
+                      { label: "Add New",      href: "/admin/products/new" },
+                    ].map((sub) => (
+                      <Link key={sub.href} href={sub.href}
+                        className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-xs transition-colors ${
+                          pathname.startsWith(sub.href)
+                            ? dark ? "text-white font-medium" : "text-brand font-medium"
+                            : dark ? "text-white/30 hover:text-white/60" : "text-gray-400 hover:text-brand"
+                        }`}
+                      >
+                        <span className={`h-1 w-1 rounded-full shrink-0 ${pathname.startsWith(sub.href) ? dark ? "bg-blue-400" : "bg-brand" : dark ? "bg-white/20" : "bg-gray-300"}`} />
+                        {sub.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : item.href === "/admin/booking" && !collapsed ? (
               <div>
                 <button
                   onClick={() => setExpandedSection(expandedSection === "/admin/booking" ? null : "/admin/booking")}

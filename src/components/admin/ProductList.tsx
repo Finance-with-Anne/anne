@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAdminTheme } from "@/lib/admin-theme";
 import ActionButton from "./ActionButton";
-import ProductsSubNav from "./ProductsSubNav";
 import type { Product } from "@/types";
 
 export default function ProductList({ products }: { products: Product[] }) {
@@ -61,8 +60,6 @@ export default function ProductList({ products }: { products: Product[] }) {
 
   return (
     <div className="space-y-5">
-      <ProductsSubNav />
-
       <div className="flex items-center justify-between gap-4">
         <div>
           <h1 className={`text-xl font-bold ${heading}`}>All Products</h1>
