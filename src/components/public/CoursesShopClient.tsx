@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import type { Course, CourseCategory } from "@/types";
 
 type Currency = "NGN" | "USD" | "GBP";
@@ -157,9 +158,10 @@ export default function CoursesShopClient({ courses, categories, currency }: Pro
                   const levelColor = LEVEL_COLORS[course.level] ?? "#6B7280";
                   const cat = course.category;
                   return (
-                    <div
+                    <Link
                       key={course.id}
-                      className="group relative rounded-2xl overflow-hidden cursor-pointer"
+                      href={`/courses/${course.id}`}
+                      className="group relative rounded-2xl overflow-hidden block"
                       style={{ aspectRatio: "4/3" }}
                     >
                       {/* Background */}
@@ -209,14 +211,14 @@ export default function CoursesShopClient({ courses, categories, currency }: Pro
 
                       {/* Hover CTA */}
                       <div className="absolute bottom-0 left-0 right-0 px-4 pb-4 flex gap-2 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                        <button className="flex-1 rounded-xl bg-white text-gray-900 text-xs font-bold py-2.5 hover:bg-gray-100 transition-colors">
+                        <span className="flex-1 text-center rounded-xl bg-white text-gray-900 text-xs font-bold py-2.5">
                           Enroll Now
-                        </button>
-                        <button className="flex-1 rounded-xl bg-white/20 backdrop-blur text-white text-xs font-bold py-2.5 border border-white/30 hover:bg-white/30 transition-colors">
-                          Preview
-                        </button>
+                        </span>
+                        <span className="flex-1 text-center rounded-xl bg-white/20 backdrop-blur text-white text-xs font-bold py-2.5 border border-white/30">
+                          View Course
+                        </span>
                       </div>
-                    </div>
+                    </Link>
                   );
                 })}
               </div>
