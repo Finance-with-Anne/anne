@@ -109,9 +109,16 @@ export default function CourseWizard({ categories, tags, initialData }: CourseWi
   });
 
   // Step 3
+  const [isFree, setIsFree] = useState<boolean>((initialData as any)?.is_free ?? false);
   const [priceNGN, setPriceNGN] = useState(initialData?.price_ngn?.toString() ?? "");
   const [priceUSD, setPriceUSD] = useState(initialData?.price_usd?.toString() ?? "");
   const [priceGBP, setPriceGBP] = useState(initialData?.price_gbp?.toString() ?? "");
+  const [saleEnabled, setSaleEnabled] = useState<boolean>(!!(initialData as any)?.sale_price_ngn || !!(initialData as any)?.sale_price_usd || !!(initialData as any)?.sale_price_gbp);
+  const [salePriceNGN, setSalePriceNGN] = useState((initialData as any)?.sale_price_ngn?.toString() ?? "");
+  const [salePriceUSD, setSalePriceUSD] = useState((initialData as any)?.sale_price_usd?.toString() ?? "");
+  const [salePriceGBP, setSalePriceGBP] = useState((initialData as any)?.sale_price_gbp?.toString() ?? "");
+  const [saleStartsAt, setSaleStartsAt] = useState<string>((initialData as any)?.sale_starts_at?.slice(0, 16) ?? "");
+  const [saleEndsAt, setSaleEndsAt] = useState<string>((initialData as any)?.sale_ends_at?.slice(0, 16) ?? "");
   const [whatYouLearn, setWhatYouLearn] = useState<string[]>(
     initialData?.what_you_learn?.length ? initialData.what_you_learn : [""]
   );
@@ -136,7 +143,7 @@ export default function CourseWizard({ categories, tags, initialData }: CourseWi
   // eslint-disable-next-line react-hooks/exhaustive-deps
   // NOTE: `published` and `certificate` intentionally excluded — auto-save always drafts (published:false),
   // so including them would overwrite the publish toggle. Only the explicit save buttons persist publish state.
-  }, [title, description, sections, priceNGN, priceUSD, priceGBP, selectedTags, categoryId, level, language, thumbnail]);
+  }, [title, description, sections, isFree, priceNGN, priceUSD, priceGBP, saleEnabled, salePriceNGN, salePriceUSD, salePriceGBP, saleStartsAt, saleEndsAt, selectedTags, categoryId, level, language, thumbnail]);
 
   const card = dark ? "bg-[#111318] border-white/5" : "bg-white border-gray-200";
   const heading = dark ? "text-white" : "text-gray-900";
@@ -230,10 +237,16 @@ export default function CourseWizard({ categories, tags, initialData }: CourseWi
           order: li,
         })),
       })),
+      is_free: isFree,
       price: parseFloat(priceNGN) || 0,
-      price_ngn: parseFloat(priceNGN) || null,
-      price_usd: parseFloat(priceUSD) || null,
-      price_gbp: parseFloat(priceGBP) || null,
+      price_ngn: isFree ? null : (parseFloat(priceNGN) || null),
+      price_usd: isFree ? null : (parseFloat(priceUSD) || null),
+      price_gbp: isFree ? null : (parseFloat(priceGBP) || null),
+      sale_price_ngn: (!isFree && saleEnabled && salePriceNGN) ? parseFloat(salePriceNGN) : null,
+      sale_price_usd: (!isFree && saleEnabled && salePriceUSD) ? parseFloat(salePriceUSD) : null,
+      sale_price_gbp: (!isFree && saleEnabled && salePriceGBP) ? parseFloat(salePriceGBP) : null,
+      sale_starts_at: (!isFree && saleEnabled && saleStartsAt) ? saleStartsAt : null,
+      sale_ends_at: (!isFree && saleEnabled && saleEndsAt) ? saleEndsAt : null,
       what_you_learn: whatYouLearn.filter(Boolean),
       requirements: requirements.filter(Boolean),
       certificate,
@@ -671,33 +684,121 @@ export default function CourseWizard({ categories, tags, initialData }: CourseWi
         <div className="space-y-4">
           {/* Pricing */}
           <div className={`rounded-xl border p-5 space-y-4 ${card}`}>
-            <p className={`text-xs font-semibold uppercase tracking-wide ${labelClass}`}>Pricing</p>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div>
-                <label className={`block text-xs font-semibold mb-1.5 ${labelClass}`}>Price (NGN ₦)</label>
-                <input
-                  type="number" value={priceNGN} onChange={e => setPriceNGN(e.target.value)}
-                  min="0" step="100" placeholder="0"
-                  className={`w-full rounded-lg border px-3 py-2.5 text-sm focus:outline-none transition-colors ${inputClass}`}
-                />
-              </div>
-              <div>
-                <label className={`block text-xs font-semibold mb-1.5 ${labelClass}`}>Price (USD $)</label>
-                <input
-                  type="number" value={priceUSD} onChange={e => setPriceUSD(e.target.value)}
-                  min="0" step="0.01" placeholder="0.00"
-                  className={`w-full rounded-lg border px-3 py-2.5 text-sm focus:outline-none transition-colors ${inputClass}`}
-                />
-              </div>
-              <div>
-                <label className={`block text-xs font-semibold mb-1.5 ${labelClass}`}>Price (GBP £)</label>
-                <input
-                  type="number" value={priceGBP} onChange={e => setPriceGBP(e.target.value)}
-                  min="0" step="0.01" placeholder="0.00"
-                  className={`w-full rounded-lg border px-3 py-2.5 text-sm focus:outline-none transition-colors ${inputClass}`}
-                />
+            <div className="flex items-center justify-between">
+              <p className={`text-xs font-semibold uppercase tracking-wide ${labelClass}`}>Pricing</p>
+              {/* Free / Paid toggle */}
+              <div className={`flex rounded-lg p-0.5 text-xs font-semibold ${dark ? "bg-white/5" : "bg-gray-100"}`}>
+                <button
+                  onClick={() => setIsFree(true)}
+                  className={`px-3 py-1.5 rounded-md transition-colors ${isFree ? "bg-emerald-500 text-white shadow-sm" : dark ? "text-white/40 hover:text-white/70" : "text-gray-400 hover:text-gray-700"}`}
+                >Free</button>
+                <button
+                  onClick={() => setIsFree(false)}
+                  className={`px-3 py-1.5 rounded-md transition-colors ${!isFree ? "bg-[#0822C0] text-white shadow-sm" : dark ? "text-white/40 hover:text-white/70" : "text-gray-400 hover:text-gray-700"}`}
+                >Paid</button>
               </div>
             </div>
+
+            {isFree ? (
+              <div className="flex items-center gap-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 px-4 py-3">
+                <svg className="h-4 w-4 text-emerald-500 shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p className="text-xs font-medium text-emerald-600">This course is free — students can enrol at no cost.</p>
+              </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div>
+                    <label className={`block text-xs font-semibold mb-1.5 ${labelClass}`}>Price (NGN ₦)</label>
+                    <input
+                      type="number" value={priceNGN} onChange={e => setPriceNGN(e.target.value)}
+                      min="0" step="100" placeholder="0"
+                      className={`w-full rounded-lg border px-3 py-2.5 text-sm focus:outline-none transition-colors ${inputClass}`}
+                    />
+                  </div>
+                  <div>
+                    <label className={`block text-xs font-semibold mb-1.5 ${labelClass}`}>Price (USD $)</label>
+                    <input
+                      type="number" value={priceUSD} onChange={e => setPriceUSD(e.target.value)}
+                      min="0" step="0.01" placeholder="0.00"
+                      className={`w-full rounded-lg border px-3 py-2.5 text-sm focus:outline-none transition-colors ${inputClass}`}
+                    />
+                  </div>
+                  <div>
+                    <label className={`block text-xs font-semibold mb-1.5 ${labelClass}`}>Price (GBP £)</label>
+                    <input
+                      type="number" value={priceGBP} onChange={e => setPriceGBP(e.target.value)}
+                      min="0" step="0.01" placeholder="0.00"
+                      className={`w-full rounded-lg border px-3 py-2.5 text-sm focus:outline-none transition-colors ${inputClass}`}
+                    />
+                  </div>
+                </div>
+
+                {/* Sale / Promo toggle */}
+                <div className={`rounded-lg border p-4 space-y-4 ${dark ? "border-white/5 bg-white/3" : "border-gray-100 bg-gray-50"}`}>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className={`text-xs font-semibold ${heading}`}>Run a Sale / Promo</p>
+                      <p className={`text-[11px] mt-0.5 ${sub}`}>Offer a discounted price for a limited time</p>
+                    </div>
+                    <button
+                      onClick={() => setSaleEnabled(v => !v)}
+                      className={`relative h-5 w-9 rounded-full transition-colors ${saleEnabled ? "bg-[#0822C0]" : dark ? "bg-white/10" : "bg-gray-200"}`}
+                    >
+                      <span className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${saleEnabled ? "translate-x-4" : "translate-x-0"}`} />
+                    </button>
+                  </div>
+
+                  {saleEnabled && (
+                    <div className="space-y-3">
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div>
+                          <label className={`block text-xs font-semibold mb-1.5 ${labelClass}`}>Sale Price (NGN ₦)</label>
+                          <input
+                            type="number" value={salePriceNGN} onChange={e => setSalePriceNGN(e.target.value)}
+                            min="0" step="100" placeholder="0"
+                            className={`w-full rounded-lg border px-3 py-2 text-sm focus:outline-none transition-colors ${inputClass}`}
+                          />
+                        </div>
+                        <div>
+                          <label className={`block text-xs font-semibold mb-1.5 ${labelClass}`}>Sale Price (USD $)</label>
+                          <input
+                            type="number" value={salePriceUSD} onChange={e => setSalePriceUSD(e.target.value)}
+                            min="0" step="0.01" placeholder="0.00"
+                            className={`w-full rounded-lg border px-3 py-2 text-sm focus:outline-none transition-colors ${inputClass}`}
+                          />
+                        </div>
+                        <div>
+                          <label className={`block text-xs font-semibold mb-1.5 ${labelClass}`}>Sale Price (GBP £)</label>
+                          <input
+                            type="number" value={salePriceGBP} onChange={e => setSalePriceGBP(e.target.value)}
+                            min="0" step="0.01" placeholder="0.00"
+                            className={`w-full rounded-lg border px-3 py-2 text-sm focus:outline-none transition-colors ${inputClass}`}
+                          />
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label className={`block text-xs font-semibold mb-1.5 ${labelClass}`}>Sale Starts</label>
+                          <input
+                            type="datetime-local" value={saleStartsAt} onChange={e => setSaleStartsAt(e.target.value)}
+                            className={`w-full rounded-lg border px-3 py-2 text-sm focus:outline-none transition-colors ${inputClass}`}
+                          />
+                        </div>
+                        <div>
+                          <label className={`block text-xs font-semibold mb-1.5 ${labelClass}`}>Sale Ends</label>
+                          <input
+                            type="datetime-local" value={saleEndsAt} onChange={e => setSaleEndsAt(e.target.value)}
+                            className={`w-full rounded-lg border px-3 py-2 text-sm focus:outline-none transition-colors ${inputClass}`}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
           </div>
 
           {/* What you'll learn */}
