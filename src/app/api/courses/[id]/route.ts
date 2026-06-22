@@ -7,14 +7,41 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorised." }, { status: 401 });
 
-  const { lessons, ...courseData } = await req.json();
-  const { data, error } = await supabase.from("courses").update({ ...courseData, updated_at: new Date().toISOString() }).eq("id", id).select().single();
+  const { sections, tag_ids, ...courseData } = await req.json();
+  const { data, error } = await supabase
+    .from("courses")
+    .update({ ...courseData, updated_at: new Date().toISOString() })
+    .eq("id", id)
+    .select()
+    .single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-  if (lessons) {
+  if (sections !== undefined) {
+    // Replace all sections and lessons
     await supabase.from("lessons").delete().eq("course_id", id);
-    if (lessons.length) {
-      await supabase.from("lessons").insert(lessons.map((l: any, i: number) => ({ ...l, course_id: id, order: i })));
+    await supabase.from("course_sections").delete().eq("course_id", id);
+    for (const section of sections) {
+      const { lessons, ...sectionData } = section;
+      const { data: sec, error: secErr } = await supabase
+        .from("course_sections")
+        .insert({ ...sectionData, id: undefined, course_id: id })
+        .select()
+        .single();
+      if (secErr) continue;
+      if (lessons?.length) {
+        await supabase.from("lessons").insert(
+          lessons.map((l: any) => ({ ...l, id: undefined, course_id: id, section_id: sec.id }))
+        );
+      }
+    }
+  }
+
+  if (tag_ids !== undefined) {
+    await supabase.from("course_tag_assignments").delete().eq("course_id", id);
+    if (tag_ids.length) {
+      await supabase.from("course_tag_assignments").insert(
+        tag_ids.map((tag_id: string) => ({ course_id: id, tag_id }))
+      );
     }
   }
 
@@ -28,6 +55,8 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
   if (!user) return NextResponse.json({ error: "Unauthorised." }, { status: 401 });
 
   await supabase.from("lessons").delete().eq("course_id", id);
+  await supabase.from("course_sections").delete().eq("course_id", id);
+  await supabase.from("course_tag_assignments").delete().eq("course_id", id);
   const { error } = await supabase.from("courses").delete().eq("id", id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ success: true });

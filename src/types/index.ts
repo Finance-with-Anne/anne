@@ -126,22 +126,61 @@ export type BookingSlot = {
   created_at: string;
 };
 
+export type CourseCategory = {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  color: string;
+  created_at: string;
+};
+
+export type CourseTag = {
+  id: string;
+  name: string;
+  slug: string;
+  created_at: string;
+};
+
+export type CourseSection = {
+  id: string;
+  course_id: string;
+  title: string;
+  sort_order: number;
+  lessons?: Lesson[];
+  created_at: string;
+};
+
 export type Course = {
   id: string;
   title: string;
   description: string;
   price: number;
+  price_ngn: number | null;
+  price_usd: number | null;
+  price_gbp: number | null;
   thumbnail_url: string | null;
   published: boolean;
+  category_id: string | null;
+  category?: { id: string; name: string; color: string } | null;
+  level: "beginner" | "intermediate" | "advanced";
+  language: string;
+  what_you_learn: string[] | null;
+  requirements: string[] | null;
+  certificate: boolean;
   lessons: Lesson[];
+  sections?: CourseSection[];
   created_at: string;
 };
 
 export type Lesson = {
   id: string;
   course_id: string;
+  section_id: string | null;
   title: string;
+  type: "video" | "text" | "quiz";
   video_url: string | null;
+  content: string | null;
   duration: number;
   order: number;
 };
