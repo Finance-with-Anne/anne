@@ -50,7 +50,8 @@ function AuthForm() {
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
+  const urlError = searchParams.get("error");
+  const [error, setError] = useState(urlError === "confirmation_failed" ? "Confirmation link expired or invalid. Please try again." : "");
   const [loading, setLoading] = useState(false);
   const [signupSuccess, setSignupSuccess] = useState(false);
   const [darkMode, setDarkMode] = useState(true);
