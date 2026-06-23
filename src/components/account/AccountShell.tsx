@@ -48,7 +48,7 @@ export default function AccountShell({
   }
 
   return (
-    <div className="min-h-screen flex bg-gray-50 dark:bg-[#0a0f1a]">
+    <div className="min-h-screen flex bg-gray-50 dark:bg-[#0d1117]">
       <AccountSidebar
         userName={userName}
         userEmail={userEmail}
