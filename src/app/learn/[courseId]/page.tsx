@@ -66,6 +66,7 @@ export default async function LearnPage({ params, searchParams }: Props) {
     <CoursePlayer
       courseId={course.id}
       courseTitle={course.title}
+      thumbnailUrl={course.thumbnail_url}
       curriculum={curriculum}
       initialLessonId={initialLesson?.id ?? null}
       completedLessonIds={Array.from(completedLessonIds)}

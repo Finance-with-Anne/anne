@@ -22,6 +22,7 @@ interface Section {
 interface Props {
   courseId: string;
   courseTitle: string;
+  thumbnailUrl?: string | null;
   curriculum: Section[];
   initialLessonId: string | null;
   completedLessonIds: string[];
@@ -418,6 +419,7 @@ function SupportTab({ courseId }: { courseId: string }) {
 export default function CoursePlayer({
   courseId,
   courseTitle,
+  thumbnailUrl,
   curriculum,
   initialLessonId,
   completedLessonIds: initial,
@@ -697,22 +699,37 @@ export default function CoursePlayer({
                   {activeTab === "overview" && (
                     <div className="max-w-2xl mx-auto px-6 py-10">
 
-                      {/* Lesson title card */}
-                      <div className="bg-white rounded-2xl border border-gray-100 px-8 py-7 mb-8 shadow-sm">
-                        <p className="text-xs font-bold text-[#0822C0] uppercase tracking-widest mb-2">
-                          Lesson {lessonLabel}
-                        </p>
-                        <h1 className="text-2xl font-bold text-gray-900 leading-snug">
-                          {activeLesson.title}
-                        </h1>
-                        {activeLesson.duration && (
-                          <p className="text-xs text-gray-400 mt-2 flex items-center gap-1">
-                            <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            {activeLesson.duration} min read
-                          </p>
-                        )}
+                      {/* Blog-style header: image left, title right */}
+                      <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden mb-8 shadow-sm">
+                        <div className="flex items-stretch">
+                          {/* Cover image */}
+                          <div className="w-44 shrink-0 bg-[#0822C0]/6 flex items-center justify-center self-stretch">
+                            {thumbnailUrl ? (
+                              <img src={thumbnailUrl} alt="" className="w-full h-full object-cover" />
+                            ) : (
+                              <svg className="h-10 w-10 text-[#0822C0]/20" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                              </svg>
+                            )}
+                          </div>
+                          {/* Title + meta */}
+                          <div className="flex-1 px-8 py-7">
+                            <p className="text-xs font-bold text-[#0822C0] uppercase tracking-widest mb-3">
+                              Lesson {lessonLabel}
+                            </p>
+                            <h1 className="text-2xl font-bold text-gray-900 leading-snug mb-3">
+                              {activeLesson.title}
+                            </h1>
+                            {activeLesson.duration && (
+                              <p className="text-xs text-gray-400 flex items-center gap-1">
+                                <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                {activeLesson.duration} min read
+                              </p>
+                            )}
+                          </div>
+                        </div>
                       </div>
 
                       {/* PDF download */}
