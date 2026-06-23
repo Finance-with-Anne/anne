@@ -699,38 +699,39 @@ export default function CoursePlayer({
                   {activeTab === "overview" && (
                     <div className="max-w-2xl mx-auto px-6 py-10">
 
-                      {/* Blog-style header: image left, title right */}
-                      <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden mb-8 shadow-sm">
-                        <div className="flex items-stretch">
-                          {/* Cover image */}
-                          <div className="w-44 shrink-0 bg-[#0822C0]/6 flex items-center justify-center self-stretch">
-                            {thumbnailUrl ? (
-                              <img src={thumbnailUrl} alt="" className="w-full h-full object-cover" />
-                            ) : (
-                              <svg className="h-10 w-10 text-[#0822C0]/20" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                      {/* Header: image left, title right — like blog */}
+                      <div className="flex gap-7 items-start mb-8">
+                        {/* Square cover image */}
+                        <div className="w-48 h-48 shrink-0 rounded-2xl overflow-hidden bg-[#0822C0]/6 flex items-center justify-center">
+                          {thumbnailUrl ? (
+                            <img src={thumbnailUrl} alt="" className="w-full h-full object-cover" />
+                          ) : (
+                            <svg className="h-12 w-12 text-[#0822C0]/20" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                            </svg>
+                          )}
+                        </div>
+                        {/* Title + meta */}
+                        <div className="flex-1 pt-1">
+                          <p className="text-xs font-bold text-[#0822C0] uppercase tracking-widest mb-3">
+                            Lesson {lessonLabel}
+                          </p>
+                          <h1 className="text-3xl font-bold text-gray-900 leading-tight mb-4">
+                            {activeLesson.title}
+                          </h1>
+                          {activeLesson.duration && (
+                            <p className="text-sm text-gray-400 flex items-center gap-1.5">
+                              <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                               </svg>
-                            )}
-                          </div>
-                          {/* Title + meta */}
-                          <div className="flex-1 px-8 py-7">
-                            <p className="text-xs font-bold text-[#0822C0] uppercase tracking-widest mb-3">
-                              Lesson {lessonLabel}
+                              {activeLesson.duration} min read
                             </p>
-                            <h1 className="text-2xl font-bold text-gray-900 leading-snug mb-3">
-                              {activeLesson.title}
-                            </h1>
-                            {activeLesson.duration && (
-                              <p className="text-xs text-gray-400 flex items-center gap-1">
-                                <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                {activeLesson.duration} min read
-                              </p>
-                            )}
-                          </div>
+                          )}
                         </div>
                       </div>
+
+                      {/* Divider */}
+                      <hr className="border-gray-200 mb-8" />
 
                       {/* PDF download */}
                       {activeLesson.type === "pdf" && activeLesson.content && (
@@ -751,25 +752,18 @@ export default function CoursePlayer({
                         </a>
                       )}
 
-                      {/* Prose content */}
+                      {/* Prose content — no card, clean like blog body */}
                       {activeLesson.content && activeLesson.type !== "pdf" ? (
-                        <div className="bg-white rounded-2xl border border-gray-100 px-8 py-8 shadow-sm">
-                          <div
-                            className="prose prose-base max-w-none prose-headings:font-bold prose-headings:text-gray-900 prose-h1:text-xl prose-h2:text-lg prose-h3:text-base prose-p:text-gray-700 prose-p:leading-relaxed prose-p:my-4 prose-li:text-gray-700 prose-ul:my-4 prose-ol:my-4 prose-a:text-[#0822C0] prose-a:font-medium prose-a:no-underline hover:prose-a:underline prose-blockquote:border-l-4 prose-blockquote:border-[#0822C0]/30 prose-blockquote:bg-[#0822C0]/3 prose-blockquote:rounded-r-lg prose-blockquote:py-1 prose-blockquote:text-gray-600 prose-img:rounded-xl prose-img:shadow-sm prose-strong:text-gray-900 prose-code:text-[#0822C0] prose-code:bg-blue-50 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-pre:bg-gray-900 prose-pre:text-gray-100 prose-pre:rounded-xl"
-                            dangerouslySetInnerHTML={{ __html: activeLesson.content }}
-                          />
-                        </div>
+                        <div
+                          className="prose prose-base max-w-none prose-headings:font-bold prose-headings:text-gray-900 prose-h1:text-xl prose-h2:text-lg prose-h3:text-base prose-p:text-gray-700 prose-p:leading-relaxed prose-p:my-4 prose-li:text-gray-700 prose-ul:my-4 prose-ol:my-4 prose-a:text-[#0822C0] prose-a:font-medium prose-a:no-underline hover:prose-a:underline prose-blockquote:border-l-4 prose-blockquote:border-[#0822C0]/30 prose-blockquote:text-gray-600 prose-img:rounded-xl prose-img:shadow-sm prose-strong:text-gray-900 prose-code:text-[#0822C0] prose-code:bg-blue-50 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-pre:bg-gray-900 prose-pre:text-gray-100 prose-pre:rounded-xl"
+                          dangerouslySetInnerHTML={{ __html: activeLesson.content }}
+                        />
                       ) : activeLesson.type !== "pdf" ? (
-                        <div className="bg-white rounded-2xl border border-dashed border-gray-200 px-8 py-12 text-center">
-                          <svg className="h-10 w-10 text-gray-200 mx-auto mb-3" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                          </svg>
-                          <p className="text-sm text-gray-400">No notes for this lesson.</p>
-                        </div>
+                        <p className="text-sm text-gray-400 text-center py-8">No notes for this lesson.</p>
                       ) : null}
 
-                      {/* Mark complete / prev+next — bottom of content */}
-                      <div className="mt-8 flex items-center justify-between gap-4">
+                      {/* Mark complete / prev+next — bottom */}
+                      <div className="mt-12 pt-8 border-t border-gray-200 flex items-center justify-between gap-4">
                         <div className="flex items-center gap-2">
                           <button onClick={() => prevLesson && selectLesson(prevLesson.id)} disabled={!prevLesson}
                             className="h-9 w-9 rounded-xl border border-gray-200 flex items-center justify-center text-gray-400 hover:text-gray-700 hover:border-gray-300 transition-colors disabled:opacity-30">
@@ -787,8 +781,7 @@ export default function CoursePlayer({
                           </span>
                         ) : (
                           <button onClick={markComplete} disabled={isPending}
-                            className="inline-flex items-center gap-2 rounded-xl bg-[#0822C0] text-white text-sm font-semibold px-6 py-2.5 hover:bg-[#061aa0] transition-colors disabled:opacity-50 shadow-sm"
-                            style={{ boxShadow: "0 0 20px #0822C025" }}>
+                            className="inline-flex items-center gap-2 rounded-xl bg-[#0822C0] text-white text-sm font-semibold px-6 py-2.5 hover:bg-[#061aa0] transition-colors disabled:opacity-50">
                             {isPending ? "Saving…" : "Mark as complete"}
                             {!isPending && <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
                           </button>
