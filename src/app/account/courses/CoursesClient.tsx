@@ -269,12 +269,12 @@ function CourseCard({ e, stats, variant }: { e: Enrollment; stats: CourseStats; 
   const isCompleted = variant === "completed";
 
   return (
-    <div className={`group rounded-2xl border bg-white overflow-hidden transition-all hover:shadow-md ${isCompleted ? "border-green-100" : "border-gray-200 hover:border-[#0822C0]/30"}`}>
+    <div className={`group rounded-xl border bg-white overflow-hidden transition-all hover:shadow-md ${isCompleted ? "border-green-100" : "border-gray-200 hover:border-[#0822C0]/30"}`}>
       <div className="relative">
         {course.thumbnail_url ? (
-          <img src={course.thumbnail_url} alt={course.title} className={`w-full object-cover ${isProgress ? "h-44" : "h-36"}`} />
+          <img src={course.thumbnail_url} alt={course.title} className="w-full aspect-square object-cover" />
         ) : (
-          <div className={`flex items-center justify-center ${isProgress ? "h-44" : "h-36"}`} style={{ backgroundColor: catColor + "18" }}>
+          <div className="aspect-square flex items-center justify-center" style={{ backgroundColor: catColor + "18" }}>
             <svg className="h-10 w-10" style={{ color: catColor + "80" }} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 10l4.553-2.069A1 1 0 0121 8.82v6.36a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z" />
             </svg>
@@ -333,7 +333,7 @@ function CourseCard({ e, stats, variant }: { e: Enrollment; stats: CourseStats; 
         )}
         <Link
           href={href}
-          className={`block w-full text-center rounded-xl text-xs font-semibold py-2.5 transition-colors ${
+          className={`block w-full text-center rounded-lg text-xs font-semibold py-2.5 transition-colors ${
             isCompleted
               ? "bg-green-50 text-green-700 hover:bg-green-100 border border-green-200"
               : isProgress
