@@ -132,7 +132,11 @@ export default function CourseAnnouncementsTab({ courseId }: { courseId: string 
                 </div>
               </div>
               <div
-                className={`mt-2.5 prose prose-sm max-w-none ${dark ? "prose-invert" : ""} prose-p:my-1.5 prose-headings:font-semibold prose-a:text-brand`}
+                className={`mt-2.5 prose prose-sm max-w-none prose-p:my-1.5 prose-headings:font-semibold ${
+                  dark
+                    ? "prose-invert prose-p:text-white/60 prose-headings:text-white/80 prose-strong:text-white/90 prose-a:text-blue-400 prose-li:text-white/60"
+                    : "prose-p:text-gray-500 prose-a:text-[#0822C0]"
+                }`}
                 dangerouslySetInnerHTML={{ __html: item.body }}
               />
             </div>
