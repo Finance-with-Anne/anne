@@ -287,6 +287,7 @@ function SupportTab({ courseId }: { courseId: string }) {
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   async function load() {
     const r = await fetch(`/api/courses/${courseId}/support`);
@@ -303,6 +304,7 @@ function SupportTab({ courseId }: { courseId: string }) {
     if (!msg || sending) return;
     setSending(true);
     setText("");
+    if (textareaRef.current) textareaRef.current.style.height = "auto";
     await fetch(`/api/courses/${courseId}/support`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -312,36 +314,71 @@ function SupportTab({ courseId }: { courseId: string }) {
     setSending(false);
   }
 
-  if (loading) return (
-    <div className="px-8 py-6 space-y-3">
-      {[1, 2].map(i => <div key={i} className="animate-pulse h-10 bg-gray-100 rounded-xl" />)}
-    </div>
-  );
+  function handleInput(e: React.ChangeEvent<HTMLTextAreaElement>) {
+    setText(e.target.value);
+    e.target.style.height = "auto";
+    e.target.style.height = Math.min(e.target.scrollHeight, 120) + "px";
+  }
 
   return (
-    <div className="flex flex-col px-8 py-6 max-w-3xl" style={{ minHeight: 420 }}>
-      <div className="mb-4">
-        <h3 className="text-sm font-semibold text-gray-800">Support & Q&A</h3>
-        <p className="text-xs text-gray-400 mt-0.5">Ask questions or get help — the instructor will reply here.</p>
+    <div className="flex flex-col" style={{ height: 560 }}>
+      {/* Header */}
+      <div className="flex items-center gap-3 px-8 py-5 border-b border-gray-100 shrink-0">
+        <div className="h-9 w-9 rounded-xl bg-[#0822C0]/8 flex items-center justify-center shrink-0">
+          <svg className="h-4.5 w-4.5 text-[#0822C0]" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+          </svg>
+        </div>
+        <div>
+          <p className="text-sm font-semibold text-gray-900">Q&amp;A / Support</p>
+          <p className="text-xs text-gray-400 mt-0.5">Ask the instructor — replies usually within 24h</p>
+        </div>
       </div>
 
       {/* Message thread */}
-      <div className="flex-1 space-y-3 mb-4">
-        {messages.length === 0 && (
-          <div className="text-sm text-gray-400 text-center py-8">
-            No messages yet. Send your first question below.
+      <div className="flex-1 overflow-y-auto px-8 py-5 space-y-4">
+        {loading && (
+          <div className="space-y-3">
+            {[1, 2].map(i => (
+              <div key={i} className={`flex ${i % 2 === 0 ? "justify-end" : "justify-start"}`}>
+                <div className="animate-pulse h-10 w-48 bg-gray-100 rounded-2xl" />
+              </div>
+            ))}
           </div>
         )}
-        {messages.map(m => (
-          <div key={m.id} className={`flex ${m.is_admin ? "justify-end" : "justify-start"}`}>
-            <div className={`max-w-[75%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
-              m.is_admin
-                ? "bg-[#0822C0] text-white rounded-br-sm"
-                : "bg-gray-100 text-gray-800 rounded-bl-sm"
+        {!loading && messages.length === 0 && (
+          <div className="flex flex-col items-center justify-center h-full text-center py-10 gap-3">
+            <div className="h-12 w-12 rounded-2xl bg-gray-100 flex items-center justify-center">
+              <svg className="h-6 w-6 text-gray-300" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+              </svg>
+            </div>
+            <p className="text-sm font-medium text-gray-500">No messages yet</p>
+            <p className="text-xs text-gray-400">Send your first question below and the instructor will get back to you.</p>
+          </div>
+        )}
+        {!loading && messages.map(m => (
+          <div key={m.id} className={`flex items-end gap-2 ${m.is_admin ? "flex-row-reverse" : "flex-row"}`}>
+            {/* Avatar */}
+            <div className={`h-7 w-7 rounded-full flex items-center justify-center shrink-0 text-[10px] font-bold mb-0.5 ${
+              m.is_admin ? "bg-[#0822C0] text-white" : "bg-gray-100 text-gray-500"
             }`}>
-              {m.is_admin && <p className="text-[10px] text-white/60 font-medium mb-0.5">Instructor</p>}
-              <p>{m.message}</p>
-              <p className={`text-[10px] mt-1 ${m.is_admin ? "text-white/50" : "text-gray-400"}`}>{timeAgo(m.created_at)}</p>
+              {m.is_admin ? "A" : "Y"}
+            </div>
+
+            {/* Bubble */}
+            <div className={`flex flex-col gap-1 max-w-[65%] ${m.is_admin ? "items-end" : "items-start"}`}>
+              {m.is_admin && (
+                <span className="text-[10px] font-medium text-gray-400 px-1">Instructor</span>
+              )}
+              <div className={`px-4 py-2.5 text-sm leading-relaxed ${
+                m.is_admin
+                  ? "bg-[#0822C0] text-white rounded-2xl rounded-br-sm"
+                  : "bg-gray-100 text-gray-800 rounded-2xl rounded-bl-sm"
+              }`}>
+                {m.message}
+              </div>
+              <span className="text-[10px] text-gray-400 px-1">{timeAgo(m.created_at)}</span>
             </div>
           </div>
         ))}
@@ -349,22 +386,29 @@ function SupportTab({ courseId }: { courseId: string }) {
       </div>
 
       {/* Input */}
-      <div className="flex gap-2 items-end">
-        <textarea
-          value={text}
-          onChange={e => setText(e.target.value)}
-          onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }}
-          placeholder="Type your question… (Enter to send)"
-          rows={2}
-          className="flex-1 rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-700 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#0822C0]/20 resize-none"
-        />
-        <button
-          onClick={send}
-          disabled={!text.trim() || sending}
-          className="rounded-xl bg-[#0822C0] text-white px-4 py-2.5 text-sm font-semibold hover:bg-[#061aa0] transition-colors disabled:opacity-40 shrink-0"
-        >
-          {sending ? "…" : "Send"}
-        </button>
+      <div className="px-8 py-4 border-t border-gray-100 shrink-0">
+        <div className="flex items-end gap-2 rounded-2xl border border-gray-200 focus-within:border-[#0822C0]/50 focus-within:ring-3 focus-within:ring-[#0822C0]/10 transition-all bg-white px-4 py-3">
+          <textarea
+            ref={textareaRef}
+            value={text}
+            onChange={handleInput}
+            onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }}
+            placeholder="Ask a question…"
+            rows={1}
+            className="flex-1 resize-none bg-transparent text-sm text-gray-700 placeholder-gray-300 focus:outline-none leading-relaxed"
+            style={{ minHeight: 24, maxHeight: 120 }}
+          />
+          <button
+            onClick={send}
+            disabled={!text.trim() || sending}
+            className="rounded-xl bg-[#0822C0] text-white p-2 hover:bg-[#061aa0] transition-colors disabled:opacity-30 shrink-0 self-end"
+          >
+            <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+            </svg>
+          </button>
+        </div>
+        <p className="text-[10px] text-gray-300 mt-1.5">Enter to send · Shift+Enter for new line</p>
       </div>
     </div>
   );
