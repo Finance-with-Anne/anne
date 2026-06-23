@@ -5,6 +5,11 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { useAdminTheme } from "@/lib/admin-theme";
+import NotificationsPanel from "./NotificationsPanel";
+import MessagesPanel from "./MessagesPanel";
+
+const NOTIF_KEY = "fwa_admin_notif_seen";
+const MSG_KEY = "fwa_admin_msg_seen";
 
 export default function AdminHeader({
   userName,
@@ -21,18 +26,48 @@ export default function AdminHeader({
   const supabase = createClient();
   const { dark, toggle } = useAdminTheme();
   const [profileOpen, setProfileOpen] = useState(false);
+  const [notifOpen, setNotifOpen] = useState(false);
+  const [msgOpen, setMsgOpen] = useState(false);
+
+  // Track badge counts from localStorage
+  const [notifSeen, setNotifSeen] = useState(true);
+  const [msgSeen, setMsgSeen] = useState(true);
+
   const profileRef = useRef<HTMLDivElement>(null);
+  const notifRef = useRef<HTMLDivElement>(null);
+  const msgRef = useRef<HTMLDivElement>(null);
 
   const isEditor = userRole === "editor";
   const displayName = userName ?? (isEditor ? "Editor" : "Finance with Anne");
   const displayEmail = userEmail ?? "webtech.fwa@gmail.com";
   const firstName = displayName.split(" ")[0];
 
+  // On mount, check if there might be unseen notifications (simple: just show badge until clicked)
+  useEffect(() => {
+    const notifTs = localStorage.getItem(NOTIF_KEY);
+    const msgTs = localStorage.getItem(MSG_KEY);
+    // No timestamp means never opened — show badge
+    setNotifSeen(!!notifTs);
+    setMsgSeen(!!msgTs);
+  }, []);
+
+  function openNotif() {
+    setNotifOpen(true);
+    setMsgOpen(false);
+    setProfileOpen(false);
+    setNotifSeen(true);
+  }
+
+  function openMsg() {
+    setMsgOpen(true);
+    setNotifOpen(false);
+    setProfileOpen(false);
+    setMsgSeen(true);
+  }
+
   useEffect(() => {
     function handleClick(e: MouseEvent) {
-      if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
-        setProfileOpen(false);
-      }
+      if (profileRef.current && !profileRef.current.contains(e.target as Node)) setProfileOpen(false);
     }
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
@@ -77,7 +112,7 @@ export default function AdminHeader({
       ];
 
   return (
-    <header className={`flex h-14 items-center justify-between border-b px-6 transition-colors duration-300 ${bg}`}>
+    <header className={`relative flex h-14 items-center justify-between border-b px-6 transition-colors duration-300 ${bg}`}>
       {/* Left */}
       <p className={`text-sm font-semibold ${dark ? "text-white/80" : "text-gray-800"}`}>
         Welcome back, {firstName} 👋
@@ -86,12 +121,23 @@ export default function AdminHeader({
       {/* Right */}
       <div className="flex items-center gap-1">
         {/* Messages */}
-        <button className={`relative flex h-8 w-8 items-center justify-center rounded-lg transition-colors ${iconBtn}`}>
-          <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-          </svg>
-          <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-blue-400" />
-        </button>
+        <div ref={msgRef} className="relative">
+          <button
+            onClick={openMsg}
+            className={`relative flex h-8 w-8 items-center justify-center rounded-lg transition-colors ${iconBtn} ${msgOpen ? dark ? "bg-white/8 text-white/70" : "bg-gray-100 text-gray-700" : ""}`}
+          >
+            <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+            </svg>
+            {!msgSeen && <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-blue-400" />}
+          </button>
+          <MessagesPanel
+            dark={dark}
+            open={msgOpen}
+            onClose={() => setMsgOpen(false)}
+            lastSeenKey={MSG_KEY}
+          />
+        </div>
 
         {/* Dark / Light */}
         <button onClick={toggle} className={`flex h-8 w-8 items-center justify-center rounded-lg transition-colors ${iconBtn}`} title={dark ? "Light mode" : "Dark mode"}>
@@ -107,19 +153,30 @@ export default function AdminHeader({
         </button>
 
         {/* Notifications */}
-        <button className={`relative flex h-8 w-8 items-center justify-center rounded-lg transition-colors ${iconBtn}`}>
-          <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-          </svg>
-          <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-red-400" />
-        </button>
+        <div ref={notifRef} className="relative">
+          <button
+            onClick={openNotif}
+            className={`relative flex h-8 w-8 items-center justify-center rounded-lg transition-colors ${iconBtn} ${notifOpen ? dark ? "bg-white/8 text-white/70" : "bg-gray-100 text-gray-700" : ""}`}
+          >
+            <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+            </svg>
+            {!notifSeen && <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-red-400" />}
+          </button>
+          <NotificationsPanel
+            dark={dark}
+            open={notifOpen}
+            onClose={() => setNotifOpen(false)}
+            lastSeenKey={NOTIF_KEY}
+          />
+        </div>
 
         <div className={`mx-2 h-5 w-px ${dark ? "bg-white/10" : "bg-gray-200"}`} />
 
         {/* Profile avatar */}
         <div className="relative" ref={profileRef}>
           <button
-            onClick={() => setProfileOpen(!profileOpen)}
+            onClick={() => { setProfileOpen(!profileOpen); setNotifOpen(false); setMsgOpen(false); }}
             className={`flex items-center gap-2 rounded-lg px-2 py-1.5 transition-colors ${dark ? "hover:bg-white/5" : "hover:bg-gray-100"}`}
           >
             {userAvatar ? (
@@ -138,7 +195,6 @@ export default function AdminHeader({
 
           {profileOpen && (
             <div className={`absolute right-0 top-full mt-2 w-64 rounded-2xl border py-2 z-50 ${dark ? "shadow-[0_6px_16px_rgba(0,0,0,0.25)]" : ""} ${dropdownBg}`}>
-              {/* Profile header */}
               <div className={`flex items-center gap-3 px-4 py-3 border-b mb-1 ${dividerColor}`}>
                 {userAvatar ? (
                   <img src={userAvatar} alt={displayName} className="h-11 w-11 rounded-full object-cover ring-2 ring-white/10 shrink-0" />
