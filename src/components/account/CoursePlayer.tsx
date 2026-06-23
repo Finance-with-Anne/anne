@@ -439,7 +439,7 @@ export default function CoursePlayer({
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-white">
       {/* ── Top bar ── */}
-      <header className="flex items-center gap-3 h-12 px-4 border-b border-gray-100 bg-white shrink-0 z-10">
+      <header className="flex items-center gap-3 h-16 px-6 border-b border-gray-100 bg-white shrink-0 z-10">
         <a
           href={backHref}
           className="flex items-center gap-1.5 text-xs font-medium text-gray-400 hover:text-gray-700 transition-colors shrink-0"
