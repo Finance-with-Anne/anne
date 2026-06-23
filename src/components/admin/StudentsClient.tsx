@@ -130,10 +130,11 @@ export default function StudentsClient({
     const data = await res.json();
     setEnrolling(false);
     if (!res.ok) { setEnrollError(data.error ?? "Enrollment failed"); return; }
-    setEnrollSuccess("Student enrolled successfully.");
+    const enrolledName = data.name || enrollEmail.trim();
+    setEnrollSuccess(`✓ ${enrolledName} enrolled successfully.`);
     setEnrollEmail("");
     setEnrollCourseId("");
-    setTimeout(() => { setEnrollOpen(false); setEnrollSuccess(""); router.refresh(); }, 1500);
+    setTimeout(() => { setEnrollOpen(false); setEnrollSuccess(""); router.refresh(); }, 2000);
   }
 
   return (

@@ -25,6 +25,12 @@ export async function POST(req: NextRequest) {
 
   if (existing) return NextResponse.json({ error: "Student is already enrolled in this course" }, { status: 409 });
 
+  // Ensure profile exists (trigger may have missed on signup)
+  const fullName = target.user_metadata?.full_name ?? target.email?.split("@")[0] ?? "";
+  await supabaseAdmin
+    .from("profiles")
+    .upsert({ id: target.id, full_name: fullName, avatar_url: target.user_metadata?.avatar_url ?? null }, { onConflict: "id" });
+
   // Enroll
   const { error } = await supabaseAdmin
     .from("course_enrollments")
@@ -32,5 +38,5 @@ export async function POST(req: NextRequest) {
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-  return NextResponse.json({ success: true, user_id: target.id });
+  return NextResponse.json({ success: true, user_id: target.id, name: fullName });
 }
