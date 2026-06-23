@@ -697,8 +697,8 @@ export default function CoursePlayer({
                 <div className="min-h-screen">
 
                   {activeTab === "overview" && (
-                    <div className="bg-white dark:bg-[#0D0F1C] min-h-full px-10 py-12">
-                      <div className="max-w-5xl mx-auto flex gap-10 items-start">
+                    <div className="bg-white dark:bg-[#0D0F1C] min-h-full pl-6 pr-10 py-12">
+                      <div className="max-w-5xl flex gap-10 items-start">
 
                         {/* LEFT: square image */}
                         <div className="w-64 shrink-0">
