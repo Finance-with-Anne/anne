@@ -201,18 +201,23 @@ function ReviewsTab({ courseId }: { courseId: string }) {
   const [error, setError] = useState("");
 
   async function load() {
-    const supabase = createClient();
-    const [reviewsRes, userRes] = await Promise.all([
-      fetch(`/api/courses/${courseId}/reviews`).then(r => r.json()),
-      supabase.auth.getUser(),
-    ]);
-    const all: any[] = Array.isArray(reviewsRes) ? reviewsRes : (reviewsRes.reviews ?? []);
-    const uid = userRes.data?.user?.id;
-    const mine = uid ? (all.find((r: any) => r.user_id === uid) ?? null) : null;
-    setReviews(all);
-    setMyReview(mine);
-    if (mine) { setRating(mine.rating); setComment(mine.comment ?? ""); }
-    setLoading(false);
+    try {
+      const supabase = createClient();
+      const [reviewsRes, userRes] = await Promise.all([
+        fetch(`/api/courses/${courseId}/reviews`).then(r => r.json()),
+        supabase.auth.getUser(),
+      ]);
+      const all: any[] = Array.isArray(reviewsRes) ? reviewsRes : [];
+      const uid = userRes.data?.user?.id;
+      const mine = uid ? (all.find((r: any) => r.user_id === uid) ?? null) : null;
+      setReviews(all);
+      setMyReview(mine);
+      if (mine) { setRating(mine.rating); setComment(mine.comment ?? ""); }
+    } catch {
+      // silently fail — no reviews yet or table missing
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => { load(); }, [courseId]);
@@ -346,10 +351,15 @@ function SupportTab({ courseId }: { courseId: string }) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   async function load() {
-    const r = await fetch(`/api/courses/${courseId}/support`);
-    const d = await r.json();
-    setMessages(Array.isArray(d) ? d : (d.messages ?? []));
-    setLoading(false);
+    try {
+      const r = await fetch(`/api/courses/${courseId}/support`);
+      const d = await r.json();
+      setMessages(Array.isArray(d) ? d : (d.messages ?? []));
+    } catch {
+      // silently fail
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => { load(); }, [courseId]);
