@@ -1,8 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AccountSidebar from "./AccountSidebar";
 import AccountHeader from "./AccountHeader";
+
+function ForceLightMode() {
+  useEffect(() => {
+    const html = document.documentElement;
+    const wasDark = html.classList.contains("dark");
+    html.classList.remove("dark");
+    return () => { if (wasDark) html.classList.add("dark"); };
+  }, []);
+  return null;
+}
 
 export default function AccountShell({
   userName,
@@ -19,6 +29,7 @@ export default function AccountShell({
 
   return (
     <div className="min-h-screen flex bg-gray-50">
+      <ForceLightMode />
       <AccountSidebar
         userName={userName}
         userEmail={userEmail}
