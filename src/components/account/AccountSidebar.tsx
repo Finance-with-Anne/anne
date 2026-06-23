@@ -66,12 +66,12 @@ export default function AccountSidebar({
             onClick={() => setMobileOpen(false)}
             className={`relative flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium transition-all ${
               active
-                ? "text-[#0822C0]"
-                : "text-gray-400 hover:text-[#0822C0] hover:bg-[#0822C0]/5"
+                ? "text-[#0822C0] dark:text-blue-400"
+                : "text-gray-400 dark:text-white/50 hover:text-[#0822C0] dark:hover:text-blue-400 hover:bg-[#0822C0]/5 dark:hover:bg-[#0822C0]/15"
             }`}
           >
             {active && (
-              <span className="absolute inset-0 rounded-lg bg-gradient-to-r from-blue-50 to-[#0822C0]/10 border border-[#0822C0]/20" />
+              <span className="absolute inset-0 rounded-lg bg-gradient-to-r from-blue-50 to-[#0822C0]/10 dark:from-[#0822C0]/25 dark:to-transparent border border-[#0822C0]/20 dark:border-[#0822C0]/40" />
             )}
             <svg className="relative h-4 w-4 shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
               {item.icon}
@@ -85,7 +85,7 @@ export default function AccountSidebar({
         <Link
           href="/courses"
           onClick={() => setMobileOpen(false)}
-          className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium text-gray-400 hover:text-[#0822C0] hover:bg-[#0822C0]/5 transition-all"
+          className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium text-gray-400 dark:text-white/50 hover:text-[#0822C0] dark:hover:text-blue-400 hover:bg-[#0822C0]/5 dark:hover:bg-[#0822C0]/15 transition-all"
         >
           <svg className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
@@ -98,7 +98,7 @@ export default function AccountSidebar({
 
   const UserFooter = () => (
     <div className="border-t border-gray-100 p-3">
-      <div className="flex items-center gap-3 rounded-xl bg-gray-50 px-3 py-2.5">
+      <div className="flex items-center gap-3 rounded-xl bg-gray-50 dark:bg-white/5 px-3 py-2.5">
         {userAvatar ? (
           <img src={userAvatar} alt={userName} className="h-8 w-8 rounded-full object-cover shrink-0" />
         ) : (
@@ -107,7 +107,7 @@ export default function AccountSidebar({
           </div>
         )}
         <div className="min-w-0 flex-1">
-          <p className="text-xs font-semibold text-gray-800 truncate">{userName}</p>
+          <p className="text-xs font-semibold text-gray-800 dark:text-white/80 truncate">{userName}</p>
           <p className="text-[10px] text-gray-400 truncate">{userEmail}</p>
         </div>
       </div>
