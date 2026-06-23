@@ -10,11 +10,15 @@ export default function AccountHeader({
   userEmail,
   userAvatar,
   onMenuToggle,
+  isDark,
+  onToggleDark,
 }: {
   userName: string;
   userEmail: string;
   userAvatar: string | null;
   onMenuToggle: () => void;
+  isDark?: boolean;
+  onToggleDark?: () => void;
 }) {
   const router = useRouter();
   const supabase = createClient();
@@ -38,7 +42,7 @@ export default function AccountHeader({
   }
 
   return (
-    <header className="flex items-center justify-between border-b border-gray-200 bg-white px-6 md:px-10 h-[68px] shrink-0">
+    <header className="flex items-center justify-between border-b border-gray-200 dark:border-white/5 bg-white dark:bg-[#05090f] px-6 md:px-10 h-[68px] shrink-0">
       {/* Left */}
       <div className="flex items-center gap-3">
         {/* Mobile hamburger */}
@@ -57,8 +61,27 @@ export default function AccountHeader({
 
       {/* Right */}
       <div className="flex items-center gap-1">
+        {/* Dark mode toggle */}
+        {onToggleDark && (
+          <button
+            onClick={onToggleDark}
+            title={isDark ? "Switch to light mode" : "Switch to dark mode"}
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
+          >
+            {isDark ? (
+              <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clipRule="evenodd" />
+              </svg>
+            ) : (
+              <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+              </svg>
+            )}
+          </button>
+        )}
+
         {/* Notifications */}
-        <button className="relative flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors">
+        <button className="relative flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 hover:text-gray-700 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
           <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
           </svg>

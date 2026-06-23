@@ -4,16 +4,6 @@ import { useState, useEffect } from "react";
 import AccountSidebar from "./AccountSidebar";
 import AccountHeader from "./AccountHeader";
 
-function ForceLightMode() {
-  useEffect(() => {
-    const html = document.documentElement;
-    const wasDark = html.classList.contains("dark");
-    html.classList.remove("dark");
-    return () => { if (wasDark) html.classList.add("dark"); };
-  }, []);
-  return null;
-}
-
 export default function AccountShell({
   userName,
   userEmail,
@@ -26,10 +16,39 @@ export default function AccountShell({
   children: React.ReactNode;
 }) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    const html = document.documentElement;
+    const publicTheme = localStorage.getItem("fwa-theme");
+    const accountDark = localStorage.getItem("fwa-account-dark") === "1";
+    if (accountDark) {
+      html.classList.add("dark");
+    } else {
+      html.classList.remove("dark");
+    }
+    setIsDark(accountDark);
+    return () => {
+      if (publicTheme === "dark") html.classList.add("dark");
+      else html.classList.remove("dark");
+    };
+  }, []);
+
+  function toggleDark() {
+    const html = document.documentElement;
+    const next = !isDark;
+    setIsDark(next);
+    if (next) {
+      html.classList.add("dark");
+      localStorage.setItem("fwa-account-dark", "1");
+    } else {
+      html.classList.remove("dark");
+      localStorage.removeItem("fwa-account-dark");
+    }
+  }
 
   return (
-    <div className="min-h-screen flex bg-gray-50">
-      <ForceLightMode />
+    <div className="min-h-screen flex bg-gray-50 dark:bg-[#0a0f1a]">
       <AccountSidebar
         userName={userName}
         userEmail={userEmail}
@@ -43,6 +62,8 @@ export default function AccountShell({
           userEmail={userEmail}
           userAvatar={userAvatar}
           onMenuToggle={() => setMobileOpen((v) => !v)}
+          isDark={isDark}
+          onToggleDark={toggleDark}
         />
         <main className="flex-1 overflow-y-auto px-6 py-5 lg:px-8 lg:py-5">
           {children}
