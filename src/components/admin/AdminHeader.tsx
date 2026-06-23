@@ -80,7 +80,7 @@ export default function AdminHeader({
 
   const bg = dark ? "bg-[#111318] border-white/5" : "bg-white border-gray-200";
   const iconBtn = dark
-    ? "text-white/30 hover:text-white/70 hover:bg-white/5"
+    ? "text-white/50 hover:text-white/80 hover:bg-white/5"
     : "text-gray-400 hover:text-gray-700 hover:bg-gray-100";
   const dropdownBg = dark ? "bg-[#1c1f27] border-white/10" : "bg-white border-gray-200";
   const dropdownItem = dark ? "text-white/60 hover:text-white hover:bg-white/5" : "text-gray-600 hover:text-gray-900 hover:bg-gray-50";
