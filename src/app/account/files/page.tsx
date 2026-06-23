@@ -1,41 +1,29 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Files & Materials — Finance with Anne" };
+export const metadata = { title: "Files & Templates — Finance with Anne" };
 
 interface Lesson {
   id: string;
   title: string;
   type: string;
-  video_url?: string;
   content?: string;
-  duration?: number;
+  video_url?: string;
 }
 
-interface Section {
-  id: string;
-  title: string;
-  lessons: Lesson[];
-}
-
-interface CourseRow {
-  id: string;
-  title: string;
-  curriculum: Section[];
-}
-
-interface Enrollment {
-  course: CourseRow | null;
-}
+interface Section { id: string; lessons: Lesson[] }
+interface CourseRow { id: string; title: string; curriculum: Section[] }
+interface Enrollment { course: CourseRow | null }
 
 interface FileItem {
   courseId: string;
   courseTitle: string;
-  lessonId: string;
-  lessonTitle: string;
-  type: "video" | "document" | "text";
+  name: string;
+  kind: "pdf" | "file" | "link";
   url: string;
+  source: "lesson" | "resource";
 }
 
 export default async function AccountFilesPage() {
@@ -43,116 +31,145 @@ export default async function AccountFilesPage() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/auth");
 
-  const { data } = await supabase
+  // Get enrolled course IDs + curriculum
+  const { data: enrollData } = await supabase
     .from("course_enrollments")
     .select("course:courses(id, title, curriculum)")
     .eq("user_id", user.id);
 
-  const enrollments: Enrollment[] = (data as unknown as Enrollment[]) ?? [];
+  const enrollments: Enrollment[] = (enrollData as unknown as Enrollment[]) ?? [];
+  const enrolledIds = enrollments.map(e => e.course?.id).filter(Boolean) as string[];
+
+  // Get admin-uploaded resources for enrolled courses (files and links only, not notes)
+  const { data: resourceData } = enrolledIds.length
+    ? await supabaseAdmin
+        .from("course_resources")
+        .select("id, course_id, title, type, url")
+        .in("course_id", enrolledIds)
+        .in("type", ["file", "link"])
+        .order("created_at", { ascending: true })
+    : { data: [] };
+
+  const resources = resourceData ?? [];
 
   const files: FileItem[] = [];
+
+  // 1 — PDF/document lessons (no videos)
   for (const e of enrollments) {
     const course = e.course;
     if (!course) continue;
-    const sections: Section[] = course.curriculum ?? [];
-    for (const section of sections) {
+    for (const section of course.curriculum ?? []) {
       for (const lesson of section.lessons ?? []) {
-        if (lesson.video_url) {
+        if (lesson.type === "pdf" && lesson.content) {
           files.push({
             courseId: course.id,
             courseTitle: course.title,
-            lessonId: lesson.id,
-            lessonTitle: lesson.title,
-            type: "video",
-            url: lesson.video_url,
-          });
-        } else if (lesson.type === "pdf" && lesson.content) {
-          files.push({
-            courseId: course.id,
-            courseTitle: course.title,
-            lessonId: lesson.id,
-            lessonTitle: lesson.title,
-            type: "document",
+            name: lesson.title,
+            kind: "pdf",
             url: lesson.content,
+            source: "lesson",
           });
         }
       }
     }
   }
 
+  // 2 — Admin-uploaded course resources
+  const courseMap = Object.fromEntries(enrollments.map(e => [e.course?.id, e.course?.title ?? ""]));
+  for (const r of resources) {
+    files.push({
+      courseId: r.course_id,
+      courseTitle: courseMap[r.course_id] ?? "Course",
+      name: r.title,
+      kind: r.type === "link" ? "link" : "file",
+      url: r.url,
+      source: "resource",
+    });
+  }
+
+  // Group by course
   const grouped: Record<string, FileItem[]> = {};
   for (const f of files) {
     if (!grouped[f.courseId]) grouped[f.courseId] = [];
     grouped[f.courseId].push(f);
   }
 
-  const iconFor = (type: string) => {
-    if (type === "video") return (
-      <svg className="h-5 w-5 text-[#0822C0]" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M15 10l4.553-2.069A1 1 0 0121 8.82v6.36a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z" />
-      </svg>
-    );
-    return (
-      <svg className="h-5 w-5 text-orange-500" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-      </svg>
-    );
+  const kindMeta: Record<string, { icon: string; color: string; label: string }> = {
+    pdf:  { icon: "M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z", color: "bg-orange-50 text-orange-500", label: "PDF" },
+    file: { icon: "M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4",                                                   color: "bg-blue-50 text-[#0822C0]",   label: "File" },
+    link: { icon: "M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1", color: "bg-green-50 text-green-600", label: "Link" },
   };
 
   return (
     <div className="space-y-6 max-w-3xl">
+      {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Files &amp; Materials</h1>
-        <p className="text-sm text-gray-400 mt-1">Download videos and documents from your enrolled courses.</p>
+        <h1 className="text-2xl font-bold text-gray-900">Files &amp; Templates</h1>
+        <p className="text-sm text-gray-400 mt-1">PDFs, templates and resources from your enrolled courses.</p>
       </div>
 
       {files.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-gray-200 py-24 text-center">
-          <div className="mx-auto mb-4 h-12 w-12 rounded-full bg-gray-100 flex items-center justify-center">
-            <svg className="h-6 w-6 text-gray-300" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-            </svg>
+        <div className="rounded-3xl border border-gray-100 bg-white overflow-hidden">
+          <div className="h-1.5 bg-gradient-to-r from-[#0822C0] via-blue-400 to-[#0822C0]/30" />
+          <div className="px-8 py-16 text-center">
+            <div className="mx-auto mb-5 h-16 w-16 rounded-2xl bg-[#0822C0]/8 flex items-center justify-center">
+              <svg className="h-8 w-8 text-[#0822C0]/50" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <p className="text-base font-semibold text-gray-900">No files yet</p>
+            <p className="text-sm text-gray-400 mt-1.5 max-w-xs mx-auto leading-relaxed">
+              PDFs and templates from your courses will appear here when added by Anne.
+            </p>
           </div>
-          <p className="text-sm font-medium text-gray-500">No files yet</p>
-          <p className="text-xs text-gray-400 mt-1">Files from your courses will appear here.</p>
         </div>
       ) : (
-        <div className="space-y-6">
-          {Object.entries(grouped).map(([, items]) => {
-            const { courseTitle } = items[0];
-            const courseId = items[0].courseId;
-            return (
-              <div key={courseId} className="rounded-2xl border border-gray-200 bg-white overflow-hidden">
-                <div className="px-5 py-3.5 border-b border-gray-100 bg-gray-50">
-                  <p className="text-sm font-semibold text-gray-800">{courseTitle}</p>
-                </div>
-                <ul className="divide-y divide-gray-100">
-                  {items.map((f) => (
-                    <li key={f.lessonId} className="flex items-center gap-4 px-5 py-3.5">
-                      <div className="h-9 w-9 rounded-xl bg-gray-50 flex items-center justify-center shrink-0">
-                        {iconFor(f.type)}
+        <div className="space-y-4">
+          {Object.entries(grouped).map(([courseId, items]) => (
+            <div key={courseId} className="rounded-2xl border border-gray-100 bg-white overflow-hidden">
+              {/* Course header */}
+              <div className="flex items-center gap-3 px-5 py-3.5 border-b border-gray-100 bg-gray-50/60">
+                <svg className="h-4 w-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 10l4.553-2.069A1 1 0 0121 8.82v6.36a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z" />
+                </svg>
+                <p className="text-sm font-semibold text-gray-800">{items[0].courseTitle}</p>
+                <span className="ml-auto text-[10px] font-semibold text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
+                  {items.length} file{items.length !== 1 ? "s" : ""}
+                </span>
+              </div>
+
+              {/* File list */}
+              <ul className="divide-y divide-gray-50">
+                {items.map((f, i) => {
+                  const meta = kindMeta[f.kind];
+                  return (
+                    <li key={i} className="flex items-center gap-4 px-5 py-4 hover:bg-gray-50/60 transition-colors group">
+                      <div className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 ${meta.color}`}>
+                        <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" d={meta.icon} />
+                        </svg>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-900 truncate">{f.lessonTitle}</p>
-                        <p className="text-xs text-gray-400 capitalize">{f.type}</p>
+                        <p className="text-sm font-medium text-gray-900 truncate">{f.name}</p>
+                        <p className="text-xs text-gray-400 mt-0.5">{meta.label}</p>
                       </div>
                       <a
                         href={f.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="shrink-0 text-xs font-semibold text-[#0822C0] hover:underline flex items-center gap-1"
+                        className="shrink-0 inline-flex items-center gap-1.5 rounded-xl border border-gray-200 text-xs font-semibold text-gray-600 px-3.5 py-2 hover:border-[#0822C0]/40 hover:text-[#0822C0] transition-colors"
                       >
                         <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                         </svg>
-                        Open
+                        {f.kind === "link" ? "Open" : "Download"}
                       </a>
                     </li>
-                  ))}
-                </ul>
-              </div>
-            );
-          })}
+                  );
+                })}
+              </ul>
+            </div>
+          ))}
         </div>
       )}
     </div>
