@@ -126,7 +126,10 @@ function AnnouncementsTab({ courseId }: { courseId: string }) {
                 )}
               </div>
               <p className="text-xs text-gray-400 mt-0.5">{timeAgo(a.created_at)}</p>
-              <p className="text-sm text-gray-700 mt-2 leading-relaxed whitespace-pre-wrap">{a.body}</p>
+              <div
+                className="mt-3 prose prose-sm max-w-none prose-p:text-gray-700 prose-p:leading-relaxed prose-p:my-2 prose-strong:text-gray-900 prose-a:text-[#0822C0] prose-a:no-underline hover:prose-a:underline prose-headings:text-gray-900 prose-headings:font-semibold prose-li:text-gray-700"
+                dangerouslySetInnerHTML={{ __html: a.body }}
+              />
             </div>
           </div>
         </div>
