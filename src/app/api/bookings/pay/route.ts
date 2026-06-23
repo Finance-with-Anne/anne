@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
-const PAYSTACK_SECRET = process.env.PAYSTACK_SECRET_KEY ?? "";
+const FLW_SECRET = process.env.FLW_SECRET_KEY ?? "";
 
 export async function POST(req: NextRequest) {
   const { booking_id, currency } = await req.json();
 
-  if (!PAYSTACK_SECRET) {
+  if (!FLW_SECRET) {
     return NextResponse.json({ error: "Payment not configured." }, { status: 503 });
   }
 
@@ -29,33 +29,37 @@ export async function POST(req: NextRequest) {
   const price = priceMap[cur];
   if (!price) return NextResponse.json({ error: "Price not set for this currency." }, { status: 400 });
 
-  const amount = Math.round(price * 100); // Paystack uses kobo/cents
+  const tx_ref = `booking_${booking_id}_${Date.now()}`;
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
-  const res = await fetch("https://api.paystack.co/transaction/initialize", {
+  const res = await fetch("https://api.flutterwave.com/v3/payments", {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${PAYSTACK_SECRET}`,
+      Authorization: `Bearer ${FLW_SECRET}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      email: booking.client_email,
-      amount,
+      tx_ref,
+      amount: price,
       currency: cur,
-      reference: `booking_${booking_id}_${Date.now()}`,
-      callback_url: `${siteUrl}/booking/verify?booking_id=${booking_id}`,
-      metadata: { booking_id, service: session.title },
+      redirect_url: `${siteUrl}/booking/verify?booking_id=${booking_id}`,
+      customer: {
+        email: booking.client_email,
+        name: booking.client_name,
+      },
+      meta: { booking_id, service: session.title },
     }),
   });
 
   const json = await res.json();
-  if (!json.status) return NextResponse.json({ error: json.message ?? "Payment init failed." }, { status: 500 });
+  if (json.status !== "success") {
+    return NextResponse.json({ error: json.message ?? "Payment init failed." }, { status: 500 });
+  }
 
-  // Save payment ref
   await supabaseAdmin
     .from("bookings")
-    .update({ payment_ref: json.data.reference, currency: cur, amount_paid: price })
+    .update({ payment_ref: tx_ref, currency: cur, amount_paid: price })
     .eq("id", booking_id);
 
-  return NextResponse.json({ authorization_url: json.data.authorization_url });
+  return NextResponse.json({ payment_url: json.data.link });
 }

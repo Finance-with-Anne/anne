@@ -6,28 +6,28 @@ import { AdminBookingNotifyEmail } from "@/lib/emails/booking-admin-notify";
 import { createMeetEvent } from "@/lib/google-calendar";
 import * as React from "react";
 
-const PAYSTACK_SECRET = process.env.PAYSTACK_SECRET_KEY ?? "";
+const FLW_SECRET = process.env.FLW_SECRET_KEY ?? "";
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? EMAIL_FROM;
 
 export async function POST(req: NextRequest) {
-  const { reference, booking_id } = await req.json();
+  const { transaction_id, booking_id } = await req.json();
 
-  if (!PAYSTACK_SECRET) return NextResponse.json({ error: "Payment not configured." }, { status: 503 });
+  if (!FLW_SECRET) return NextResponse.json({ error: "Payment not configured." }, { status: 503 });
 
-  // Verify with Paystack
-  const res = await fetch(`https://api.paystack.co/transaction/verify/${encodeURIComponent(reference)}`, {
-    headers: { Authorization: `Bearer ${PAYSTACK_SECRET}` },
+  // Verify with Flutterwave
+  const res = await fetch(`https://api.flutterwave.com/v3/transactions/${encodeURIComponent(transaction_id)}/verify`, {
+    headers: { Authorization: `Bearer ${FLW_SECRET}` },
   });
   const json = await res.json();
 
-  if (!json.status || json.data?.status !== "success") {
+  if (json.status !== "success" || json.data?.status !== "successful") {
     return NextResponse.json({ error: "Payment not successful." }, { status: 400 });
   }
 
   // Fetch booking + session + questions
   const { data: booking, error } = await supabaseAdmin
     .from("bookings")
-    .select("*, session:booking_sessions(title, google_meet_link, questions:booking_questions(*))")
+    .select("*, session:booking_sessions(title, google_meet_link, duration_minutes, questions:booking_questions(*))")
     .eq("id", booking_id)
     .single();
 
@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
   // Mark as paid + confirmed
   await supabaseAdmin
     .from("bookings")
-    .update({ is_paid: true, status: "confirmed", payment_ref: reference })
+    .update({ is_paid: true, status: "confirmed", payment_ref: json.data.tx_ref ?? String(transaction_id) })
     .eq("id", booking_id);
 
   const session = booking.session as { title: string; google_meet_link: string | null; duration_minutes?: number; questions: { id: string; question: string }[] };

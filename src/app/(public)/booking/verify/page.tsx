@@ -7,17 +7,19 @@ import { Suspense } from "react";
 function VerifyContent() {
   const params = useSearchParams();
   const bookingId = params.get("booking_id");
-  const reference = params.get("reference") ?? params.get("trxref");
+  const transactionId = params.get("transaction_id");
+  const flwStatus = params.get("status");
   const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    if (!bookingId || !reference) { setStatus("error"); setMessage("Missing payment reference."); return; }
+    if (!bookingId || !transactionId) { setStatus("error"); setMessage("Missing payment reference."); return; }
+    if (flwStatus === "cancelled") { setStatus("error"); setMessage("Payment was cancelled."); return; }
 
     fetch("/api/bookings/verify", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ booking_id: bookingId, reference }),
+      body: JSON.stringify({ booking_id: bookingId, transaction_id: transactionId }),
     })
       .then(r => r.json())
       .then(j => {
@@ -25,7 +27,7 @@ function VerifyContent() {
         else { setStatus("error"); setMessage(j.error ?? "Verification failed."); }
       })
       .catch(() => { setStatus("error"); setMessage("Network error."); });
-  }, [bookingId, reference]);
+  }, [bookingId, transactionId, flwStatus]);
 
   if (status === "loading") {
     return (

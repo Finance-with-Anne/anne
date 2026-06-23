@@ -105,7 +105,7 @@ export default function BookingFlow({
     });
     const json = await res.json();
     if (!res.ok) { setError(json.error ?? "Payment initialization failed."); setSubmitting(false); return; }
-    window.location.href = json.authorization_url;
+    window.location.href = json.payment_url;
   }
 
   // ── Left info panel ──────────────────────────────────────────────────────────
@@ -193,7 +193,7 @@ export default function BookingFlow({
         )}
         {error && <p className="text-sm text-red-400">{error}</p>}
         <button onClick={handlePay} disabled={submitting} className="w-full rounded-xl bg-brand py-3 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50 transition-opacity">
-          {submitting ? "Redirecting…" : "Pay with Paystack →"}
+          {submitting ? "Redirecting…" : "Pay with Flutterwave →"}
         </button>
       </div>
     </div>
