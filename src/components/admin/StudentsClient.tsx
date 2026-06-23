@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useAdminTheme } from "@/lib/admin-theme";
+import StudentDetailPanel from "./StudentDetailPanel";
 
 type StudentRow = {
   id: string;
@@ -45,6 +46,9 @@ export default function StudentsClient({
   const [search, setSearch] = useState("");
   const [courseFilter, setCourseFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState<"all" | "completed" | "in_progress" | "not_started">("all");
+
+  // Student detail panel
+  const [selectedStudent, setSelectedStudent] = useState<{ userId: string; name: string } | null>(null);
 
   // Manual enroll modal state
   const [enrollOpen, setEnrollOpen] = useState(false);
@@ -225,7 +229,8 @@ export default function StudentsClient({
             return (
               <div
                 key={s.id}
-                className={`grid items-center gap-4 px-4 py-3 border-b last:border-b-0 transition-colors ${rowHover} ${divider}`}
+                onClick={() => setSelectedStudent({ userId: s.user_id, name })}
+                className={`grid items-center gap-4 px-4 py-3 border-b last:border-b-0 transition-colors cursor-pointer ${rowHover} ${divider}`}
                 style={{ gridTemplateColumns: "1fr 1fr 1fr 6rem 8rem" }}
               >
                 {/* Student */}
@@ -333,6 +338,16 @@ export default function StudentsClient({
           </div>
         </div>
       </div>
+    )}
+
+    {/* Student detail panel */}
+    {selectedStudent && (
+      <StudentDetailPanel
+        userId={selectedStudent.userId}
+        studentName={selectedStudent.name}
+        onClose={() => setSelectedStudent(null)}
+        onDeenrolled={() => { setSelectedStudent(null); router.refresh(); }}
+      />
     )}
     </>
   );
