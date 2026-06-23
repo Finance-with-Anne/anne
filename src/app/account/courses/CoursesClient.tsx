@@ -137,15 +137,15 @@ export default function CoursesClient({
         <>
           {/* Tabs + Search */}
           <div className="flex items-center justify-between gap-4 flex-wrap">
-            <div className="flex items-center gap-1 bg-gray-100 rounded-xl p-1">
+            <div className="flex items-center gap-1 bg-gray-100 dark:bg-white/5 rounded-xl p-1">
               {tabs.map((t) => (
                 <button
                   key={t.id}
                   onClick={() => setTab(t.id)}
                   className={`flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-all ${
                     tab === t.id
-                      ? "bg-white text-gray-900 shadow-sm"
-                      : "text-gray-400 hover:text-gray-600"
+                      ? "bg-white dark:bg-white/12 text-gray-900 dark:text-white shadow-sm"
+                      : "text-gray-400 dark:text-white/40 hover:text-gray-600 dark:hover:text-white/70"
                   }`}
                 >
                   {t.label}
@@ -153,8 +153,8 @@ export default function CoursesClient({
                     <span
                       className={`text-[10px] font-bold rounded-full px-1.5 py-0.5 min-w-[18px] text-center ${
                         tab === t.id
-                          ? "bg-[#0822C0]/10 text-[#0822C0]"
-                          : "bg-gray-200/80 text-gray-400"
+                          ? "bg-[#0822C0]/10 dark:bg-blue-400/20 text-[#0822C0] dark:text-blue-400"
+                          : "bg-gray-200/80 dark:bg-white/8 text-gray-400 dark:text-white/35"
                       }`}
                     >
                       {counts[t.id]}
@@ -173,7 +173,7 @@ export default function CoursesClient({
                 placeholder="Search courses..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-8 pr-4 py-2 text-xs rounded-xl border border-gray-200 bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#0822C0]/40 focus:ring-1 focus:ring-[#0822C0]/20 w-48 transition-all"
+                className="pl-8 pr-4 py-2 text-xs rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 text-gray-700 dark:text-white/80 placeholder-gray-400 dark:placeholder-white/30 focus:outline-none focus:border-[#0822C0]/40 dark:focus:border-blue-400/40 focus:ring-1 focus:ring-[#0822C0]/20 w-48 transition-all"
               />
             </div>
           </div>
