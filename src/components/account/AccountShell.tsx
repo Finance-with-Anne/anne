@@ -48,7 +48,7 @@ export default function AccountShell({
   }
 
   return (
-    <div className="min-h-screen flex bg-gray-50 dark:bg-[#08090c]">
+    <div className="min-h-screen flex dark:bg-[#08090c]" style={{ backgroundColor: "var(--background)" }}>
       <AccountSidebar
         userName={userName}
         userEmail={userEmail}
@@ -65,7 +65,7 @@ export default function AccountShell({
           isDark={isDark}
           onToggleDark={toggleDark}
         />
-        <main className="flex-1 overflow-y-auto px-6 py-5 lg:px-8 lg:py-5">
+        <main className="flex-1 overflow-y-auto px-6 py-5 lg:px-8 lg:py-5 bg-[#f0f2f7] dark:bg-[#08090c]">
           {children}
         </main>
       </div>

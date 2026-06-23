@@ -4,8 +4,8 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f0f2f7;
+  --foreground: #0f172a;
 }
 
 @theme inline {
@@ -37,6 +37,14 @@ body {
 .dark main > article {
   background-color: inherit;
 }
+
+/* Light mode — lift low-contrast grays to be readable on off-white bg */
+:root {
+  --tw-text-gray-400: #6b7280;
+  --tw-text-gray-300: #9ca3af;
+}
+.text-gray-400  { color: #64748b; }
+.text-gray-300  { color: #94a3b8; }
 
 /* Color hierarchy — near-black base, clear card separation */
 .dark .bg-gray-50  { background-color: #08090c !important; }
