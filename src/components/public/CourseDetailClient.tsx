@@ -125,17 +125,38 @@ export default function CourseDetailClient({ course, related, currency, totalLes
       return;
     }
     setEnrolling(true);
+
+    if (isFree) {
+      try {
+        const res = await fetch("/api/enroll", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ courseId: course.id }),
+        });
+        if (res.ok) {
+          setEnrolled(true);
+          router.push(`/learn/${course.id}`);
+        }
+      } finally {
+        setEnrolling(false);
+      }
+      return;
+    }
+
+    // Paid course — initiate Flutterwave
     try {
-      const res = await fetch("/api/enroll", {
+      const res = await fetch("/api/courses/pay", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ courseId: course.id }),
+        body: JSON.stringify({ courseId: course.id, currency }),
       });
-      if (res.ok) {
-        setEnrolled(true);
-        router.push(`/learn/${course.id}`);
+      const json = await res.json();
+      if (!res.ok || !json.payment_url) {
+        setEnrolling(false);
+        return;
       }
-    } finally {
+      window.location.href = json.payment_url;
+    } catch {
       setEnrolling(false);
     }
   }

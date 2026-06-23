@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import type { Product, ProductCategory } from "@/types";
+import { useCart } from "@/contexts/CartContext";
 
 type Currency = "NGN" | "USD" | "GBP";
 
@@ -21,9 +22,16 @@ function formatPrice(product: Product, currency: Currency): string {
   return "Free";
 }
 
+function rawPrice(product: Product, currency: Currency): number {
+  if (currency === "GBP") return product.price_gbp ?? product.price_usd ?? product.price_ngn ?? product.price ?? 0;
+  if (currency === "USD") return product.price_usd ?? product.price_ngn ?? product.price_gbp ?? product.price ?? 0;
+  return product.price_ngn ?? product.price_usd ?? product.price_gbp ?? product.price ?? 0;
+}
+
 export default function ProductsShopClient({ products, categories, currency }: Props) {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [search, setSearch] = useState("");
+  const { addItem } = useCart();
 
   const filtered = products.filter(p => {
     const matchCat = !activeCategory || p.category_id === activeCategory;
@@ -201,9 +209,27 @@ export default function ProductsShopClient({ products, categories, currency }: P
 
                       {/* Hover CTA */}
                       <div className="absolute bottom-0 left-0 right-0 px-4 pb-4 flex gap-2 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                        <span className="flex-1 text-center rounded-xl bg-white text-gray-900 text-xs font-bold py-2.5">
-                          {isCourse ? "Enroll Now" : "Buy Now"}
-                        </span>
+                        {isCourse ? (
+                          <span className="flex-1 text-center rounded-xl bg-white text-gray-900 text-xs font-bold py-2.5">
+                            Enroll Now
+                          </span>
+                        ) : (
+                          <button
+                            onClick={e => {
+                              e.preventDefault();
+                              addItem({
+                                id: product.id,
+                                name: product.name,
+                                price: rawPrice(product, currency),
+                                currency,
+                                image_url: product.image_url,
+                              });
+                            }}
+                            className="flex-1 text-center rounded-xl bg-white text-gray-900 text-xs font-bold py-2.5 hover:bg-gray-50 transition-colors"
+                          >
+                            Add to Cart
+                          </button>
+                        )}
                         <span className="flex-1 text-center rounded-xl bg-white/20 backdrop-blur text-white text-xs font-bold py-2.5 border border-white/30">
                           {isCourse ? "View Course" : "Learn More"}
                         </span>

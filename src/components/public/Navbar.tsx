@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
 import { usePublicTheme } from "@/components/public/PublicThemeProvider";
 import { createClient } from "@/lib/supabase/client";
+import { useCart } from "@/contexts/CartContext";
 
 type Post = { id: string; title: string; slug: string; excerpt: string | null; cover_image: string | null; published_at: string | null };
 
@@ -137,6 +138,7 @@ export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const { dark, toggle } = usePublicTheme();
+  const { count: cartCount, openCart } = useCart();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileResourcesOpen, setMobileResourcesOpen] = useState(false);
   const [megaOpen, setMegaOpen] = useState(false);
@@ -385,11 +387,18 @@ export default function Navbar() {
           <div className="mx-1 h-5 w-px bg-gray-200 dark:bg-white/10" />
 
           {/* Cart icon */}
-          <button className="relative flex h-9 w-9 items-center justify-center rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors">
+          <button
+            onClick={openCart}
+            className="relative flex h-9 w-9 items-center justify-center rounded-lg text-gray-500 dark:text-white/50 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
+          >
             <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
             </svg>
-            <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-[#0822C0]" />
+            {cartCount > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#0822C0] text-[9px] font-bold text-white leading-none">
+                {cartCount > 9 ? "9+" : cartCount}
+              </span>
+            )}
           </button>
 
           <div className="mx-1 h-5 w-px bg-gray-200 dark:bg-white/10" />
