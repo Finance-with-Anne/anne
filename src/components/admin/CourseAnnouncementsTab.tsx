@@ -2,6 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { useAdminTheme } from "@/lib/admin-theme";
+import RichTextEditor from "./RichTextEditor";
+
+function hasContent(html: string) {
+  return html.replace(/<[^>]*>/g, "").trim().length > 0;
+}
 
 type Announcement = {
   id: string;
@@ -43,7 +48,7 @@ export default function CourseAnnouncementsTab({ courseId }: { courseId: string 
   useEffect(() => { load(); }, [courseId]);
 
   async function handlePost() {
-    if (!title.trim() || !body.trim()) { setError("Title and body are required."); return; }
+    if (!title.trim() || !hasContent(body)) { setError("Title and body are required."); return; }
     setSaving(true);
     setError("");
     const res = await fetch(`/api/courses/${courseId}/announcements`, {
@@ -53,7 +58,7 @@ export default function CourseAnnouncementsTab({ courseId }: { courseId: string 
     });
     setSaving(false);
     if (!res.ok) { const d = await res.json(); setError(d.error ?? "Failed"); return; }
-    setTitle(""); setBody("");
+    setTitle(""); setBody("<p></p>");
     load();
   }
 
@@ -79,17 +84,17 @@ export default function CourseAnnouncementsTab({ courseId }: { courseId: string 
           onChange={e => setTitle(e.target.value)}
           className={`w-full rounded-xl border px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand/30 ${inputBg}`}
         />
-        <textarea
-          placeholder="Write your announcement…"
+        <RichTextEditor
           value={body}
-          onChange={e => setBody(e.target.value)}
-          rows={4}
-          className={`w-full rounded-xl border px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand/30 resize-none ${inputBg}`}
+          onChange={setBody}
+          dark={dark}
+          placeholder="Write your announcement…"
+          minHeight={160}
         />
         {error && <p className="text-xs text-red-400">{error}</p>}
         <button
           onClick={handlePost}
-          disabled={saving || !title.trim() || !body.trim()}
+          disabled={saving || !title.trim() || !hasContent(body)}
           className="rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-hover transition-colors disabled:opacity-50"
         >
           {saving ? "Posting…" : "Post Announcement"}
@@ -126,7 +131,10 @@ export default function CourseAnnouncementsTab({ courseId }: { courseId: string 
                   </button>
                 </div>
               </div>
-              <p className={`mt-2.5 text-sm leading-relaxed whitespace-pre-wrap ${tSub}`}>{item.body}</p>
+              <div
+                className={`mt-2.5 prose prose-sm max-w-none ${dark ? "prose-invert" : ""} prose-p:my-1.5 prose-headings:font-semibold prose-a:text-brand`}
+                dangerouslySetInnerHTML={{ __html: item.body }}
+              />
             </div>
           ))}
         </div>
