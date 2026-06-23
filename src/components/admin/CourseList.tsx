@@ -66,7 +66,7 @@ export default function CourseList({ courses }: { courses: any[] }) {
         <ActionButton label="New Course" onClick={() => router.push("/admin/courses/new")} />
       </div>
 
-      <div className={`flex items-center justify-between px-4 py-3 rounded-xl border ${card}`}>
+      <div className={`flex flex-wrap items-center gap-3 px-4 py-3 rounded-xl border ${card}`}>
         <div className="flex items-center gap-1">
           {(["all", "published", "draft"] as const).map(f => (
             <button key={f} onClick={() => setFilter(f)} className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize transition-colors ${filterTab(filter === f)}`}>
@@ -79,7 +79,7 @@ export default function CourseList({ courses }: { courses: any[] }) {
           placeholder="Search courses…"
           value={search}
           onChange={e => setSearch(e.target.value)}
-          className={`rounded-lg border px-3 py-1.5 text-xs focus:outline-none w-44 ${inputBg}`}
+          className={`ml-auto rounded-lg border px-3 py-1.5 text-xs focus:outline-none w-44 ${inputBg}`}
         />
       </div>
 
@@ -87,9 +87,11 @@ export default function CourseList({ courses }: { courses: any[] }) {
         <div className={`rounded-xl border py-16 text-center text-sm ${card} ${sub}`}>No courses found.</div>
       ) : (
         <div className={`rounded-xl border overflow-hidden ${card}`}>
+          <div className="overflow-x-auto">
+          <div style={{ minWidth: "680px" }}>
           {/* Header row */}
           <div className={`grid items-center gap-4 px-4 py-2.5 border-b text-xs font-medium ${tSub} ${divider}`}
-            style={{ gridTemplateColumns: "3rem 1fr 5rem 5rem 5.5rem 6rem 6rem" }}>
+            style={{ gridTemplateColumns: "3rem 1fr 5rem 5rem 5.5rem 6rem 7rem" }}>
             <div />
             <div>Course</div>
             <div className="text-center">Status</div>
@@ -104,7 +106,7 @@ export default function CourseList({ courses }: { courses: any[] }) {
             <div
               key={course.id}
               className={`grid items-center gap-4 px-4 py-3 border-b last:border-b-0 transition-colors ${rowHover} ${divider}`}
-              style={{ gridTemplateColumns: "3rem 1fr 5rem 5rem 5.5rem 6rem 6rem" }}
+              style={{ gridTemplateColumns: "3rem 1fr 5rem 5rem 5.5rem 6rem 7rem" }}
             >
               {/* Thumbnail */}
               <div className="w-12 h-8 shrink-0">
@@ -177,6 +179,8 @@ export default function CourseList({ courses }: { courses: any[] }) {
               </div>
             </div>
           ))}
+          </div>
+          </div>
         </div>
       )}
     </div>
