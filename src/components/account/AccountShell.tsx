@@ -33,7 +33,7 @@ export default function AccountShell({
           userAvatar={userAvatar}
           onMenuToggle={() => setMobileOpen((v) => !v)}
         />
-        <main className="flex-1 overflow-y-auto p-6 lg:p-8">
+        <main className="flex-1 overflow-y-auto px-6 py-5 lg:px-8 lg:py-5">
           {children}
         </main>
       </div>
