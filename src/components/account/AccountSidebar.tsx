@@ -118,7 +118,7 @@ export default function AccountSidebar({
     <>
       {/* Desktop sidebar */}
       <aside className="hidden md:flex flex-col w-56 shrink-0 bg-white border-r border-gray-200 min-h-screen">
-        <div className="flex items-center gap-2.5 px-4 py-5 border-b border-gray-100">
+        <div className="flex items-center gap-2.5 px-4 h-[68px] border-b border-gray-100">
           <img src="/fwa-dark.svg" alt="Finance with Anne" className="h-7 w-auto" />
           <span className="text-xs font-semibold text-gray-700 truncate">My Account</span>
         </div>
@@ -133,9 +133,9 @@ export default function AccountSidebar({
         <div className="md:hidden fixed inset-0 z-40" onClick={() => setMobileOpen(false)}>
           <div className="absolute inset-0 bg-black/20" />
           <div className="absolute top-0 left-0 bottom-0 w-64 bg-white flex flex-col shadow-xl" onClick={e => e.stopPropagation()}>
-            <div className="flex items-center gap-2.5 px-4 py-5 border-b border-gray-100">
+            <div className="flex items-center gap-2.5 px-4 h-[68px] border-b border-gray-100">
               <img src="/fwa-dark.svg" alt="Finance with Anne" className="h-7 w-auto" />
-              <span className="text-xs font-semibold text-gray-700">Student Portal</span>
+              <span className="text-xs font-semibold text-gray-700">My Account</span>
             </div>
             <nav className="flex-1 px-2 py-4 space-y-0.5 overflow-y-auto">
               <NavLinks />
