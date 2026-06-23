@@ -716,10 +716,10 @@ export default function CoursePlayer({
                 {/* ── Tab content ── */}
                 <div className="bg-white">
                   {activeTab === "overview" && (
-                    <div className="px-8 py-6 max-w-3xl space-y-4">
+                    <div className="px-8 py-8 max-w-3xl">
                       {activeLesson.content && activeLesson.type !== "pdf" ? (
                         <div
-                          className="prose prose-sm max-w-none text-gray-700 leading-relaxed"
+                          className="prose prose-base max-w-none prose-headings:font-bold prose-headings:text-gray-900 prose-p:text-gray-700 prose-p:leading-relaxed prose-li:text-gray-700 prose-a:text-[#0822C0] prose-a:no-underline hover:prose-a:underline prose-blockquote:border-l-4 prose-blockquote:border-[#0822C0]/30 prose-blockquote:text-gray-600 prose-img:rounded-xl prose-img:shadow-sm prose-strong:text-gray-900 prose-code:text-[#0822C0] prose-code:bg-gray-100 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-pre:bg-gray-900 prose-pre:text-gray-100"
                           dangerouslySetInnerHTML={{ __html: activeLesson.content }}
                         />
                       ) : (

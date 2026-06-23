@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAdminTheme } from "@/lib/admin-theme";
 import type { CourseCategory, CourseTag, Course } from "@/types";
+import RichTextEditor from "./RichTextEditor";
 
 function tmpId() { return Math.random().toString(36).slice(2); }
 
@@ -629,14 +630,15 @@ export default function CourseWizard({ categories, tags, initialData }: CourseWi
                       )}
 
                       {lesson.type === "text" && (
-                        <textarea
-                          value={lesson.content}
-                          onChange={e => updateLesson(section.id, lesson.id, "content", e.target.value)}
-                          rows={3}
-                          placeholder="Lesson content (Markdown supported)"
-                          className={`w-full ml-10 rounded-lg border px-3 py-2 text-xs focus:outline-none resize-none transition-colors ${inputClass}`}
-                          style={{ width: "calc(100% - 2.5rem)" }}
-                        />
+                        <div className="ml-10" style={{ width: "calc(100% - 2.5rem)" }}>
+                          <RichTextEditor
+                            value={lesson.content}
+                            onChange={html => updateLesson(section.id, lesson.id, "content", html)}
+                            dark={dark}
+                            placeholder="Write your lesson content here…"
+                            minHeight={200}
+                          />
+                        </div>
                       )}
 
                       {lesson.type === "quiz" && (
