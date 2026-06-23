@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAdminTheme } from "@/lib/admin-theme";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 
 type LeaderboardRow = {
   rank: number; userId: string; name: string; avatarUrl: string | null;
@@ -44,12 +45,26 @@ function Avatar({ name, url, size = 8 }: { name: string; url: string | null; siz
 
 const MEDALS = ["🥇", "🥈", "🥉"];
 
+type DrilldownStudent = LeaderboardRow & { email?: string };
+
 export default function CourseReportsPage({
   leaderboard, activeThisWeek, courseStats,
   totalLessonsWatched, totalStudents, avgCompletionRate, activeThisWeekCount,
 }: Props) {
   const { dark } = useAdminTheme();
   const [courseSearch, setCourseSearch] = useState("");
+  const [drilldown, setDrilldown] = useState<DrilldownStudent | null>(null);
+  const [drillData, setDrillData] = useState<{ courseId: string; courseTitle: string; lessonsCompleted: number; totalLessons: number; lastActive: string | null }[]>([]);
+  const [drillLoading, setDrillLoading] = useState(false);
+
+  async function openDrilldown(s: LeaderboardRow) {
+    setDrilldown(s);
+    setDrillLoading(true);
+    const res = await fetch(`/api/admin/students/${s.userId}/progress`);
+    const data = await res.json();
+    setDrillData(data.courses ?? []);
+    setDrillLoading(false);
+  }
 
   const card = dark ? "bg-[#111318] border-white/5" : "bg-white border-gray-200";
   const heading = dark ? "text-white" : "text-gray-900";
@@ -127,7 +142,8 @@ export default function CourseReportsPage({
 
                 {leaderboard.map((s) => (
                   <div key={s.userId}
-                    className={`grid items-center px-5 py-3 border-b last:border-0 transition-colors ${tRow} ${divider}`}
+                    onClick={() => openDrilldown(s)}
+                    className={`grid items-center px-5 py-3 border-b last:border-0 transition-colors cursor-pointer ${tRow} ${divider}`}
                     style={{ gridTemplateColumns: "2.5rem 1fr 5rem 5rem 5rem 5.5rem" }}>
 
                     {/* Rank */}
@@ -297,6 +313,56 @@ export default function CourseReportsPage({
           </div>
         )}
       </div>
+
+      {/* ── Per-student drill-down modal ── */}
+      {drilldown && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-6">
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setDrilldown(null)} />
+          <div className={`relative w-full max-w-lg rounded-2xl border shadow-2xl overflow-hidden ${dark ? "bg-[#111318] border-white/8" : "bg-white border-gray-200"}`}>
+            {/* Header */}
+            <div className={`flex items-center gap-3 px-6 py-5 border-b ${dark ? "border-white/5" : "border-gray-100"}`}>
+              <Avatar name={drilldown.name} url={drilldown.avatarUrl} size={10} />
+              <div className="flex-1 min-w-0">
+                <p className={`text-sm font-semibold truncate ${dark ? "text-white" : "text-gray-900"}`}>{drilldown.name}</p>
+                <p className={`text-xs mt-0.5 ${dark ? "text-white/35" : "text-gray-400"}`}>
+                  {drilldown.totalLessons} lessons · {drilldown.coursesEnrolled} courses
+                </p>
+              </div>
+              <button onClick={() => setDrilldown(null)} className={`rounded-lg p-1.5 ${dark ? "text-white/30 hover:text-white hover:bg-white/5" : "text-gray-400 hover:text-gray-600 hover:bg-gray-100"} transition-colors`}>
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+              </button>
+            </div>
+            {/* Course breakdown */}
+            <div className="max-h-96 overflow-y-auto px-6 py-4 space-y-3">
+              {drillLoading ? (
+                <div className="space-y-3 py-4">
+                  {[1,2,3].map(i => <div key={i} className={`h-12 rounded-xl animate-pulse ${dark ? "bg-white/5" : "bg-gray-100"}`} />)}
+                </div>
+              ) : drillData.length === 0 ? (
+                <p className={`text-sm text-center py-8 ${dark ? "text-white/30" : "text-gray-400"}`}>No course activity yet.</p>
+              ) : drillData.map(c => {
+                const pct = c.totalLessons > 0 ? Math.round((c.lessonsCompleted / c.totalLessons) * 100) : 0;
+                return (
+                  <div key={c.courseId} className={`rounded-xl border p-4 ${dark ? "border-white/5 bg-white/[0.02]" : "border-gray-100 bg-gray-50"}`}>
+                    <div className="flex items-center justify-between mb-2">
+                      <p className={`text-sm font-medium truncate flex-1 mr-3 ${dark ? "text-white/80" : "text-gray-800"}`}>{c.courseTitle}</p>
+                      <span className={`text-xs shrink-0 ${pct === 100 ? "text-green-500 font-semibold" : dark ? "text-white/40" : "text-gray-400"}`}>
+                        {pct === 100 ? "✓ Done" : `${pct}%`}
+                      </span>
+                    </div>
+                    <div className={`h-1.5 rounded-full overflow-hidden ${dark ? "bg-white/10" : "bg-gray-200"}`}>
+                      <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, backgroundColor: pct === 100 ? "#22c55e" : "#0822C0" }} />
+                    </div>
+                    <p className={`text-xs mt-1.5 ${dark ? "text-white/25" : "text-gray-400"}`}>
+                      {c.lessonsCompleted} / {c.totalLessons} lessons · last active {timeAgo(c.lastActive)}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -7,13 +7,15 @@ import CourseResourcesTab from "./CourseResourcesTab";
 import CourseAnnouncementsTab from "./CourseAnnouncementsTab";
 import CourseReviewsTab from "./CourseReviewsTab";
 import CourseSupportTab from "./CourseSupportTab";
+import CourseQuizzesTab from "./CourseQuizzesTab";
 import type { CourseCategory, CourseTag, Course } from "@/types";
 
-type Tab = "edit" | "resources" | "announcements" | "reviews" | "support";
+type Tab = "edit" | "resources" | "quizzes" | "announcements" | "reviews" | "support";
 
 const TABS: { id: Tab; label: string }[] = [
   { id: "edit", label: "Edit" },
   { id: "resources", label: "Resources" },
+  { id: "quizzes", label: "Quizzes" },
   { id: "announcements", label: "Announcements" },
   { id: "reviews", label: "Reviews" },
   { id: "support", label: "Support" },
@@ -96,6 +98,7 @@ export default function CourseEditShell({
         <CourseWizard categories={categories} tags={tags} initialData={initialData} />
       )}
       {tab === "resources" && (courseId ? <CourseResourcesTab courseId={courseId} /> : <LockedTab label="Resources" dark={dark} />)}
+      {tab === "quizzes" && (courseId ? <CourseQuizzesTab courseId={courseId} /> : <LockedTab label="Quizzes" dark={dark} />)}
       {tab === "announcements" && (courseId ? <CourseAnnouncementsTab courseId={courseId} /> : <LockedTab label="Announcements" dark={dark} />)}
       {tab === "reviews" && (courseId ? <CourseReviewsTab courseId={courseId} /> : <LockedTab label="Reviews" dark={dark} />)}
       {tab === "support" && (courseId ? <CourseSupportTab courseId={courseId} /> : <LockedTab label="Support" dark={dark} />)}

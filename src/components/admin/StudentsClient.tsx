@@ -52,11 +52,16 @@ export default function StudentsClient({
 
   // Manual enroll modal state
   const [enrollOpen, setEnrollOpen] = useState(false);
+  const [enrollTab, setEnrollTab] = useState<"single" | "bulk">("single");
   const [enrollEmail, setEnrollEmail] = useState("");
   const [enrollCourseId, setEnrollCourseId] = useState("");
   const [enrolling, setEnrolling] = useState(false);
   const [enrollError, setEnrollError] = useState("");
   const [enrollSuccess, setEnrollSuccess] = useState("");
+  // Bulk enroll
+  const [bulkEmails, setBulkEmails] = useState("");
+  const [bulkResults, setBulkResults] = useState<{ email: string; ok: boolean; msg: string }[]>([]);
+  const [bulking, setBulking] = useState(false);
 
   const card = dark ? "bg-[#111318] border-white/5" : "bg-white border-gray-200";
   const heading = dark ? "text-white" : "text-gray-900";
@@ -135,6 +140,27 @@ export default function StudentsClient({
     setEnrollEmail("");
     setEnrollCourseId("");
     setTimeout(() => { setEnrollOpen(false); setEnrollSuccess(""); router.refresh(); }, 2000);
+  }
+
+  async function handleBulkEnroll() {
+    if (!enrollCourseId || !bulkEmails.trim()) return;
+    const emails = bulkEmails.split(/[\n,;]/).map(e => e.trim()).filter(Boolean);
+    if (!emails.length) return;
+    setBulking(true);
+    setBulkResults([]);
+    const results: { email: string; ok: boolean; msg: string }[] = [];
+    for (const email of emails) {
+      const res = await fetch("/api/admin/enroll", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, course_id: enrollCourseId }),
+      });
+      const data = await res.json();
+      results.push({ email, ok: res.ok, msg: res.ok ? (data.name ? `✓ ${data.name}` : "✓ Enrolled") : (data.error ?? "Failed") });
+      setBulkResults([...results]);
+    }
+    setBulking(false);
+    router.refresh();
   }
 
   return (
@@ -281,62 +307,86 @@ export default function StudentsClient({
     {/* Manual Enroll Modal */}
     {enrollOpen && (
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => !enrolling && setEnrollOpen(false)} />
+        <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => !enrolling && !bulking && setEnrollOpen(false)} />
         <div className={`relative w-full max-w-sm rounded-2xl border shadow-2xl p-6 ${dark ? "bg-[#111318] border-white/8" : "bg-white border-gray-200"}`}>
-          <h3 className={`text-base font-semibold mb-1 ${dark ? "text-white" : "text-gray-900"}`}>Enroll Student</h3>
-          <p className={`text-sm mb-5 ${dark ? "text-white/40" : "text-gray-500"}`}>
-            Enter the student's registered email address and select a course.
-          </p>
+          <h3 className={`text-base font-semibold mb-4 ${dark ? "text-white" : "text-gray-900"}`}>Enroll Student</h3>
 
-          <div className="space-y-3">
-            <div>
-              <label className={`block text-xs font-medium mb-1.5 ${dark ? "text-white/50" : "text-gray-600"}`}>Email address</label>
-              <input
-                type="email"
-                value={enrollEmail}
-                onChange={e => setEnrollEmail(e.target.value)}
-                placeholder="student@example.com"
-                className={`w-full rounded-xl border px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand/30 ${inputBg}`}
-              />
-            </div>
-            <div>
-              <label className={`block text-xs font-medium mb-1.5 ${dark ? "text-white/50" : "text-gray-600"}`}>Course</label>
-              <select
-                value={enrollCourseId}
-                onChange={e => setEnrollCourseId(e.target.value)}
-                className={`w-full rounded-xl border px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand/30 ${selectBg}`}
-              >
-                <option value="">Select a course…</option>
-                {allCourses.map(c => (
-                  <option key={c.id} value={c.id}>{c.title}</option>
-                ))}
-              </select>
-            </div>
+          {/* Single / Bulk tabs */}
+          <div className={`inline-flex gap-1 rounded-xl p-1 mb-5 ${dark ? "bg-white/5" : "bg-gray-100"}`}>
+            {(["single", "bulk"] as const).map(t => (
+              <button key={t} onClick={() => { setEnrollTab(t); setBulkResults([]); setEnrollError(""); setEnrollSuccess(""); }}
+                className={`rounded-lg px-4 py-1.5 text-xs font-semibold capitalize transition-colors ${enrollTab === t ? "bg-brand text-white" : dark ? "text-white/40 hover:text-white/70" : "text-gray-500 hover:text-gray-700"}`}>
+                {t === "single" ? "Single" : "Bulk CSV"}
+              </button>
+            ))}
           </div>
 
-          {enrollError && (
-            <p className="mt-3 text-xs text-red-400 font-medium">{enrollError}</p>
-          )}
-          {enrollSuccess && (
-            <p className="mt-3 text-xs text-green-400 font-medium">{enrollSuccess}</p>
-          )}
-
-          <div className="flex gap-3 mt-5">
-            <button
-              onClick={() => setEnrollOpen(false)}
-              disabled={enrolling}
-              className={`flex-1 rounded-xl py-2.5 text-sm font-medium transition-colors ${dark ? "bg-white/6 text-white/60 hover:bg-white/10" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleEnroll}
-              disabled={enrolling || !enrollEmail.trim() || !enrollCourseId}
-              className="flex-1 rounded-xl py-2.5 text-sm font-medium bg-brand text-white hover:bg-brand-hover transition-colors disabled:opacity-50"
-            >
-              {enrolling ? "Enrolling…" : "Enroll"}
-            </button>
+          {/* Course selector (shared) */}
+          <div className="mb-4">
+            <label className={`block text-xs font-medium mb-1.5 ${dark ? "text-white/50" : "text-gray-600"}`}>Course</label>
+            <select value={enrollCourseId} onChange={e => setEnrollCourseId(e.target.value)}
+              className={`w-full rounded-xl border px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand/30 ${selectBg}`}>
+              <option value="">Select a course…</option>
+              {allCourses.map(c => <option key={c.id} value={c.id}>{c.title}</option>)}
+            </select>
           </div>
+
+          {enrollTab === "single" ? (
+            <>
+              <div className="mb-4">
+                <label className={`block text-xs font-medium mb-1.5 ${dark ? "text-white/50" : "text-gray-600"}`}>Email address</label>
+                <input type="email" value={enrollEmail} onChange={e => setEnrollEmail(e.target.value)}
+                  placeholder="student@example.com"
+                  className={`w-full rounded-xl border px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand/30 ${inputBg}`} />
+              </div>
+              {enrollError && <p className="mb-3 text-xs text-red-400 font-medium">{enrollError}</p>}
+              {enrollSuccess && <p className="mb-3 text-xs text-green-400 font-medium">{enrollSuccess}</p>}
+              <div className="flex gap-3">
+                <button onClick={() => setEnrollOpen(false)} disabled={enrolling}
+                  className={`flex-1 rounded-xl py-2.5 text-sm font-medium transition-colors ${dark ? "bg-white/6 text-white/60 hover:bg-white/10" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
+                  Cancel
+                </button>
+                <button onClick={handleEnroll} disabled={enrolling || !enrollEmail.trim() || !enrollCourseId}
+                  className="flex-1 rounded-xl py-2.5 text-sm font-medium bg-brand text-white hover:bg-brand-hover transition-colors disabled:opacity-50">
+                  {enrolling ? "Enrolling…" : "Enroll"}
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="mb-4">
+                <label className={`block text-xs font-medium mb-1.5 ${dark ? "text-white/50" : "text-gray-600"}`}>
+                  Email addresses <span className={`font-normal ${dark ? "text-white/25" : "text-gray-400"}`}>(one per line, or comma/semicolon separated)</span>
+                </label>
+                <textarea value={bulkEmails} onChange={e => setBulkEmails(e.target.value)} rows={5}
+                  placeholder={"student1@example.com\nstudent2@example.com\nstudent3@example.com"}
+                  className={`w-full rounded-xl border px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand/30 resize-none font-mono ${inputBg}`} />
+              </div>
+              {/* Results */}
+              {bulkResults.length > 0 && (
+                <div className={`rounded-xl border p-3 mb-4 max-h-32 overflow-y-auto space-y-1 ${dark ? "border-white/5 bg-white/3" : "border-gray-100 bg-gray-50"}`}>
+                  {bulkResults.map((r, i) => (
+                    <div key={i} className={`flex items-center gap-2 text-xs ${r.ok ? "text-green-500" : "text-red-400"}`}>
+                      <span className="shrink-0">{r.ok ? "✓" : "✗"}</span>
+                      <span className="truncate">{r.email}</span>
+                      <span className={`ml-auto shrink-0 ${dark ? "text-white/30" : "text-gray-400"}`}>{r.msg}</span>
+                    </div>
+                  ))}
+                  {bulking && <p className={`text-xs ${dark ? "text-white/30" : "text-gray-400"}`}>Processing…</p>}
+                </div>
+              )}
+              <div className="flex gap-3">
+                <button onClick={() => { setEnrollOpen(false); setBulkResults([]); setBulkEmails(""); }} disabled={bulking}
+                  className={`flex-1 rounded-xl py-2.5 text-sm font-medium transition-colors ${dark ? "bg-white/6 text-white/60 hover:bg-white/10" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
+                  {bulkResults.length > 0 ? "Done" : "Cancel"}
+                </button>
+                <button onClick={handleBulkEnroll} disabled={bulking || !bulkEmails.trim() || !enrollCourseId}
+                  className="flex-1 rounded-xl py-2.5 text-sm font-medium bg-brand text-white hover:bg-brand-hover transition-colors disabled:opacity-50">
+                  {bulking ? `Enrolling ${bulkResults.length}…` : "Enroll All"}
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </div>
     )}

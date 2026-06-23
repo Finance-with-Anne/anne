@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, useEffect, useRef } from "react";
+import { useState, useTransition, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
@@ -29,7 +29,7 @@ interface Props {
   backHref?: string;
 }
 
-type Tab = "overview" | "announcements" | "reviews" | "support";
+type Tab = "overview" | "announcements" | "reviews" | "support" | "resources" | "notes" | "quiz";
 
 function getEmbedUrl(url: string): string | null {
   try {
@@ -418,6 +418,241 @@ function SupportTab({ courseId }: { courseId: string }) {
   );
 }
 
+// ─── Resources Tab ───────────────────────────────────────────────────────────
+function ResourcesTab({ courseId }: { courseId: string }) {
+  const [items, setItems] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch(`/api/courses/${courseId}/resources`)
+      .then(r => r.json())
+      .then(d => { setItems(Array.isArray(d) ? d : []); setLoading(false); });
+  }, [courseId]);
+
+  const iconPath: Record<string, string> = {
+    file: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z",
+    link: "M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1",
+    note: "M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z",
+  };
+  const iconColor: Record<string, string> = {
+    file: "bg-blue-50 text-blue-600 dark:bg-blue-400/10 dark:text-blue-400",
+    link: "bg-green-50 text-green-600 dark:bg-green-400/10 dark:text-green-400",
+    note: "bg-amber-50 text-amber-600 dark:bg-amber-400/10 dark:text-amber-400",
+  };
+
+  if (loading) return (
+    <div className="px-8 py-10 space-y-3">
+      {[1,2,3].map(i => <div key={i} className="h-14 rounded-xl bg-gray-100 dark:bg-white/5 animate-pulse" />)}
+    </div>
+  );
+
+  if (!items.length) return (
+    <div className="px-8 py-16 text-center text-sm text-gray-400 dark:text-white/30">No resources yet.</div>
+  );
+
+  return (
+    <div className="px-8 py-6 max-w-3xl space-y-3">
+      {items.map(r => (
+        <div key={r.id} className="flex items-center gap-4 rounded-2xl border border-gray-100 dark:border-white/8 bg-white dark:bg-white/3 px-5 py-4 hover:border-[#0822C0]/20 dark:hover:border-white/15 transition-colors group">
+          <div className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 ${iconColor[r.type] ?? iconColor.file}`}>
+            <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d={iconPath[r.type] ?? iconPath.file} />
+            </svg>
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">{r.title}</p>
+            {r.url && <p className="text-xs text-gray-400 dark:text-white/30 truncate mt-0.5">{r.url}</p>}
+            {r.content && <p className="text-xs text-gray-500 dark:text-white/40 mt-0.5 line-clamp-2">{r.content}</p>}
+          </div>
+          {(r.type === "file" || r.type === "link") && r.url && (
+            <a href={r.url} target="_blank" rel="noopener noreferrer"
+              className="shrink-0 h-8 w-8 rounded-xl border border-gray-200 dark:border-white/10 flex items-center justify-center text-gray-400 dark:text-white/30 hover:text-[#0822C0] dark:hover:text-white hover:border-[#0822C0]/30 dark:hover:border-white/30 transition-colors">
+              <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+            </a>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ─── Notes Tab ────────────────────────────────────────────────────────────────
+function NotesTab({ courseId, lessonId }: { courseId: string; lessonId: string }) {
+  const [content, setContent] = useState("");
+  const [saved, setSaved] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (!lessonId) return;
+    setSaved(true);
+    fetch(`/api/courses/${courseId}/notes?lesson_id=${lessonId}`)
+      .then(r => r.json())
+      .then(d => setContent(d.content ?? ""));
+  }, [courseId, lessonId]);
+
+  function handleChange(val: string) {
+    setContent(val);
+    setSaved(false);
+    if (saveTimer.current) clearTimeout(saveTimer.current);
+    saveTimer.current = setTimeout(async () => {
+      setSaving(true);
+      await fetch(`/api/courses/${courseId}/notes`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ lesson_id: lessonId, content: val }),
+      });
+      setSaving(false);
+      setSaved(true);
+    }, 800);
+  }
+
+  return (
+    <div className="px-8 py-6 max-w-3xl">
+      <div className="flex items-center justify-between mb-3">
+        <p className="text-xs font-semibold text-gray-500 dark:text-white/40 uppercase tracking-wide">My Notes</p>
+        <span className="text-xs text-gray-400 dark:text-white/25">
+          {saving ? "Saving…" : saved ? "Saved" : "Unsaved"}
+        </span>
+      </div>
+      <textarea
+        value={content}
+        onChange={e => handleChange(e.target.value)}
+        placeholder="Jot down your notes for this lesson…"
+        className="w-full min-h-[320px] rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/3 px-5 py-4 text-sm text-gray-800 dark:text-white/80 placeholder-gray-300 dark:placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-[#0822C0]/20 resize-none leading-relaxed"
+      />
+      <p className="text-xs text-gray-300 dark:text-white/20 mt-2">Notes auto-save as you type. Private to you.</p>
+    </div>
+  );
+}
+
+// ─── Quiz Tab ────────────────────────────────────────────────────────────────
+interface QuizQuestion {
+  question: string;
+  options: [string, string, string, string];
+  correct: number;
+}
+
+function QuizTab({ courseId, lessonId }: { courseId: string; lessonId: string }) {
+  const [questions, setQuestions] = useState<QuizQuestion[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [answers, setAnswers] = useState<Record<string, number>>({});
+  const [result, setResult] = useState<{ score: number; total: number; passed: boolean } | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    setLoading(true);
+    setAnswers({});
+    setResult(null);
+    fetch(`/api/courses/${courseId}/quizzes`)
+      .then(r => r.json())
+      .then((quizzes: any[]) => {
+        const quiz = quizzes.find(q => q.lesson_id === lessonId);
+        setQuestions(quiz?.questions ?? []);
+        setLoading(false);
+      });
+  }, [courseId, lessonId]);
+
+  async function handleSubmit() {
+    if (Object.keys(answers).length < questions.length) return;
+    setSubmitting(true);
+    const res = await fetch(`/api/courses/${courseId}/quiz-attempt`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ lesson_id: lessonId, answers }),
+    });
+    const data = await res.json();
+    setResult({ score: data.score, total: data.total, passed: data.passed });
+    setSubmitting(false);
+  }
+
+  if (loading) return (
+    <div className="px-8 py-10 space-y-4">
+      {[1, 2].map(i => <div key={i} className="h-20 rounded-2xl bg-gray-100 dark:bg-white/5 animate-pulse" />)}
+    </div>
+  );
+
+  if (!questions.length) return (
+    <div className="px-8 py-16 text-center text-sm text-gray-400 dark:text-white/30">No quiz for this lesson.</div>
+  );
+
+  if (result) return (
+    <div className="px-8 py-12 max-w-2xl">
+      <div className={`rounded-3xl border p-8 text-center ${result.passed ? "border-green-200 dark:border-green-400/20 bg-green-50 dark:bg-green-400/5" : "border-red-200 dark:border-red-400/20 bg-red-50 dark:bg-red-400/5"}`}>
+        <div className={`inline-flex h-16 w-16 items-center justify-center rounded-full mb-5 ${result.passed ? "bg-green-100 dark:bg-green-400/15" : "bg-red-100 dark:bg-red-400/15"}`}>
+          <svg className={`h-8 w-8 ${result.passed ? "text-green-500" : "text-red-500"}`} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+            {result.passed
+              ? <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              : <path strokeLinecap="round" strokeLinejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />}
+          </svg>
+        </div>
+        <p className={`text-2xl font-bold mb-1 ${result.passed ? "text-green-700 dark:text-green-400" : "text-red-700 dark:text-red-400"}`}>
+          {result.score} / {result.total}
+        </p>
+        <p className={`text-sm font-semibold mb-2 ${result.passed ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}>
+          {result.passed ? "You passed! 🎉" : "Not quite — keep studying!"}
+        </p>
+        <p className="text-xs text-gray-400 dark:text-white/30 mb-6">
+          {Math.round((result.score / result.total) * 100)}% score — 70% required to pass
+        </p>
+        <button
+          onClick={() => { setResult(null); setAnswers({}); }}
+          className="rounded-xl border border-gray-300 dark:border-white/15 text-sm font-medium px-5 py-2 text-gray-700 dark:text-white/70 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
+        >
+          Try again
+        </button>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="px-8 py-6 max-w-3xl space-y-6">
+      {questions.map((q, qi) => (
+        <div key={qi} className="space-y-3">
+          <p className="text-sm font-semibold text-gray-900 dark:text-white/85">
+            <span className="text-gray-400 dark:text-white/30 font-normal mr-2">{qi + 1}.</span>
+            {q.question}
+          </p>
+          <div className="space-y-2">
+            {q.options.map((opt, oi) => {
+              const selected = answers[String(qi)] === oi;
+              return (
+                <button
+                  key={oi}
+                  onClick={() => setAnswers(prev => ({ ...prev, [String(qi)]: oi }))}
+                  className={`w-full text-left rounded-xl border px-4 py-3 text-sm transition-colors ${
+                    selected
+                      ? "border-[#0822C0] bg-[#0822C0]/5 dark:bg-[#0822C0]/15 text-[#0822C0] dark:text-blue-300 font-medium"
+                      : "border-gray-200 dark:border-white/10 text-gray-700 dark:text-white/70 hover:border-gray-300 dark:hover:border-white/20 hover:bg-gray-50 dark:hover:bg-white/3"
+                  }`}
+                >
+                  <span className={`mr-3 font-medium ${selected ? "text-[#0822C0] dark:text-blue-300" : "text-gray-400 dark:text-white/25"}`}>
+                    {["A", "B", "C", "D"][oi]}.
+                  </span>
+                  {opt}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+
+      <button
+        onClick={handleSubmit}
+        disabled={submitting || Object.keys(answers).length < questions.length}
+        className="rounded-xl bg-[#0822C0] text-white text-sm font-semibold px-6 py-2.5 hover:bg-[#0a2fd4] transition-colors disabled:opacity-40"
+      >
+        {submitting ? "Submitting…" : "Submit answers"}
+      </button>
+      {Object.keys(answers).length < questions.length && (
+        <p className="text-xs text-gray-400 dark:text-white/25">Answer all {questions.length} questions to submit.</p>
+      )}
+    </div>
+  );
+}
+
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function CoursePlayer({
   courseId,
@@ -458,15 +693,25 @@ export default function CoursePlayer({
   async function markComplete() {
     if (!activeLesson || completed.has(activeLesson.id)) return;
     startTransition(async () => {
+      const { data: { user } } = await supabase.auth.getUser();
       await supabase.from("lesson_progress").upsert({
-        user_id: (await supabase.auth.getUser()).data.user?.id,
+        user_id: user?.id,
         course_id: courseId,
         lesson_id: activeLesson.id,
         completed_at: new Date().toISOString(),
       });
-      setCompleted((prev) => new Set([...prev, activeLesson.id]));
+      const newCompleted = new Set([...completed, activeLesson.id]);
+      setCompleted(newCompleted);
       const idx = allLessons.findIndex((l) => l.id === activeLesson.id);
-      if (idx !== -1 && idx < allLessons.length - 1) selectLesson(allLessons[idx + 1].id);
+      const isLastLesson = idx === allLessons.length - 1;
+      const allDone = allLessons.every(l => newCompleted.has(l.id));
+      if (isLastLesson && allDone) {
+        // Issue certificate
+        await supabase.from("course_certificates").upsert({ user_id: user?.id, course_id: courseId });
+        setShowCompletion(true);
+      } else if (idx !== -1 && idx < allLessons.length - 1) {
+        selectLesson(allLessons[idx + 1].id);
+      }
     });
   }
 
@@ -490,8 +735,13 @@ export default function CoursePlayer({
     }
   }
 
+  const [showCompletion, setShowCompletion] = useState(false);
+
   const tabs: { key: Tab; label: string }[] = [
     { key: "overview", label: "Overview" },
+    { key: "quiz", label: "Quiz" },
+    { key: "notes", label: "Notes" },
+    { key: "resources", label: "Resources" },
     { key: "announcements", label: "Announcements" },
     { key: "reviews", label: "Reviews" },
     { key: "support", label: "Q&A / Support" },
@@ -790,6 +1040,9 @@ export default function CoursePlayer({
                     </div>
                   )}
 
+                  {activeTab === "quiz" && activeLesson && <QuizTab courseId={courseId} lessonId={activeLesson.id} />}
+                  {activeTab === "notes" && activeLesson && <NotesTab courseId={courseId} lessonId={activeLesson.id} />}
+                  {activeTab === "resources" && <ResourcesTab courseId={courseId} />}
                   {activeTab === "announcements" && <AnnouncementsTab courseId={courseId} />}
                   {activeTab === "reviews" && <ReviewsTab courseId={courseId} />}
                   {activeTab === "support" && <SupportTab courseId={courseId} />}
@@ -799,6 +1052,44 @@ export default function CoursePlayer({
           </div>
         </div>
       </div>
+
+      {/* ── Course completion modal ── */}
+      {showCompletion && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-6">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowCompletion(false)} />
+          <div className="relative bg-white dark:bg-[#0D0F1C] rounded-3xl shadow-2xl max-w-md w-full p-10 text-center border border-gray-100 dark:border-white/10">
+            {/* Confetti-style icon */}
+            <div className="h-20 w-20 rounded-full bg-[#0822C0]/8 flex items-center justify-center mx-auto mb-6">
+              <svg className="h-10 w-10 text-[#0822C0]" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Course Complete!</h2>
+            <p className="text-sm text-gray-500 dark:text-white/50 mb-8 leading-relaxed">
+              You've finished <span className="font-semibold text-gray-800 dark:text-white">{courseTitle}</span>. Your certificate is ready.
+            </p>
+            <div className="flex flex-col gap-3">
+              <a
+                href={`/certificate/${courseId}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#0822C0] text-white font-semibold px-6 py-3 hover:bg-[#0a2fd4] transition-colors"
+              >
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                </svg>
+                View Certificate
+              </a>
+              <button
+                onClick={() => setShowCompletion(false)}
+                className="rounded-2xl border border-gray-200 dark:border-white/10 text-gray-600 dark:text-white/60 font-medium px-6 py-3 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors text-sm"
+              >
+                Continue browsing
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
