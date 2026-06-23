@@ -25,6 +25,7 @@ interface Props {
   curriculum: Section[];
   initialLessonId: string | null;
   completedLessonIds: string[];
+  backHref?: string;
 }
 
 function getEmbedUrl(url: string): string | null {
@@ -56,6 +57,7 @@ export default function CoursePlayer({
   curriculum,
   initialLessonId,
   completedLessonIds: initial,
+  backHref = "/account/courses",
 }: Props) {
   const router = useRouter();
   const supabase = createClient();
@@ -71,7 +73,7 @@ export default function CoursePlayer({
 
   function selectLesson(lessonId: string) {
     setActiveLessonId(lessonId);
-    router.replace(`/account/courses/${courseId}?lesson=${lessonId}`, { scroll: false });
+    router.replace(`/learn/${courseId}?lesson=${lessonId}`, { scroll: false });
   }
 
   function toggleSection(sectionId: string) {
@@ -106,12 +108,45 @@ export default function CoursePlayer({
   const progress = totalLessons > 0 ? Math.round((doneCount / totalLessons) * 100) : 0;
 
   return (
-    <div className="flex h-[calc(100vh-3.5rem)] -m-6 lg:-m-8 overflow-hidden">
+    <div className="flex flex-col h-screen overflow-hidden bg-white">
+      {/* Top bar */}
+      <header className="flex items-center gap-3 h-12 px-4 border-b border-gray-100 bg-white shrink-0 z-10">
+        {/* Exit */}
+        <a
+          href={backHref}
+          className="flex items-center gap-1.5 text-xs font-medium text-gray-400 hover:text-gray-700 transition-colors shrink-0"
+        >
+          <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </a>
+
+        {/* Logo */}
+        <a href="/" className="shrink-0">
+          <img src="/fwa-dark.svg" alt="Finance with Anne" className="h-6 w-auto" />
+        </a>
+
+        <div className="h-4 w-px bg-gray-200 shrink-0" />
+
+        {/* Course title */}
+        <span className="text-xs font-semibold text-gray-700 truncate flex-1">{courseTitle}</span>
+
+        {/* Progress */}
+        <div className="hidden sm:flex items-center gap-2.5 shrink-0">
+          <div className="w-32 h-1.5 rounded-full bg-gray-100 overflow-hidden">
+            <div className="h-full rounded-full bg-[#0822C0] transition-all duration-500" style={{ width: `${progress}%` }} />
+          </div>
+          <span className="text-[10px] font-semibold text-gray-400">{doneCount}/{totalLessons}</span>
+        </div>
+      </header>
+
+      {/* Body */}
+      <div className="flex flex-1 overflow-hidden">
       {/* Sidebar */}
       <aside
         className={`${sidebarOpen ? "w-72" : "w-0"} shrink-0 border-r border-gray-200 bg-white flex flex-col transition-all duration-300 overflow-hidden`}
       >
-        {/* Course title */}
+        {/* Course title in sidebar */}
         <div className="px-4 py-4 border-b border-gray-100 space-y-1">
           <p className="text-xs text-gray-400 font-medium">Course</p>
           <p className="text-sm font-bold text-gray-900 line-clamp-2 leading-snug">{courseTitle}</p>
@@ -192,18 +227,18 @@ export default function CoursePlayer({
 
       {/* Main content */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Top bar */}
-        <div className="flex items-center gap-3 px-4 py-3 border-b border-gray-200 bg-white shrink-0">
+        {/* Lesson bar */}
+        <div className="flex items-center gap-3 px-4 py-2.5 border-b border-gray-100 bg-white shrink-0">
           <button
             onClick={() => setSidebarOpen((v) => !v)}
-            className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
-            title="Toggle sidebar"
+            className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors shrink-0"
+            title="Toggle curriculum"
           >
             <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
-          <span className="text-sm font-semibold text-gray-900 truncate">
+          <span className="text-sm font-semibold text-gray-700 truncate">
             {activeLesson?.title ?? courseTitle}
           </span>
         </div>
@@ -333,6 +368,7 @@ export default function CoursePlayer({
           )}
         </div>
       </div>
+      </div> {/* end body */}
     </div>
   );
 }

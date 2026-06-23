@@ -163,8 +163,8 @@ function CourseCard({ e, stats, variant }: { e: any; stats: any; variant: "progr
   const { totalLessons, done, pct, totalMins, nextLesson } = stats;
   const catColor = course.category?.color ?? "#0822C0";
   const href = nextLesson
-    ? `/account/courses/${course.id}?lesson=${nextLesson.id}`
-    : `/account/courses/${course.id}`;
+    ? `/learn/${course.id}?lesson=${nextLesson.id}`
+    : `/learn/${course.id}`;
 
   const isProgress = variant === "progress";
   const isCompleted = variant === "completed";

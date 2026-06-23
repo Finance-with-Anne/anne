@@ -181,7 +181,7 @@ export default async function AccountDashboardPage() {
                 return (
                   <li key={course.id}>
                     <Link
-                      href={`/account/courses/${course.id}`}
+                      href={`/learn/${course.id}`}
                       className="group flex items-center gap-4 px-5 py-4 hover:bg-gray-50 transition-colors"
                     >
                       {/* Thumbnail */}

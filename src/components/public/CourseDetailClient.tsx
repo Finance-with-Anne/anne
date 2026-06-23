@@ -121,7 +121,7 @@ export default function CourseDetailClient({ course, related, currency, totalLes
       return;
     }
     if (enrolled) {
-      router.push(`/account/courses/${course.id}`);
+      router.push(`/learn/${course.id}`);
       return;
     }
     setEnrolling(true);
@@ -133,7 +133,7 @@ export default function CourseDetailClient({ course, related, currency, totalLes
       });
       if (res.ok) {
         setEnrolled(true);
-        router.push(`/account/courses/${course.id}`);
+        router.push(`/learn/${course.id}`);
       }
     } finally {
       setEnrolling(false);
