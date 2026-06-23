@@ -98,7 +98,7 @@ export default function AccountHeader({
                 <div className="min-w-0">
                   <p className="text-sm font-bold text-gray-900 truncate">{userName}</p>
                   <p className="text-xs text-gray-400 truncate">{userEmail}</p>
-                  <span className="text-[10px] font-medium text-[#0822C0]">Student</span>
+                  <span className="text-[10px] font-medium text-[#0822C0]">Member</span>
                 </div>
               </div>
 

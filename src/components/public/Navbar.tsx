@@ -160,7 +160,7 @@ export default function Navbar() {
         .single();
       setUser({
         email: u.email ?? "",
-        name: profile?.full_name || u.email?.split("@")[0] || "Student",
+        name: profile?.full_name || u.email?.split("@")[0] || "Member",
         avatar: profile?.avatar_url ?? null,
       });
     }
