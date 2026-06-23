@@ -101,7 +101,7 @@ export default async function AccountBookingsPage() {
           <h1 className="text-2xl font-bold text-gray-900">My Bookings</h1>
           <p className="text-sm text-gray-400 mt-1">All your scheduled sessions with Anne.</p>
         </div>
-        <Link href="/booking" className="rounded-lg bg-[#0822C0] text-white text-xs font-semibold px-4 py-2.5 hover:bg-[#061aa0] transition-colors shrink-0">
+        <Link href="/account/bookings/book" className="rounded-lg bg-[#0822C0] text-white text-xs font-semibold px-4 py-2.5 hover:bg-[#061aa0] transition-colors shrink-0">
           Book a session
         </Link>
       </div>
@@ -115,7 +115,7 @@ export default async function AccountBookingsPage() {
           </div>
           <p className="text-sm font-medium text-gray-500">No bookings found</p>
           <p className="text-xs text-gray-400 mt-1">Book a 1-on-1 session with Anne to get started.</p>
-          <Link href="/booking" className="inline-block mt-5 rounded-lg bg-[#0822C0] text-white text-xs font-semibold px-5 py-2.5 hover:bg-[#061aa0] transition-colors">
+          <Link href="/account/bookings/book" className="inline-block mt-5 rounded-lg bg-[#0822C0] text-white text-xs font-semibold px-5 py-2.5 hover:bg-[#061aa0] transition-colors">
             Book a session
           </Link>
         </div>

@@ -21,6 +21,10 @@ const nav = [
     href: "/account/bookings",
     exact: false,
     icon: <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />,
+    children: [
+      { label: "My Bookings", href: "/account/bookings", exact: true },
+      { label: "Book a Session", href: "/account/bookings/book" },
+    ],
   },
   {
     label: "Files",
@@ -59,25 +63,56 @@ export default function AccountSidebar({
     <>
       {nav.map((item) => {
         const active = isActive(item.href, item.exact);
+        const sectionActive = pathname.startsWith(item.href) && item.href !== "/account";
+        const hasChildren = item.children && item.children.length > 0;
+        const showChildren = hasChildren && sectionActive;
+
         return (
-          <Link
-            key={item.href}
-            href={item.href}
-            onClick={() => setMobileOpen(false)}
-            className={`relative flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium transition-all ${
-              active
-                ? "text-[#0822C0] dark:text-blue-400"
-                : "text-gray-400 dark:text-white/50 hover:text-[#0822C0] dark:hover:text-blue-400 hover:bg-[#0822C0]/5 dark:hover:bg-[#0822C0]/15"
-            }`}
-          >
-            {active && (
-              <span className="absolute inset-0 rounded-lg bg-gradient-to-r from-blue-50 to-[#0822C0]/10 dark:from-[#0822C0]/25 dark:to-transparent border border-[#0822C0]/20 dark:border-[#0822C0]/40" />
+          <div key={item.href}>
+            <Link
+              href={hasChildren ? (item.children![0].href) : item.href}
+              onClick={() => setMobileOpen(false)}
+              className={`relative flex items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium transition-all ${
+                active && !hasChildren
+                  ? "text-[#0822C0] dark:text-blue-400"
+                  : sectionActive && hasChildren
+                  ? "text-[#0822C0] dark:text-blue-400"
+                  : "text-gray-400 dark:text-white/50 hover:text-[#0822C0] dark:hover:text-blue-400 hover:bg-[#0822C0]/5 dark:hover:bg-[#0822C0]/15"
+              }`}
+            >
+              {(active || (sectionActive && hasChildren)) && (
+                <span className="absolute inset-0 rounded-lg bg-gradient-to-r from-blue-50 to-[#0822C0]/10 dark:from-[#0822C0]/25 dark:to-transparent border border-[#0822C0]/20 dark:border-[#0822C0]/40" />
+              )}
+              <svg className="relative h-4 w-4 shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                {item.icon}
+              </svg>
+              <span className="relative">{item.label}</span>
+            </Link>
+
+            {/* Submenu */}
+            {showChildren && (
+              <div className="ml-7 mt-0.5 space-y-0.5">
+                {item.children!.map((child) => {
+                  const childActive = child.exact ? pathname === child.href : pathname.startsWith(child.href);
+                  return (
+                    <Link
+                      key={child.href}
+                      href={child.href}
+                      onClick={() => setMobileOpen(false)}
+                      className={`flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs transition-all ${
+                        childActive
+                          ? "text-[#0822C0] dark:text-blue-400 font-semibold bg-[#0822C0]/5 dark:bg-[#0822C0]/15"
+                          : "text-gray-400 dark:text-white/40 hover:text-gray-700 dark:hover:text-white/70"
+                      }`}
+                    >
+                      <span className={`h-1 w-1 rounded-full shrink-0 ${childActive ? "bg-[#0822C0]" : "bg-gray-300 dark:bg-white/20"}`} />
+                      {child.label}
+                    </Link>
+                  );
+                })}
+              </div>
             )}
-            <svg className="relative h-4 w-4 shrink-0" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
-              {item.icon}
-            </svg>
-            <span className="relative">{item.label}</span>
-          </Link>
+          </div>
         );
       })}
 

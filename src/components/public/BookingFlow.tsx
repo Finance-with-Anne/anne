@@ -17,7 +17,19 @@ function formatPrice(session: BookingSession, currency: string): string | null {
   return null;
 }
 
-export default function BookingFlow({ session, defaultCurrency = "NGN" }: { session: BookingSession; defaultCurrency?: string }) {
+export default function BookingFlow({
+  session,
+  defaultCurrency = "NGN",
+  initialName = "",
+  initialEmail = "",
+  backHref,
+}: {
+  session: BookingSession;
+  defaultCurrency?: string;
+  initialName?: string;
+  initialEmail?: string;
+  backHref?: string;
+}) {
   const availableSlots = (session.slots ?? []).filter((s: BookingSlot) => !s.is_booked);
   const questions = (session.questions ?? []) as BookingQuestion[];
 
@@ -26,8 +38,8 @@ export default function BookingFlow({ session, defaultCurrency = "NGN" }: { sess
   const [calMonth, setCalMonth] = useState(new Date(today.getFullYear(), today.getMonth(), 1));
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedSlot, setSelectedSlot] = useState<BookingSlot | null>(null);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  const [name, setName] = useState(initialName);
+  const [email, setEmail] = useState(initialEmail);
   const [phone, setPhone] = useState("");
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [currency, setCurrency] = useState(defaultCurrency);
