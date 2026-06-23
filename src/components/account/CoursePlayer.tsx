@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
@@ -28,29 +28,349 @@ interface Props {
   backHref?: string;
 }
 
+type Tab = "overview" | "announcements" | "reviews" | "support";
+
 function getEmbedUrl(url: string): string | null {
   try {
     const u = new URL(url);
     if (u.hostname.includes("youtube.com") || u.hostname.includes("youtu.be")) {
-      const vid =
-        u.searchParams.get("v") ??
-        (u.hostname === "youtu.be" ? u.pathname.slice(1) : null);
-      return vid ? `https://www.youtube.com/embed/${vid}` : null;
+      const vid = u.searchParams.get("v") ?? (u.hostname === "youtu.be" ? u.pathname.slice(1) : null);
+      return vid ? `https://www.youtube.com/embed/${vid}?rel=0&modestbranding=1` : null;
     }
     if (u.hostname.includes("vimeo.com")) {
       const id = u.pathname.split("/").filter(Boolean).pop();
       return id ? `https://player.vimeo.com/video/${id}` : null;
     }
     return null;
-  } catch {
-    return null;
-  }
+  } catch { return null; }
 }
 
 function isDirectVideo(url: string) {
   return /\.(mp4|webm|ogg|mov)(\?|$)/i.test(url);
 }
 
+function Stars({ rating, onChange }: { rating: number; onChange?: (r: number) => void }) {
+  const [hover, setHover] = useState(0);
+  return (
+    <div className="flex gap-0.5">
+      {[1, 2, 3, 4, 5].map(i => (
+        <button
+          key={i}
+          type="button"
+          onClick={() => onChange?.(i)}
+          onMouseEnter={() => onChange && setHover(i)}
+          onMouseLeave={() => onChange && setHover(0)}
+          className={onChange ? "cursor-pointer" : "cursor-default"}
+          disabled={!onChange}
+        >
+          <svg className="h-5 w-5" fill={(hover || rating) >= i ? "#f59e0b" : "none"} stroke="#f59e0b" strokeWidth={1.5} viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+          </svg>
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function timeAgo(iso: string) {
+  const s = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
+  if (s < 60) return "just now";
+  if (s < 3600) return `${Math.floor(s / 60)}m ago`;
+  if (s < 86400) return `${Math.floor(s / 3600)}h ago`;
+  return new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+}
+
+// ─── Announcements Tab ───────────────────────────────────────────────────────
+function AnnouncementsTab({ courseId }: { courseId: string }) {
+  const [items, setItems] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch(`/api/courses/${courseId}/announcements`)
+      .then(r => r.json())
+      .then(d => { setItems(Array.isArray(d) ? d : (d.announcements ?? [])); setLoading(false); });
+  }, [courseId]);
+
+  if (loading) return (
+    <div className="space-y-4 px-8 py-6">
+      {[1, 2].map(i => (
+        <div key={i} className="animate-pulse space-y-2">
+          <div className="h-4 bg-gray-100 rounded w-40" />
+          <div className="h-3 bg-gray-100 rounded w-full" />
+          <div className="h-3 bg-gray-100 rounded w-3/4" />
+        </div>
+      ))}
+    </div>
+  );
+
+  if (!items.length) return (
+    <div className="px-8 py-12 text-center text-sm text-gray-400">No announcements yet.</div>
+  );
+
+  return (
+    <div className="px-8 py-6 space-y-6 max-w-3xl">
+      {items.map((a, i) => (
+        <div key={a.id} className="border-b border-gray-100 pb-6 last:border-0 last:pb-0">
+          <div className="flex items-start gap-3">
+            <div className="h-9 w-9 rounded-full bg-[#0822C0]/10 flex items-center justify-center shrink-0 mt-0.5">
+              <svg className="h-4 w-4 text-[#0822C0]" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
+              </svg>
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h3 className="text-sm font-semibold text-gray-900">{a.title}</h3>
+                {i === 0 && (
+                  <span className="text-[10px] font-semibold text-[#0822C0] bg-[#0822C0]/8 px-2 py-0.5 rounded-full">Latest</span>
+                )}
+              </div>
+              <p className="text-xs text-gray-400 mt-0.5">{timeAgo(a.created_at)}</p>
+              <p className="text-sm text-gray-700 mt-2 leading-relaxed whitespace-pre-wrap">{a.body}</p>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ─── Reviews Tab ─────────────────────────────────────────────────────────────
+function ReviewsTab({ courseId }: { courseId: string }) {
+  const [reviews, setReviews] = useState<any[]>([]);
+  const [myReview, setMyReview] = useState<any | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
+
+  async function load() {
+    const supabase = createClient();
+    const [reviewsRes, userRes] = await Promise.all([
+      fetch(`/api/courses/${courseId}/reviews`).then(r => r.json()),
+      supabase.auth.getUser(),
+    ]);
+    const all: any[] = Array.isArray(reviewsRes) ? reviewsRes : (reviewsRes.reviews ?? []);
+    const uid = userRes.data?.user?.id;
+    const mine = uid ? (all.find((r: any) => r.user_id === uid) ?? null) : null;
+    setReviews(all);
+    setMyReview(mine);
+    if (mine) { setRating(mine.rating); setComment(mine.comment ?? ""); }
+    setLoading(false);
+  }
+
+  useEffect(() => { load(); }, [courseId]);
+
+  async function submit() {
+    if (!rating) return;
+    setSubmitting(true); setError("");
+    const r = await fetch(`/api/courses/${courseId}/reviews`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ rating, comment }),
+    });
+    if (!r.ok) { const d = await r.json(); setError(d.error ?? "Failed"); }
+    else { await load(); }
+    setSubmitting(false);
+  }
+
+  const avg = reviews.length > 0
+    ? (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1)
+    : null;
+
+  const dist = [5, 4, 3, 2, 1].map(n => ({
+    n, count: reviews.filter(r => r.rating === n).length,
+  }));
+
+  if (loading) return (
+    <div className="px-8 py-6 space-y-3">
+      {[1, 2, 3].map(i => (
+        <div key={i} className="animate-pulse h-4 bg-gray-100 rounded w-full" />
+      ))}
+    </div>
+  );
+
+  return (
+    <div className="px-8 py-6 space-y-8 max-w-3xl">
+      {/* Submit / your review */}
+      <div className="rounded-xl border border-gray-200 p-5">
+        <h3 className="text-sm font-semibold text-gray-800 mb-3">
+          {myReview ? "Your review" : "Leave a review"}
+        </h3>
+        <Stars rating={rating} onChange={myReview ? undefined : setRating} />
+        <textarea
+          value={comment}
+          onChange={e => !myReview && setComment(e.target.value)}
+          readOnly={!!myReview}
+          placeholder="Share your experience with this course…"
+          rows={3}
+          className="mt-3 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#0822C0]/20 resize-none read-only:bg-gray-50 read-only:cursor-default"
+        />
+        {error && <p className="mt-2 text-xs text-red-500">{error}</p>}
+        {!myReview && (
+          <button
+            onClick={submit}
+            disabled={submitting || !rating}
+            className="mt-3 rounded-lg bg-[#0822C0] text-white text-sm font-semibold px-5 py-2 hover:bg-[#061aa0] transition-colors disabled:opacity-40"
+          >
+            {submitting ? "Submitting…" : "Submit review"}
+          </button>
+        )}
+      </div>
+
+      {/* Summary */}
+      {reviews.length > 0 && (
+        <div className="flex items-start gap-8">
+          <div className="text-center shrink-0">
+            <p className="text-5xl font-extrabold text-gray-900">{avg}</p>
+            <Stars rating={Math.round(Number(avg))} />
+            <p className="text-xs text-gray-400 mt-1">{reviews.length} rating{reviews.length !== 1 ? "s" : ""}</p>
+          </div>
+          <div className="flex-1 space-y-1.5">
+            {dist.map(d => (
+              <div key={d.n} className="flex items-center gap-2">
+                <span className="text-xs text-gray-400 w-3">{d.n}</span>
+                <svg className="h-3 w-3 text-amber-400 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                </svg>
+                <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-amber-400 rounded-full"
+                    style={{ width: reviews.length > 0 ? `${(d.count / reviews.length) * 100}%` : "0%" }}
+                  />
+                </div>
+                <span className="text-xs text-gray-400 w-4 text-right">{d.count}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Review list */}
+      {reviews.length > 0 && (
+        <div className="space-y-5">
+          {reviews.map(r => {
+            const name = r.profile?.full_name ?? "Student";
+            const initials = name.split(" ").map((w: string) => w[0]).slice(0, 2).join("").toUpperCase();
+            return (
+              <div key={r.id} className="flex gap-3 border-b border-gray-100 pb-5 last:border-0 last:pb-0">
+                <div className="h-9 w-9 rounded-full bg-[#0822C0]/10 flex items-center justify-center shrink-0 text-xs font-bold text-[#0822C0]">
+                  {r.profile?.avatar_url
+                    ? <img src={r.profile.avatar_url} className="h-9 w-9 rounded-full object-cover" />
+                    : initials}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <p className="text-sm font-medium text-gray-800">{name}</p>
+                    <span className="text-xs text-gray-400">{timeAgo(r.created_at)}</span>
+                  </div>
+                  <Stars rating={r.rating} />
+                  {r.comment && <p className="mt-1.5 text-sm text-gray-600 leading-relaxed">{r.comment}</p>}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {reviews.length === 0 && !myReview && (
+        <p className="text-sm text-gray-400 text-center">No reviews yet. Be the first!</p>
+      )}
+    </div>
+  );
+}
+
+// ─── Support Tab ─────────────────────────────────────────────────────────────
+function SupportTab({ courseId }: { courseId: string }) {
+  const [messages, setMessages] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [text, setText] = useState("");
+  const [sending, setSending] = useState(false);
+  const bottomRef = useRef<HTMLDivElement>(null);
+
+  async function load() {
+    const r = await fetch(`/api/courses/${courseId}/support`);
+    const d = await r.json();
+    setMessages(Array.isArray(d) ? d : (d.messages ?? []));
+    setLoading(false);
+  }
+
+  useEffect(() => { load(); }, [courseId]);
+  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
+
+  async function send() {
+    const msg = text.trim();
+    if (!msg || sending) return;
+    setSending(true);
+    setText("");
+    await fetch(`/api/courses/${courseId}/support`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: msg }),
+    });
+    await load();
+    setSending(false);
+  }
+
+  if (loading) return (
+    <div className="px-8 py-6 space-y-3">
+      {[1, 2].map(i => <div key={i} className="animate-pulse h-10 bg-gray-100 rounded-xl" />)}
+    </div>
+  );
+
+  return (
+    <div className="flex flex-col px-8 py-6 max-w-3xl" style={{ minHeight: 420 }}>
+      <div className="mb-4">
+        <h3 className="text-sm font-semibold text-gray-800">Support & Q&A</h3>
+        <p className="text-xs text-gray-400 mt-0.5">Ask questions or get help — the instructor will reply here.</p>
+      </div>
+
+      {/* Message thread */}
+      <div className="flex-1 space-y-3 mb-4">
+        {messages.length === 0 && (
+          <div className="text-sm text-gray-400 text-center py-8">
+            No messages yet. Send your first question below.
+          </div>
+        )}
+        {messages.map(m => (
+          <div key={m.id} className={`flex ${m.is_admin ? "justify-end" : "justify-start"}`}>
+            <div className={`max-w-[75%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
+              m.is_admin
+                ? "bg-[#0822C0] text-white rounded-br-sm"
+                : "bg-gray-100 text-gray-800 rounded-bl-sm"
+            }`}>
+              {m.is_admin && <p className="text-[10px] text-white/60 font-medium mb-0.5">Instructor</p>}
+              <p>{m.message}</p>
+              <p className={`text-[10px] mt-1 ${m.is_admin ? "text-white/50" : "text-gray-400"}`}>{timeAgo(m.created_at)}</p>
+            </div>
+          </div>
+        ))}
+        <div ref={bottomRef} />
+      </div>
+
+      {/* Input */}
+      <div className="flex gap-2 items-end">
+        <textarea
+          value={text}
+          onChange={e => setText(e.target.value)}
+          onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }}
+          placeholder="Type your question… (Enter to send)"
+          rows={2}
+          className="flex-1 rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-gray-700 placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#0822C0]/20 resize-none"
+        />
+        <button
+          onClick={send}
+          disabled={!text.trim() || sending}
+          className="rounded-xl bg-[#0822C0] text-white px-4 py-2.5 text-sm font-semibold hover:bg-[#061aa0] transition-colors disabled:opacity-40 shrink-0"
+        >
+          {sending ? "…" : "Send"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ─── Main Component ───────────────────────────────────────────────────────────
 export default function CoursePlayer({
   courseId,
   courseTitle,
@@ -68,11 +388,13 @@ export default function CoursePlayer({
   const [completed, setCompleted] = useState<Set<string>>(new Set(initial));
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [collapsedSections, setCollapsedSections] = useState<Set<string>>(new Set());
+  const [activeTab, setActiveTab] = useState<Tab>("overview");
 
   const activeLesson = allLessons.find((l) => l.id === activeLessonId) ?? null;
 
   function selectLesson(lessonId: string) {
     setActiveLessonId(lessonId);
+    setActiveTab("overview");
     router.replace(`/learn/${courseId}?lesson=${lessonId}`, { scroll: false });
   }
 
@@ -94,12 +416,8 @@ export default function CoursePlayer({
         completed_at: new Date().toISOString(),
       });
       setCompleted((prev) => new Set([...prev, activeLesson.id]));
-
-      // Advance to next lesson
       const idx = allLessons.findIndex((l) => l.id === activeLesson.id);
-      if (idx !== -1 && idx < allLessons.length - 1) {
-        selectLesson(allLessons[idx + 1].id);
-      }
+      if (idx !== -1 && idx < allLessons.length - 1) selectLesson(allLessons[idx + 1].id);
     });
   }
 
@@ -107,11 +425,21 @@ export default function CoursePlayer({
   const doneCount = allLessons.filter((l) => completed.has(l.id)).length;
   const progress = totalLessons > 0 ? Math.round((doneCount / totalLessons) * 100) : 0;
 
+  const idx = allLessons.findIndex((l) => l.id === activeLessonId);
+  const prevLesson = idx > 0 ? allLessons[idx - 1] : null;
+  const nextLesson = idx < allLessons.length - 1 ? allLessons[idx + 1] : null;
+
+  const tabs: { key: Tab; label: string }[] = [
+    { key: "overview", label: "Overview" },
+    { key: "announcements", label: "Announcements" },
+    { key: "reviews", label: "Reviews" },
+    { key: "support", label: "Q&A / Support" },
+  ];
+
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-white">
-      {/* Top bar */}
+      {/* ── Top bar ── */}
       <header className="flex items-center gap-3 h-12 px-4 border-b border-gray-100 bg-white shrink-0 z-10">
-        {/* Exit */}
         <a
           href={backHref}
           className="flex items-center gap-1.5 text-xs font-medium text-gray-400 hover:text-gray-700 transition-colors shrink-0"
@@ -120,18 +448,11 @@ export default function CoursePlayer({
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </a>
-
-        {/* Logo */}
         <a href="/" className="shrink-0">
           <img src="/fwa-dark.svg" alt="Finance with Anne" className="h-6 w-auto" />
         </a>
-
         <div className="h-4 w-px bg-gray-200 shrink-0" />
-
-        {/* Course title */}
         <span className="text-xs font-semibold text-gray-700 truncate flex-1">{courseTitle}</span>
-
-        {/* Progress */}
         <div className="hidden sm:flex items-center gap-2.5 shrink-0">
           <div className="w-32 h-1.5 rounded-full bg-gray-100 overflow-hidden">
             <div className="h-full rounded-full bg-[#0822C0] transition-all duration-500" style={{ width: `${progress}%` }} />
@@ -140,181 +461,165 @@ export default function CoursePlayer({
         </div>
       </header>
 
-      {/* Body */}
+      {/* ── Body ── */}
       <div className="flex flex-1 overflow-hidden">
-      {/* Sidebar */}
-      <aside
-        className={`${sidebarOpen ? "w-72" : "w-0"} shrink-0 border-r border-gray-200 bg-white flex flex-col transition-all duration-300 overflow-hidden`}
-      >
-        {/* Course title in sidebar */}
-        <div className="px-4 py-4 border-b border-gray-100 space-y-1">
-          <p className="text-xs text-gray-400 font-medium">Course</p>
-          <p className="text-sm font-bold text-gray-900 line-clamp-2 leading-snug">{courseTitle}</p>
-          {/* Progress bar */}
-          <div className="pt-1 space-y-1">
-            <div className="h-1.5 rounded-full bg-gray-100 overflow-hidden">
-              <div className="h-full rounded-full bg-[#0822C0] transition-all duration-500" style={{ width: `${progress}%` }} />
-            </div>
-            <p className="text-[10px] text-gray-400">{doneCount}/{totalLessons} lessons · {progress}%</p>
-          </div>
-        </div>
 
-        {/* Curriculum */}
-        <nav className="flex-1 overflow-y-auto py-2">
-          {curriculum.map((section, si) => {
-            const isCollapsed = collapsedSections.has(section.id);
-            return (
-              <div key={section.id}>
-                <button
-                  onClick={() => toggleSection(section.id)}
-                  className="w-full flex items-center justify-between px-4 py-2.5 text-left"
-                >
-                  <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                    {si + 1}. {section.title}
-                  </span>
-                  <svg className={`h-3.5 w-3.5 text-gray-400 transition-transform shrink-0 ${isCollapsed ? "-rotate-90" : ""}`} fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-                {!isCollapsed && (
-                  <ul>
-                    {(section.lessons ?? []).map((lesson, li) => {
-                      const isActive = lesson.id === activeLessonId;
-                      const isDone = completed.has(lesson.id);
-                      return (
-                        <li key={lesson.id}>
-                          <button
-                            onClick={() => selectLesson(lesson.id)}
-                            className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors ${
-                              isActive ? "bg-[#0822C0]/5 text-[#0822C0]" : "hover:bg-gray-50 text-gray-700"
-                            }`}
-                          >
-                            <div className={`h-5 w-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
-                              isDone
-                                ? "border-green-500 bg-green-500"
-                                : isActive
-                                ? "border-[#0822C0]"
-                                : "border-gray-200"
-                            }`}>
-                              {isDone && (
-                                <svg className="h-3 w-3 text-white" fill="none" stroke="currentColor" strokeWidth={3} viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                                </svg>
-                              )}
-                              {!isDone && isActive && (
-                                <div className="h-1.5 w-1.5 rounded-full bg-[#0822C0]" />
-                              )}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <span className="text-xs font-medium leading-snug block truncate">
-                                {si + 1}.{li + 1} {lesson.title}
-                              </span>
-                              {lesson.duration && (
-                                <span className="text-[10px] text-gray-400">{lesson.duration} min</span>
-                              )}
-                            </div>
-                          </button>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                )}
+        {/* ── Left Sidebar ── */}
+        <aside
+          className={`${sidebarOpen ? "w-[340px]" : "w-0"} shrink-0 border-r border-gray-100 bg-white flex flex-col transition-all duration-300 overflow-hidden`}
+        >
+          <div className="px-4 py-4 border-b border-gray-100 space-y-1 shrink-0">
+            <p className="text-[10px] uppercase tracking-widest text-gray-400 font-semibold">Course</p>
+            <p className="text-sm font-bold text-gray-900 line-clamp-2 leading-snug">{courseTitle}</p>
+            <div className="pt-1 space-y-1">
+              <div className="h-1.5 rounded-full bg-gray-100 overflow-hidden">
+                <div className="h-full rounded-full bg-[#0822C0] transition-all duration-500" style={{ width: `${progress}%` }} />
               </div>
-            );
-          })}
-        </nav>
-      </aside>
-
-      {/* Main content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Lesson bar */}
-        <div className="flex items-center gap-3 px-4 py-2.5 border-b border-gray-100 bg-white shrink-0">
-          <button
-            onClick={() => setSidebarOpen((v) => !v)}
-            className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors shrink-0"
-            title="Toggle curriculum"
-          >
-            <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </button>
-          <span className="text-sm font-semibold text-gray-700 truncate">
-            {activeLesson?.title ?? courseTitle}
-          </span>
-        </div>
-
-        {/* Lesson area */}
-        <div className="flex-1 overflow-y-auto">
-          {!activeLesson ? (
-            <div className="flex h-full items-center justify-center text-gray-400 text-sm">
-              Select a lesson to begin.
+              <p className="text-[10px] text-gray-400">{doneCount}/{totalLessons} lessons · {progress}%</p>
             </div>
-          ) : (
-            <div className="max-w-3xl mx-auto px-4 py-8 space-y-6">
-              {/* Video / media */}
-              {activeLesson.video_url && (() => {
-                const embedUrl = getEmbedUrl(activeLesson.video_url);
-                if (embedUrl) {
-                  return (
-                    <div className="relative w-full rounded-2xl overflow-hidden bg-black" style={{ paddingBottom: "56.25%" }}>
-                      <iframe
-                        src={embedUrl}
-                        className="absolute inset-0 h-full w-full"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                      />
-                    </div>
-                  );
-                }
-                if (isDirectVideo(activeLesson.video_url)) {
-                  return (
-                    <video
-                      src={activeLesson.video_url}
-                      controls
-                      className="w-full rounded-2xl bg-black"
-                    />
-                  );
-                }
-                return (
-                  <a href={activeLesson.video_url} target="_blank" rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-sm text-[#0822C0] hover:underline">
-                    <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </div>
+
+          <nav className="flex-1 overflow-y-auto py-2">
+            {curriculum.map((section, si) => {
+              const isCollapsed = collapsedSections.has(section.id);
+              return (
+                <div key={section.id}>
+                  <button
+                    onClick={() => toggleSection(section.id)}
+                    className="w-full flex items-center justify-between px-4 py-2.5 text-left hover:bg-gray-50 transition-colors"
+                  >
+                    <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">
+                      {si + 1}. {section.title}
+                    </span>
+                    <svg className={`h-3.5 w-3.5 text-gray-400 transition-transform shrink-0 ${isCollapsed ? "-rotate-90" : ""}`} fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                     </svg>
-                    Open video resource
-                  </a>
-                );
-              })()}
+                  </button>
+                  {!isCollapsed && (
+                    <ul>
+                      {(section.lessons ?? []).map((lesson, li) => {
+                        const isActive = lesson.id === activeLessonId;
+                        const isDone = completed.has(lesson.id);
+                        return (
+                          <li key={lesson.id}>
+                            <button
+                              onClick={() => selectLesson(lesson.id)}
+                              className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors ${isActive ? "bg-[#0822C0]/5 text-[#0822C0]" : "hover:bg-gray-50 text-gray-700"}`}
+                            >
+                              <div className={`h-5 w-5 rounded-full border-2 flex items-center justify-center shrink-0 ${isDone ? "border-green-500 bg-green-500" : isActive ? "border-[#0822C0]" : "border-gray-200"}`}>
+                                {isDone && (
+                                  <svg className="h-3 w-3 text-white" fill="none" stroke="currentColor" strokeWidth={3} viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                  </svg>
+                                )}
+                                {!isDone && isActive && <div className="h-1.5 w-1.5 rounded-full bg-[#0822C0]" />}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <span className="text-xs font-medium leading-snug block truncate">
+                                  {si + 1}.{li + 1} {lesson.title}
+                                </span>
+                                {lesson.duration && (
+                                  <span className="text-[10px] text-gray-400">{lesson.duration} min</span>
+                                )}
+                              </div>
+                            </button>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
+                </div>
+              );
+            })}
+          </nav>
+        </aside>
 
-              {/* Text / HTML content */}
-              {activeLesson.content && activeLesson.type !== "pdf" && (
-                <div
-                  className="prose prose-sm max-w-none text-gray-700"
-                  dangerouslySetInnerHTML={{ __html: activeLesson.content }}
-                />
-              )}
+        {/* ── Main content ── */}
+        <div className="flex-1 flex flex-col overflow-hidden min-w-0">
 
-              {/* PDF download */}
-              {activeLesson.type === "pdf" && activeLesson.content && (
-                <a
-                  href={activeLesson.content}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-700 hover:border-[#0822C0]/30 hover:text-[#0822C0] transition-all"
-                >
-                  <svg className="h-5 w-5 text-orange-500" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                  </svg>
-                  {activeLesson.title}.pdf
-                  <svg className="h-4 w-4 ml-1 text-gray-400" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                  </svg>
-                </a>
-              )}
+          {/* Toggle sidebar + lesson title bar */}
+          <div className="flex items-center gap-3 px-4 h-10 border-b border-gray-100 bg-white shrink-0">
+            <button
+              onClick={() => setSidebarOpen((v) => !v)}
+              className="p-1 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors shrink-0"
+              title="Toggle curriculum"
+            >
+              <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+            <span className="text-xs font-semibold text-gray-600 truncate flex-1">
+              {activeLesson?.title ?? courseTitle}
+            </span>
+            {/* Prev / Next in top bar */}
+            <div className="flex items-center gap-1 shrink-0">
+              <button
+                onClick={() => prevLesson && selectLesson(prevLesson.id)}
+                disabled={!prevLesson}
+                className="p-1.5 rounded-lg border border-gray-200 text-gray-400 hover:text-gray-700 hover:border-gray-300 transition-colors disabled:opacity-30"
+              >
+                <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+              <button
+                onClick={() => nextLesson && selectLesson(nextLesson.id)}
+                disabled={!nextLesson}
+                className="p-1.5 rounded-lg border border-gray-200 text-gray-400 hover:text-gray-700 hover:border-gray-300 transition-colors disabled:opacity-30"
+              >
+                <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+          </div>
 
-              {/* Mark complete */}
-              <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                <div className="flex items-center gap-3">
+          {/* Scrollable area: video + tabs */}
+          <div className="flex-1 overflow-y-auto">
+            {!activeLesson ? (
+              <div className="flex h-full items-center justify-center text-gray-400 text-sm">
+                Select a lesson to begin.
+              </div>
+            ) : (
+              <>
+                {/* ── Video area — edge to edge, black bg ── */}
+                <div className="w-full bg-black shrink-0">
+                  {activeLesson.video_url ? (() => {
+                    const embedUrl = getEmbedUrl(activeLesson.video_url);
+                    if (embedUrl) {
+                      return (
+                        <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
+                          <iframe
+                            key={activeLesson.id}
+                            src={embedUrl}
+                            className="absolute inset-0 h-full w-full"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+                            allowFullScreen
+                          />
+                        </div>
+                      );
+                    }
+                    if (isDirectVideo(activeLesson.video_url)) {
+                      return <video key={activeLesson.id} src={activeLesson.video_url} controls className="w-full" style={{ maxHeight: "56.25vw" }} />;
+                    }
+                    return (
+                      <div className="flex items-center justify-center py-8 text-white/60 text-sm">
+                        <a href={activeLesson.video_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-white hover:underline">
+                          <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                          </svg>
+                          Open video resource
+                        </a>
+                      </div>
+                    );
+                  })() : (
+                    // No video — show a placeholder bar so the black area isn't huge
+                    <div className="h-2" />
+                  )}
+                </div>
+
+                {/* ── Mark complete bar ── */}
+                <div className="flex items-center justify-between px-6 py-3 border-b border-gray-100 bg-white shrink-0">
                   {completed.has(activeLesson.id) ? (
                     <span className="inline-flex items-center gap-1.5 text-sm font-medium text-green-600">
                       <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
@@ -326,49 +631,71 @@ export default function CoursePlayer({
                     <button
                       onClick={markComplete}
                       disabled={isPending}
-                      className="inline-flex items-center gap-2 rounded-xl bg-[#0822C0] text-white text-sm font-semibold px-5 py-2.5 hover:bg-[#061aa0] transition-colors disabled:opacity-50"
+                      className="inline-flex items-center gap-2 rounded-xl bg-[#0822C0] text-white text-sm font-semibold px-5 py-2 hover:bg-[#061aa0] transition-colors disabled:opacity-50"
                     >
                       {isPending ? "Saving…" : "Mark as complete"}
                     </button>
                   )}
+                  {/* PDF download if lesson type is pdf */}
+                  {activeLesson.type === "pdf" && activeLesson.content && (
+                    <a
+                      href={activeLesson.content}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 rounded-xl border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:border-[#0822C0]/30 hover:text-[#0822C0] transition-all"
+                    >
+                      <svg className="h-4 w-4 text-orange-500" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                      </svg>
+                      Download PDF
+                    </a>
+                  )}
                 </div>
 
-                {/* Prev / Next */}
-                <div className="flex items-center gap-2">
-                  {(() => {
-                    const idx = allLessons.findIndex((l) => l.id === activeLessonId);
-                    const prev = idx > 0 ? allLessons[idx - 1] : null;
-                    const next = idx < allLessons.length - 1 ? allLessons[idx + 1] : null;
-                    return (
-                      <>
-                        <button
-                          onClick={() => prev && selectLesson(prev.id)}
-                          disabled={!prev}
-                          className="p-2 rounded-lg border border-gray-200 text-gray-400 hover:text-gray-700 hover:border-gray-300 transition-colors disabled:opacity-30"
-                        >
-                          <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-                          </svg>
-                        </button>
-                        <button
-                          onClick={() => next && selectLesson(next.id)}
-                          disabled={!next}
-                          className="p-2 rounded-lg border border-gray-200 text-gray-400 hover:text-gray-700 hover:border-gray-300 transition-colors disabled:opacity-30"
-                        >
-                          <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                          </svg>
-                        </button>
-                      </>
-                    );
-                  })()}
+                {/* ── Tab bar ── */}
+                <div className="flex border-b border-gray-100 bg-white px-6 shrink-0">
+                  {tabs.map(t => (
+                    <button
+                      key={t.key}
+                      onClick={() => setActiveTab(t.key)}
+                      className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors -mb-px ${
+                        activeTab === t.key
+                          ? "border-[#0822C0] text-[#0822C0]"
+                          : "border-transparent text-gray-500 hover:text-gray-700"
+                      }`}
+                    >
+                      {t.label}
+                    </button>
+                  ))}
                 </div>
-              </div>
-            </div>
-          )}
+
+                {/* ── Tab content ── */}
+                <div className="bg-white">
+                  {activeTab === "overview" && (
+                    <div className="px-8 py-6 max-w-3xl space-y-4">
+                      {activeLesson.content && activeLesson.type !== "pdf" ? (
+                        <div
+                          className="prose prose-sm max-w-none text-gray-700 leading-relaxed"
+                          dangerouslySetInnerHTML={{ __html: activeLesson.content }}
+                        />
+                      ) : (
+                        <p className="text-sm text-gray-400">
+                          {activeLesson.type === "pdf"
+                            ? "Download the PDF above to view this lesson's content."
+                            : "No additional notes for this lesson."}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                  {activeTab === "announcements" && <AnnouncementsTab courseId={courseId} />}
+                  {activeTab === "reviews" && <ReviewsTab courseId={courseId} />}
+                  {activeTab === "support" && <SupportTab courseId={courseId} />}
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </div>
-      </div> {/* end body */}
     </div>
   );
 }
