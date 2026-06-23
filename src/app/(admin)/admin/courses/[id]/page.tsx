@@ -1,6 +1,6 @@
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { notFound } from "next/navigation";
-import CourseWizard from "@/components/admin/CourseWizard";
+import CourseEditShell from "@/components/admin/CourseEditShell";
 
 export default async function EditCoursePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -20,7 +20,9 @@ export default async function EditCoursePage({ params }: { params: Promise<{ id:
   const tag_ids = (tagAssignments ?? []).map((t: any) => t.tag_id);
 
   return (
-    <CourseWizard
+    <CourseEditShell
+      courseId={id}
+      courseTitle={course.title}
       categories={categories ?? []}
       tags={tags ?? []}
       initialData={{ ...course, lessons: (course as any).lessons ?? [], tag_ids }}

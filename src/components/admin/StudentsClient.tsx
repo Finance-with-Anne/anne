@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import { useAdminTheme } from "@/lib/admin-theme";
 
 type StudentRow = {
@@ -33,14 +34,25 @@ function Avatar({ name, url, dark }: { name: string; url: string | null; dark: b
 export default function StudentsClient({
   students,
   courses,
+  allCourses,
 }: {
   students: StudentRow[];
   courses: { id: string; title: string }[];
+  allCourses: { id: string; title: string }[];
 }) {
   const { dark } = useAdminTheme();
+  const router = useRouter();
   const [search, setSearch] = useState("");
   const [courseFilter, setCourseFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState<"all" | "completed" | "in_progress" | "not_started">("all");
+
+  // Manual enroll modal state
+  const [enrollOpen, setEnrollOpen] = useState(false);
+  const [enrollEmail, setEnrollEmail] = useState("");
+  const [enrollCourseId, setEnrollCourseId] = useState("");
+  const [enrolling, setEnrolling] = useState(false);
+  const [enrollError, setEnrollError] = useState("");
+  const [enrollSuccess, setEnrollSuccess] = useState("");
 
   const card = dark ? "bg-[#111318] border-white/5" : "bg-white border-gray-200";
   const heading = dark ? "text-white" : "text-gray-900";
@@ -101,11 +113,45 @@ export default function StudentsClient({
     { label: "Avg Progress", value: `${avgPct}%` },
   ];
 
+  async function handleEnroll() {
+    if (!enrollEmail.trim() || !enrollCourseId) return;
+    setEnrolling(true);
+    setEnrollError("");
+    setEnrollSuccess("");
+    const res = await fetch("/api/admin/enroll", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: enrollEmail.trim(), course_id: enrollCourseId }),
+    });
+    const data = await res.json();
+    setEnrolling(false);
+    if (!res.ok) { setEnrollError(data.error ?? "Enrollment failed"); return; }
+    setEnrollSuccess("Student enrolled successfully.");
+    setEnrollEmail("");
+    setEnrollCourseId("");
+    setTimeout(() => { setEnrollOpen(false); setEnrollSuccess(""); router.refresh(); }, 1500);
+  }
+
   return (
+    <>
     <div className="space-y-5">
-      <div>
-        <h1 className={`text-xl font-bold ${heading}`}>Students</h1>
-        <p className={`text-sm mt-0.5 ${sub}`}>{totalStudents} students · {totalEnrollments} enrollments</p>
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <h1 className={`text-xl font-bold ${heading}`}>Students</h1>
+          <p className={`text-sm mt-0.5 ${sub}`}>{totalStudents} students · {totalEnrollments} enrollments</p>
+        </div>
+        <button
+          onClick={() => { setEnrollOpen(true); setEnrollError(""); setEnrollSuccess(""); }}
+          className="flex items-center gap-2 rounded-xl bg-brand px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-hover transition-colors"
+          style={{ boxShadow: "0 0 18px #0822C055, 0 0 40px #0822C025" }}
+        >
+          <span className="flex h-5 w-5 items-center justify-center rounded-md bg-white/15">
+            <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+            </svg>
+          </span>
+          Enroll Student
+        </button>
       </div>
 
       {/* Stats */}
@@ -225,5 +271,69 @@ export default function StudentsClient({
         </div>
       )}
     </div>
+
+    {/* Manual Enroll Modal */}
+    {enrollOpen && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => !enrolling && setEnrollOpen(false)} />
+        <div className={`relative w-full max-w-sm rounded-2xl border shadow-2xl p-6 ${dark ? "bg-[#111318] border-white/8" : "bg-white border-gray-200"}`}>
+          <h3 className={`text-base font-semibold mb-1 ${dark ? "text-white" : "text-gray-900"}`}>Enroll Student</h3>
+          <p className={`text-sm mb-5 ${dark ? "text-white/40" : "text-gray-500"}`}>
+            Enter the student's registered email address and select a course.
+          </p>
+
+          <div className="space-y-3">
+            <div>
+              <label className={`block text-xs font-medium mb-1.5 ${dark ? "text-white/50" : "text-gray-600"}`}>Email address</label>
+              <input
+                type="email"
+                value={enrollEmail}
+                onChange={e => setEnrollEmail(e.target.value)}
+                placeholder="student@example.com"
+                className={`w-full rounded-xl border px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand/30 ${inputBg}`}
+              />
+            </div>
+            <div>
+              <label className={`block text-xs font-medium mb-1.5 ${dark ? "text-white/50" : "text-gray-600"}`}>Course</label>
+              <select
+                value={enrollCourseId}
+                onChange={e => setEnrollCourseId(e.target.value)}
+                className={`w-full rounded-xl border px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand/30 ${selectBg}`}
+              >
+                <option value="">Select a course…</option>
+                {allCourses.map(c => (
+                  <option key={c.id} value={c.id}>{c.title}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {enrollError && (
+            <p className="mt-3 text-xs text-red-400 font-medium">{enrollError}</p>
+          )}
+          {enrollSuccess && (
+            <p className="mt-3 text-xs text-green-400 font-medium">{enrollSuccess}</p>
+          )}
+
+          <div className="flex gap-3 mt-5">
+            <button
+              onClick={() => setEnrollOpen(false)}
+              disabled={enrolling}
+              className={`flex-1 rounded-xl py-2.5 text-sm font-medium transition-colors ${dark ? "bg-white/6 text-white/60 hover:bg-white/10" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleEnroll}
+              disabled={enrolling || !enrollEmail.trim() || !enrollCourseId}
+              className="flex-1 rounded-xl py-2.5 text-sm font-medium bg-brand text-white hover:bg-brand-hover transition-colors disabled:opacity-50"
+            >
+              {enrolling ? "Enrolling…" : "Enroll"}
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+    </>
   );
 }

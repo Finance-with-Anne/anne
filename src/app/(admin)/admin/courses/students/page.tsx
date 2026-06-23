@@ -9,7 +9,6 @@ export default async function StudentsPage() {
       .from("course_enrollments")
       .select(`
         id, user_id, course_id, enrolled_at, completed_at,
-        profile:profiles(full_name, avatar_url),
         course:courses(id, title, thumbnail_url, curriculum, category:course_categories(name))
       `)
       .order("enrolled_at", { ascending: false }),
@@ -25,9 +24,16 @@ export default async function StudentsPage() {
   const progress = progressResult.data ?? [];
   const authUsers = usersResult.data?.users ?? [];
 
-  // email lookup: userId → email
-  const emailMap: Record<string, string> = {};
-  for (const u of authUsers) emailMap[u.id] = u.email ?? "";
+  // Fetch profiles separately (no direct FK from enrollments → profiles)
+  const userIds = [...new Set(enrollments.map(e => e.user_id))];
+  const { data: profiles } = userIds.length > 0
+    ? await supabaseAdmin.from("profiles").select("id, full_name, avatar_url").in("id", userIds)
+    : { data: [] };
+
+  const profileMap: Record<string, { full_name: string | null; avatar_url: string | null }> =
+    Object.fromEntries((profiles ?? []).map(p => [p.id, p]));
+  const emailMap: Record<string, string> =
+    Object.fromEntries(authUsers.map(u => [u.id, u.email ?? ""]));
 
   // progress map: "userId_courseId" → completed lesson count
   const progressMap: Record<string, number> = {};
@@ -36,7 +42,6 @@ export default async function StudentsPage() {
     progressMap[key] = (progressMap[key] ?? 0) + 1;
   }
 
-  // Enrich each enrollment with email + progress
   const students = enrollments.map(e => {
     const curriculum: any[] = (e.course as any)?.curriculum ?? [];
     const totalLessons = curriculum.reduce(
@@ -45,13 +50,14 @@ export default async function StudentsPage() {
     );
     return {
       ...e,
+      profile: profileMap[e.user_id] ?? null,
       email: emailMap[e.user_id] ?? "",
       lessonsCompleted: progressMap[`${e.user_id}_${e.course_id}`] ?? 0,
       totalLessons,
     };
   });
 
-  // Unique courses for the filter dropdown
+  // Unique courses for filter dropdown
   const seen = new Set<string>();
   const courses: { id: string; title: string }[] = [];
   for (const e of enrollments) {
@@ -62,5 +68,11 @@ export default async function StudentsPage() {
     }
   }
 
-  return <StudentsClient students={students as any} courses={courses} />;
+  // All courses for the manual-enroll dropdown
+  const { data: allCourses } = await supabaseAdmin
+    .from("courses")
+    .select("id, title")
+    .order("title");
+
+  return <StudentsClient students={students as any} courses={courses} allCourses={allCourses ?? []} />;
 }
