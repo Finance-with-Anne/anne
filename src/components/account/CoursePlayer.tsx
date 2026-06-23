@@ -697,79 +697,79 @@ export default function CoursePlayer({
                 <div className="min-h-screen">
 
                   {activeTab === "overview" && (
-                    <div className="bg-[#0D0F1C] min-h-full px-10 py-12">
+                    <div className="bg-white dark:bg-[#0D0F1C] min-h-full px-10 py-12">
                       <div className="max-w-5xl mx-auto flex gap-10 items-start">
 
-                        {/* LEFT: square image, stays fixed */}
+                        {/* LEFT: square image */}
                         <div className="w-64 shrink-0">
-                          <div className="w-64 h-64 rounded-2xl overflow-hidden bg-[#1a2040] flex items-center justify-center">
+                          <div className="w-64 h-64 rounded-2xl overflow-hidden bg-gray-100 dark:bg-[#1a2040] flex items-center justify-center">
                             {thumbnailUrl ? (
                               <img src={thumbnailUrl} alt="" className="w-full h-full object-cover" />
                             ) : (
-                              <svg className="h-14 w-14 text-white/10" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                              <svg className="h-14 w-14 text-gray-300 dark:text-white/10" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                               </svg>
                             )}
                           </div>
                         </div>
 
-                        {/* RIGHT: title + date + divider + all body content */}
+                        {/* RIGHT: all content */}
                         <div className="flex-1 min-w-0">
-                          <p className="text-xs font-bold text-[#5b7cff] uppercase tracking-widest mb-3">
+                          <p className="text-xs font-bold text-[#0822C0] dark:text-[#5b7cff] uppercase tracking-widest mb-3">
                             Lesson {lessonLabel}
                           </p>
-                          <h1 className="text-3xl font-bold text-white leading-tight mb-2">
+                          <h1 className="text-3xl font-bold text-gray-900 dark:text-white leading-tight mb-2">
                             {activeLesson.title}
                           </h1>
                           {!!activeLesson.duration && (
-                            <p className="text-sm text-white/40 mb-6">{activeLesson.duration} min read</p>
+                            <p className="text-sm text-gray-400 dark:text-white/40 mb-6">{activeLesson.duration} min read</p>
                           )}
 
-                          <hr className="border-white/10 mb-8" />
+                          <hr className="border-gray-200 dark:border-white/10 mb-8" />
 
                           {/* PDF download */}
                           {activeLesson.type === "pdf" && activeLesson.content && (
                             <a href={activeLesson.content} target="_blank" rel="noopener noreferrer"
-                              className="flex items-center gap-3 bg-white/5 border border-white/10 rounded-2xl px-5 py-4 mb-8 hover:bg-white/10 transition-all group">
-                              <div className="h-9 w-9 rounded-xl bg-orange-500/20 flex items-center justify-center shrink-0">
-                                <svg className="h-4 w-4 text-orange-400" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                              className="flex items-center gap-3 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl px-5 py-4 mb-8 hover:border-[#0822C0]/30 dark:hover:bg-white/10 transition-all group">
+                              <div className="h-9 w-9 rounded-xl bg-orange-50 dark:bg-orange-500/20 flex items-center justify-center shrink-0">
+                                <svg className="h-4 w-4 text-orange-500 dark:text-orange-400" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                                 </svg>
                               </div>
                               <div className="flex-1 min-w-0">
-                                <p className="text-sm font-semibold text-white">{activeLesson.title}.pdf</p>
-                                <p className="text-xs text-white/40">Click to download</p>
+                                <p className="text-sm font-semibold text-gray-800 dark:text-white">{activeLesson.title}.pdf</p>
+                                <p className="text-xs text-gray-400 dark:text-white/40">Click to download</p>
                               </div>
-                              <svg className="h-4 w-4 text-white/20 group-hover:text-white/60 transition-colors shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                              <svg className="h-4 w-4 text-gray-300 dark:text-white/20 group-hover:text-[#0822C0] dark:group-hover:text-white/60 transition-colors shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                               </svg>
                             </a>
                           )}
 
-                          {/* Body text — prose-invert for dark bg */}
+                          {/* Body prose */}
                           {activeLesson.content && activeLesson.type !== "pdf" ? (
                             <div
-                              className="prose prose-base max-w-none prose-invert prose-headings:font-bold prose-headings:text-white prose-h1:text-xl prose-h2:text-lg prose-h3:text-base prose-p:text-gray-300 prose-p:leading-relaxed prose-p:my-4 prose-li:text-gray-300 prose-ul:my-4 prose-ol:my-4 prose-a:text-[#7c9dff] prose-a:no-underline hover:prose-a:underline prose-blockquote:border-l-4 prose-blockquote:border-white/20 prose-blockquote:text-gray-400 prose-strong:text-white prose-code:text-[#7c9dff] prose-code:bg-white/10 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-pre:bg-black/40 prose-pre:rounded-xl"
+                              className="prose prose-base dark:prose-invert max-w-none prose-headings:font-bold prose-h1:text-xl prose-h2:text-lg prose-h3:text-base prose-p:leading-relaxed prose-p:my-4 prose-ul:my-4 prose-ol:my-4 prose-a:text-[#0822C0] dark:prose-a:text-[#7c9dff] prose-a:no-underline hover:prose-a:underline prose-blockquote:border-l-4 prose-blockquote:border-[#0822C0]/30 dark:prose-blockquote:border-white/20 prose-img:rounded-xl prose-img:shadow-sm prose-code:text-[#0822C0] dark:prose-code:text-[#7c9dff] prose-code:bg-blue-50 dark:prose-code:bg-white/10 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-pre:bg-gray-900 dark:prose-pre:bg-black/40 prose-pre:rounded-xl"
                               dangerouslySetInnerHTML={{ __html: activeLesson.content }}
                             />
                           ) : activeLesson.type !== "pdf" ? (
-                            <p className="text-sm text-white/30 py-4">No notes for this lesson.</p>
+                            <p className="text-sm text-gray-400 dark:text-white/30 py-4">No notes for this lesson.</p>
                           ) : null}
 
                           {/* Mark complete / prev+next */}
-                          <div className="mt-12 pt-8 border-t border-white/10 flex items-center justify-between gap-4">
+                          <div className="mt-12 pt-8 border-t border-gray-200 dark:border-white/10 flex items-center justify-between gap-4">
                             <div className="flex items-center gap-2">
                               <button onClick={() => prevLesson && selectLesson(prevLesson.id)} disabled={!prevLesson}
-                                className="h-9 w-9 rounded-xl border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:border-white/30 transition-colors disabled:opacity-20">
+                                className="h-9 w-9 rounded-xl border border-gray-200 dark:border-white/10 flex items-center justify-center text-gray-400 dark:text-white/40 hover:text-gray-700 dark:hover:text-white hover:border-gray-300 dark:hover:border-white/30 transition-colors disabled:opacity-30">
                                 <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
                               </button>
                               <button onClick={() => nextLesson && selectLesson(nextLesson.id)} disabled={!nextLesson}
-                                className="h-9 w-9 rounded-xl border border-white/10 flex items-center justify-center text-white/40 hover:text-white hover:border-white/30 transition-colors disabled:opacity-20">
+                                className="h-9 w-9 rounded-xl border border-gray-200 dark:border-white/10 flex items-center justify-center text-gray-400 dark:text-white/40 hover:text-gray-700 dark:hover:text-white hover:border-gray-300 dark:hover:border-white/30 transition-colors disabled:opacity-30">
                                 <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
                               </button>
                             </div>
                             {completed.has(activeLesson.id) ? (
-                              <span className="inline-flex items-center gap-2 text-sm font-semibold text-green-400 bg-green-400/10 border border-green-400/20 rounded-xl px-5 py-2.5">
+                              <span className="inline-flex items-center gap-2 text-sm font-semibold text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-400/10 border border-green-100 dark:border-green-400/20 rounded-xl px-5 py-2.5">
                                 <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
                                 Completed
                               </span>
