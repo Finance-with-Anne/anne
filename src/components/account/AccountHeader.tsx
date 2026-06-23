@@ -34,7 +34,7 @@ export default function AccountHeader({
 
   async function handleSignOut() {
     await supabase.auth.signOut();
-    router.push("/auth");
+    window.location.href = "/";
   }
 
   return (

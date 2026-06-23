@@ -182,10 +182,7 @@ export default function Navbar() {
 
   async function handleSignOut() {
     await supabase.auth.signOut();
-    setUser(null);
-    setProfileOpen(false);
-    router.push("/");
-    router.refresh();
+    window.location.href = "/";
   }
 
   useEffect(() => {
