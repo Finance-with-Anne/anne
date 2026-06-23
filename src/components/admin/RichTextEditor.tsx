@@ -134,16 +134,18 @@ export default function RichTextEditor({ value, onChange, dark, placeholder = "S
     setLinkInput("");
   }
 
-  const border = dark ? "border-white/5" : "border-gray-200";
+  const border = dark ? "border-white/10" : "border-gray-200";
   const bg = dark ? "bg-[#111318]" : "bg-white";
+  const toolbarBg = dark ? "bg-[#1a1d26]" : "bg-gray-50";
+  const toolbarDivider = dark ? "border-white/10" : "border-gray-200";
 
   return (
-    <div className={`rounded-xl border overflow-hidden ${border} ${bg}`}>
+    <div className={`rounded-xl border ${border} ${bg}`}>
       {/* Hidden file input */}
       <input ref={imgInputRef} type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
 
-      {/* Toolbar */}
-      <div className={`sticky top-0 z-10 flex flex-wrap items-center gap-0.5 px-3 py-2 border-b ${divider} ${bg}`}>
+      {/* Toolbar — no sticky, just sits at top */}
+      <div className={`flex flex-wrap items-center gap-0.5 px-3 py-2 border-b rounded-t-xl ${toolbarDivider} ${toolbarBg}`}>
 
         {/* Undo / Redo */}
         <button title="Undo" onMouseDown={e => e.preventDefault()} onClick={() => editor?.chain().focus().undo().run()} disabled={!editor?.can().undo()} className={`h-7 w-7 rounded flex items-center justify-center transition-colors disabled:opacity-25 ${toolbarBtn}`}>
@@ -267,7 +269,7 @@ export default function RichTextEditor({ value, onChange, dark, placeholder = "S
 
       {/* Link bar */}
       {showLinkBar && (
-        <div className={`flex items-center gap-2 px-3 py-2 border-b ${divider}`}>
+        <div className={`flex items-center gap-2 px-3 py-2 border-b ${toolbarDivider}`}>
           <svg className={`h-3.5 w-3.5 shrink-0 ${labelCls}`} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
           <input autoFocus type="url" value={linkInput} onChange={e => setLinkInput(e.target.value)}
             onKeyDown={e => { if (e.key === "Enter") applyLink(); if (e.key === "Escape") setShowLinkBar(false); }}
@@ -281,7 +283,7 @@ export default function RichTextEditor({ value, onChange, dark, placeholder = "S
 
       {/* Editor content */}
       <div
-        className={`px-5 py-4 prose prose-sm max-w-none ${dark ? "prose-invert text-white/85" : "text-gray-800"}`}
+        className={`px-5 py-4 prose prose-sm max-w-none rounded-b-xl ${dark ? "prose-invert text-white/85" : "text-gray-800"}`}
         style={{ minHeight }}
         onClick={() => editor?.chain().focus().run()}
       >
