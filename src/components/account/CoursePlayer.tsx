@@ -31,12 +31,22 @@ interface Props {
 
 type Tab = "overview" | "announcements" | "reviews" | "support" | "resources" | "notes" | "quiz";
 
-function getEmbedUrl(url: string): string | null {
+function getYoutubeId(url: string): string | null {
   try {
     const u = new URL(url);
     if (u.hostname.includes("youtube.com") || u.hostname.includes("youtu.be")) {
-      const vid = u.searchParams.get("v") ?? (u.hostname === "youtu.be" ? u.pathname.slice(1) : null);
-      return vid ? `https://www.youtube.com/embed/${vid}?rel=0&modestbranding=1` : null;
+      return u.searchParams.get("v") ?? (u.hostname === "youtu.be" ? u.pathname.slice(1) : null);
+    }
+    return null;
+  } catch { return null; }
+}
+
+function getEmbedUrl(url: string): string | null {
+  try {
+    const u = new URL(url);
+    const ytId = getYoutubeId(url);
+    if (ytId) {
+      return `https://www.youtube.com/embed/${ytId}?rel=0&modestbranding=1&iv_load_policy=3&disablekb=0`;
     }
     if (u.hostname.includes("vimeo.com")) {
       const id = u.pathname.split("/").filter(Boolean).pop();
@@ -44,6 +54,48 @@ function getEmbedUrl(url: string): string | null {
     }
     return null;
   } catch { return null; }
+}
+
+function YoutubeEmbed({ embedUrl, videoId, lessonId }: { embedUrl: string; videoId: string; lessonId: string }) {
+  const [playing, setPlaying] = useState(false);
+  const thumbUrl = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+
+  useEffect(() => { setPlaying(false); }, [lessonId]);
+
+  return (
+    <div
+      className="relative w-full select-none"
+      style={{ paddingBottom: "56.25%" }}
+      onContextMenu={(e) => e.preventDefault()}
+    >
+      <iframe
+        key={lessonId + (playing ? "-play" : "")}
+        src={playing ? `${embedUrl}&autoplay=1` : embedUrl}
+        className="absolute inset-0 h-full w-full"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+        allowFullScreen
+      />
+
+      {/* Custom play overlay — hides YouTube's unstarted screen and "Watch on YouTube" button */}
+      {!playing && (
+        <div
+          className="absolute inset-0 z-10 flex items-center justify-center cursor-pointer bg-black"
+          onClick={() => setPlaying(true)}
+          style={{ backgroundImage: `url(${thumbUrl})`, backgroundSize: "cover", backgroundPosition: "center" }}
+        >
+          <div className="absolute inset-0 bg-black/30" />
+          <div className="relative z-10 flex h-16 w-16 items-center justify-center rounded-full bg-white/95 shadow-2xl hover:scale-105 transition-transform">
+            <svg className="h-7 w-7 text-[#0822C0] ml-1" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          </div>
+        </div>
+      )}
+
+      {/* Cover YouTube watermark / "Watch on YouTube" in controls bar (bottom-right) */}
+      <div className="absolute bottom-0 right-0 z-20 h-10 w-36 bg-black" style={{ pointerEvents: "none" }} />
+    </div>
+  );
 }
 
 function isDirectVideo(url: string) {
@@ -896,8 +948,12 @@ export default function CoursePlayer({
                 {/* ── Video area — edge to edge, black bg ── */}
                 <div className="w-full bg-black shrink-0">
                   {activeLesson.video_url ? (() => {
+                    const ytId = getYoutubeId(activeLesson.video_url);
                     const embedUrl = getEmbedUrl(activeLesson.video_url);
                     if (embedUrl) {
+                      if (ytId) {
+                        return <YoutubeEmbed embedUrl={embedUrl} videoId={ytId} lessonId={activeLesson.id} />;
+                      }
                       return (
                         <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
                           <iframe
