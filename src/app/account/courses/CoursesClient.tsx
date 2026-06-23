@@ -188,7 +188,7 @@ export default function CoursesClient({
             <div className="space-y-10">
               {inProgress.length > 0 && (
                 <SectionGroup title="Continue Learning" count={inProgress.length}>
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
                     {inProgress.map((e) => (
                       <CourseCard key={e.course.id} e={e} stats={getCourseStats(e)} variant="progress" />
                     ))}
@@ -272,9 +272,11 @@ function CourseCard({ e, stats, variant }: { e: Enrollment; stats: CourseStats; 
     <div className={`group rounded-xl border bg-white overflow-hidden transition-all hover:shadow-md ${isCompleted ? "border-green-100" : "border-gray-200 hover:border-[#0822C0]/30"}`}>
       <div className="relative">
         {course.thumbnail_url ? (
-          <img src={course.thumbnail_url} alt={course.title} className="w-full aspect-square object-cover" />
+          <div className="h-52 w-full overflow-hidden">
+            <img src={course.thumbnail_url} alt={course.title} className="h-full w-full object-cover" />
+          </div>
         ) : (
-          <div className="aspect-square flex items-center justify-center" style={{ backgroundColor: catColor + "18" }}>
+          <div className="h-52 flex items-center justify-center" style={{ backgroundColor: catColor + "18" }}>
             <svg className="h-10 w-10" style={{ color: catColor + "80" }} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 10l4.553-2.069A1 1 0 0121 8.82v6.36a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z" />
             </svg>
