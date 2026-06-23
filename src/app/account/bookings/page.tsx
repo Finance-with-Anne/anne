@@ -133,7 +133,7 @@ export default async function AccountBookingsPage() {
   }
 
   return (
-    <div className="space-y-8 max-w-3xl">
+    <div className="space-y-8">
       {/* Header */}
       <div className="flex items-center justify-between gap-4">
         <div>
@@ -169,9 +169,8 @@ export default async function AccountBookingsPage() {
 
       {bookings.length === 0 ? (
         /* Empty state */
-        <div className="rounded-3xl border border-gray-100 bg-white overflow-hidden">
-          <div className="h-1.5 bg-gradient-to-r from-[#0822C0] via-blue-400 to-[#0822C0]/30" />
-          <div className="px-8 py-16 text-center">
+        <div className="rounded-2xl border border-gray-100 bg-white">
+          <div className="px-8 py-20 text-center">
             <div className="mx-auto mb-5 h-16 w-16 rounded-2xl bg-[#0822C0]/8 flex items-center justify-center">
               <svg className="h-8 w-8 text-[#0822C0]/50" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
