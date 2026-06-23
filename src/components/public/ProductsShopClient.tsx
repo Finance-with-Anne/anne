@@ -47,10 +47,10 @@ export default function ProductsShopClient({ products, categories, currency }: P
     <div className="bg-white dark:bg-[#05090f] min-h-screen">
 
       {/* ── Page header banner ── */}
-      <div className="relative overflow-hidden border-b border-gray-100 dark:border-white/5 bg-gradient-to-br from-[#0822C0]/5 via-white to-indigo-50/60 dark:from-[#0822C0]/10 dark:via-[#05090f] dark:to-indigo-950/30">
+      <div className="relative overflow-hidden border-b border-[#0822C0]/10 dark:border-white/5 bg-gradient-to-br from-[#0822C0]/10 via-indigo-50 to-blue-100/70 dark:from-[#0822C0]/20 dark:via-[#05090f] dark:to-indigo-950/60">
         {/* decorative circles */}
-        <div className="pointer-events-none absolute -top-16 -right-16 h-64 w-64 rounded-full bg-[#0822C0]/6 dark:bg-[#0822C0]/8 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-10 left-1/3 h-40 w-40 rounded-full bg-indigo-400/10 dark:bg-indigo-400/6 blur-2xl" />
+        <div className="pointer-events-none absolute -top-16 -right-16 h-64 w-64 rounded-full bg-[#0822C0]/15 dark:bg-[#0822C0]/15 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-10 left-1/3 h-40 w-40 rounded-full bg-indigo-400/20 dark:bg-indigo-400/12 blur-2xl" />
 
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-[#0822C0]/20 bg-[#0822C0]/8 px-3 py-0.5 text-[11px] font-semibold uppercase tracking-widest text-[#0822C0] dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-300 mb-4">
