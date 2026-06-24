@@ -26,8 +26,6 @@ export async function POST(req: NextRequest) {
 
   if (!title || !slug) return NextResponse.json({ error: "Title and slug are required." }, { status: 400 });
 
-  const { data: { user } } = await supabase.auth.getUser();
-
   const { data, error } = await supabase
     .from("blog_posts")
     .insert({ title, slug, excerpt, content, cover_image, published, published_at, meta_title, meta_description, focus_keyword, author_id: user?.id })
