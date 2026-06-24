@@ -16,6 +16,7 @@ type Editor = {
   role: string;
   verified: boolean;
   last_sign_in_at: string | null;
+  post_count: number;
   created_at: string;
 };
 
@@ -396,7 +397,7 @@ export default function EditorsPage({ initialEditors }: { initialEditors: Editor
                 <p className={`text-[10px] font-semibold uppercase tracking-widest mb-3 ${sub}`}>Analytics</p>
                 <div className="grid grid-cols-2 gap-3">
                   <div className={`rounded-xl border p-3 text-center ${dark ? "bg-white/3 border-white/5" : "bg-gray-50 border-gray-100"}`}>
-                    <p className={`text-2xl font-bold ${heading}`}>—</p>
+                    <p className={`text-2xl font-bold ${heading}`}>{selectedEditor.post_count}</p>
                     <p className={`text-[11px] mt-0.5 ${sub}`}>Posts written</p>
                   </div>
                   <div className={`rounded-xl border p-3 text-center ${dark ? "bg-white/3 border-white/5" : "bg-gray-50 border-gray-100"}`}>
