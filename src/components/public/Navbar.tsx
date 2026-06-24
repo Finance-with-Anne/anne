@@ -213,7 +213,7 @@ export default function Navbar() {
 
         {/* Desktop nav — centred */}
         <nav className="absolute left-1/2 -translate-x-1/2 hidden items-center gap-6 lg:flex">
-          {topLinks.map((link) => (
+          {topLinks.slice(0, 2).map((link) => (
             <Link
               key={link.href}
               href={link.href}
@@ -223,7 +223,7 @@ export default function Navbar() {
             </Link>
           ))}
 
-          {/* Resources trigger */}
+          {/* Resources trigger — centre */}
           <div className="relative" onMouseEnter={openMega} onMouseLeave={closeMega}>
             <button
               className={`flex items-center gap-1 text-sm font-medium transition-colors hover:text-black dark:hover:text-white ${megaOpen ? "text-black dark:text-white" : "text-gray-500 dark:text-white/50"}`}
@@ -364,6 +364,16 @@ export default function Navbar() {
               </div>
             )}
           </div>
+
+          {topLinks.slice(2).map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={`text-sm font-medium transition-colors hover:text-black dark:hover:text-white ${pathname === link.href ? "text-black dark:text-white" : "text-gray-500 dark:text-white/50"}`}
+            >
+              {link.label}
+            </Link>
+          ))}
         </nav>
 
         <div className="hidden lg:flex items-center gap-2">
