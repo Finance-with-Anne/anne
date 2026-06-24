@@ -26,6 +26,7 @@ export default function BookingAdminPage({ bookings, sessions }: { bookings: Boo
   const [filter, setFilter] = useState<"all" | Status>("all");
   const [search, setSearch] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [cancellingId, setCancellingId] = useState<string | null>(null);
 
   const card = dark ? "bg-[#111318] border-white/5" : "bg-white border-gray-200";
   const heading = dark ? "text-white" : "text-gray-900";
@@ -75,6 +76,18 @@ export default function BookingAdminPage({ bookings, sessions }: { bookings: Boo
     await fetch(`/api/booking-sessions/${id}`, { method: "DELETE" });
     router.refresh();
     setDeletingId(null);
+  }
+
+  async function cancelBooking(id: string) {
+    if (!confirm("Cancel this booking?")) return;
+    setCancellingId(id);
+    await fetch(`/api/bookings/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: "cancelled" }),
+    });
+    setCancellingId(null);
+    router.refresh();
   }
 
   async function toggleSessionActive(id: string, current: boolean) {
@@ -194,7 +207,15 @@ export default function BookingAdminPage({ bookings, sessions }: { bookings: Boo
                       </span>
                     </td>
                     <td className="px-5 py-4 text-right">
-                      <Link href={`/admin/booking/${booking.id}`} className={`text-xs underline ${tSub} hover:opacity-70`}>View</Link>
+                      <div className="flex items-center justify-end gap-3">
+                        {booking.status !== "cancelled" && (
+                          <button onClick={() => cancelBooking(booking.id)} disabled={cancellingId === booking.id}
+                            className="text-xs text-red-400 hover:opacity-70 disabled:opacity-40 transition-opacity">
+                            {cancellingId === booking.id ? "…" : "Cancel"}
+                          </button>
+                        )}
+                        <Link href={`/admin/booking/${booking.id}`} className={`text-xs underline ${tSub} hover:opacity-70`}>View</Link>
+                      </div>
                     </td>
                   </tr>
                 ))}
