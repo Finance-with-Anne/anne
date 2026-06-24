@@ -7,7 +7,17 @@ import { randomUUID } from "crypto";
 const ALLOWED_TYPES: Record<string, string[]> = {
   image: ["image/jpeg", "image/png", "image/webp", "image/gif", "image/svg+xml", "image/avif"],
   video: ["video/mp4", "video/webm", "video/ogg"],
-  document: ["application/pdf"],
+  document: [
+    "application/pdf",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "application/vnd.ms-excel",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "application/vnd.ms-powerpoint",
+    "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    "application/zip",
+    "text/csv",
+  ],
 };
 
 const MAX_SIZE_MB = 100;
