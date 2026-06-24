@@ -87,7 +87,7 @@ export default function BookingDetailAdmin({ booking }: { booking: BookingWithRe
   });
 
   return (
-    <div className="max-w-3xl space-y-4">
+    <div className="space-y-4">
 
       {/* Back */}
       <Link href="/admin/booking" className={`inline-flex items-center gap-1.5 text-sm ${sub} hover:opacity-80 transition-opacity`}>
@@ -138,8 +138,8 @@ export default function BookingDetailAdmin({ booking }: { booking: BookingWithRe
         </div>
       </div>
 
-      {/* Info grid — client + session side by side */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      {/* Info grid — expands to 3 cols when meet link present */}
+      <div className={`grid gap-4 ${meetLink ? "grid-cols-1 sm:grid-cols-3" : "grid-cols-1 sm:grid-cols-2"}`}>
 
         {/* Session */}
         <div className={`rounded-2xl border ${card} p-5`}>
@@ -175,22 +175,24 @@ export default function BookingDetailAdmin({ booking }: { booking: BookingWithRe
             )}
           </div>
         </div>
-      </div>
 
-      {/* Google Meet */}
-      {meetLink && (
-        <div className={`rounded-2xl border ${card} p-5`}>
-          <p className={`text-xs font-semibold uppercase tracking-widest ${sub} mb-3`}>Google Meet</p>
-          <div className={`flex items-center gap-3 rounded-xl px-4 py-3 ${dark ? "bg-blue-400/8 border border-blue-400/15" : "bg-blue-50 border border-blue-100"}`}>
-            <svg className={`h-4 w-4 shrink-0 ${dark ? "text-blue-400" : "text-blue-600"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M15 10l4.553-2.069A1 1 0 0121 8.82v6.36a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z" /></svg>
-            <span className={`text-xs font-mono flex-1 truncate ${dark ? "text-blue-300" : "text-blue-700"}`}>{meetLink}</span>
-            <a href={meetLink} target="_blank" rel="noopener noreferrer"
-              className="shrink-0 rounded-lg bg-[#0822C0] px-4 py-1.5 text-xs font-semibold text-white hover:opacity-90 transition-opacity">
-              Join →
-            </a>
+        {/* Google Meet — third column when present */}
+        {meetLink && (
+          <div className={`rounded-2xl border ${card} p-5`}>
+            <p className={`text-xs font-semibold uppercase tracking-widest ${sub} mb-4`}>Google Meet</p>
+            <div className={`flex flex-col gap-3 rounded-xl px-4 py-4 h-[calc(100%-2rem)] justify-between ${dark ? "bg-blue-400/8 border border-blue-400/15" : "bg-blue-50 border border-blue-100"}`}>
+              <div className="flex items-center gap-2">
+                <svg className={`h-4 w-4 shrink-0 ${dark ? "text-blue-400" : "text-blue-600"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M15 10l4.553-2.069A1 1 0 0121 8.82v6.36a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z" /></svg>
+                <span className={`text-xs font-mono truncate ${dark ? "text-blue-300" : "text-blue-700"}`}>{meetLink}</span>
+              </div>
+              <a href={meetLink} target="_blank" rel="noopener noreferrer"
+                className="w-full text-center rounded-lg bg-[#0822C0] px-4 py-2 text-xs font-semibold text-white hover:opacity-90 transition-opacity">
+                Join Meeting →
+              </a>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Q&A */}
       {questions.length > 0 && (
