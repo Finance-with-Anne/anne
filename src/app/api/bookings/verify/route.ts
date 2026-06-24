@@ -4,7 +4,8 @@ import { resend, EMAIL_FROM } from "@/lib/resend";
 import { createMeetEvent } from "@/lib/google-calendar";
 
 const FLW_SECRET = process.env.FLW_SECRET_KEY ?? "";
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? EMAIL_FROM;
+const ADMIN_EMAILS = (process.env.ADMIN_EMAIL ?? EMAIL_FROM)
+  .split(",").map(e => e.trim()).filter(Boolean);
 
 export async function POST(req: NextRequest) {
   const { transaction_id, booking_id } = await req.json();
@@ -104,7 +105,7 @@ export async function POST(req: NextRequest) {
 
   const [clientEmail, adminEmail] = await Promise.allSettled([
     resend.emails.send({ from: EMAIL_FROM, to: booking.client_email, subject: `Booking Confirmed — ${session.title}`, html: clientHtml }),
-    resend.emails.send({ from: EMAIL_FROM, to: ADMIN_EMAIL, subject: `Booking Paid: ${booking.client_name} — ${session.title}`, html: adminHtml }),
+    resend.emails.send({ from: EMAIL_FROM, to: ADMIN_EMAILS, subject: `Booking Paid: ${booking.client_name} — ${session.title}`, html: adminHtml }),
   ]);
 
   if (clientEmail.status === "rejected") console.error("Client email failed:", clientEmail.reason);
