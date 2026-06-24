@@ -25,7 +25,7 @@ export default async function HomePage() {
       ══════════════════════════════════════ */}
       <section className="relative overflow-hidden border-b border-gray-100 dark:border-white/6">
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#0822C0]/6 via-transparent to-transparent dark:from-[#0822C0]/12" />
-        <div className="relative mx-auto max-w-6xl px-6 py-20 sm:py-28 lg:flex lg:items-center lg:gap-16">
+        <div className="relative mx-auto max-w-6xl px-6 min-h-[calc(100vh-4rem)] flex flex-col justify-center lg:flex-row lg:items-center lg:gap-16 py-16">
 
           {/* Left — text */}
           <div className="flex-1 max-w-xl">
