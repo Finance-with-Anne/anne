@@ -6,6 +6,65 @@ import Link from "next/link";
 const PRICE = 11999;
 const PRODUCT_NAME = "The Complete Budget & Money Tracker";
 
+const ICO = "h-4 w-4 text-[#0822C0] dark:text-blue-400";
+
+const WHAT_YOU_GET = [
+  {
+    label: "Monthly Budget Planner",
+    desc: "Plan your income and expenses before the month starts",
+    Icon: () => (
+      <svg className={ICO} fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+      </svg>
+    ),
+  },
+  {
+    label: "Daily Expense Tracker",
+    desc: "Log and categorise every naira you spend",
+    Icon: () => (
+      <svg className={ICO} fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+      </svg>
+    ),
+  },
+  {
+    label: "Savings Goals Tracker",
+    desc: "Set targets and track progress visually",
+    Icon: () => (
+      <svg className={ICO} fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+      </svg>
+    ),
+  },
+  {
+    label: "Debt Payoff Plan",
+    desc: "Crush debt using the snowball method",
+    Icon: () => (
+      <svg className={ICO} fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    ),
+  },
+  {
+    label: "Net Worth Calculator",
+    desc: "Know your real financial position at any time",
+    Icon: () => (
+      <svg className={ICO} fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+      </svg>
+    ),
+  },
+  {
+    label: "Annual Overview Dashboard",
+    desc: "Spot trends and patterns across the full year",
+    Icon: () => (
+      <svg className={ICO} fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+      </svg>
+    ),
+  },
+];
+
 export default function MoneyTrackerCheckout() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -62,16 +121,11 @@ export default function MoneyTrackerCheckout() {
             <div className="rounded-2xl border border-gray-200 dark:border-white/8 bg-white dark:bg-white/3 p-6 space-y-4">
               <h2 className="font-bold text-gray-900 dark:text-white text-sm uppercase tracking-widest">What you&apos;ll receive</h2>
               <div className="space-y-3">
-                {[
-                  { icon: "📋", label: "Monthly Budget Planner", desc: "Plan your income and expenses before the month starts" },
-                  { icon: "📝", label: "Daily Expense Tracker", desc: "Log and categorise every naira you spend" },
-                  { icon: "🎯", label: "Savings Goals Tracker", desc: "Set targets and track progress visually" },
-                  { icon: "❄️", label: "Debt Payoff Plan", desc: "Crush debt using the snowball method" },
-                  { icon: "📊", label: "Net Worth Calculator", desc: "Know your real financial position at any time" },
-                  { icon: "🗓️", label: "Annual Overview Dashboard", desc: "Spot trends and patterns across the full year" },
-                ].map(item => (
+                {WHAT_YOU_GET.map(item => (
                   <div key={item.label} className="flex items-start gap-3">
-                    <span className="text-xl leading-none mt-0.5 shrink-0">{item.icon}</span>
+                    <span className="h-8 w-8 rounded-lg bg-[#0822C0]/8 dark:bg-[#0822C0]/15 flex items-center justify-center shrink-0 mt-0.5">
+                      <item.Icon />
+                    </span>
                     <div>
                       <p className="text-sm font-semibold text-gray-800 dark:text-white">{item.label}</p>
                       <p className="text-xs text-gray-400 dark:text-white/35 mt-0.5">{item.desc}</p>
