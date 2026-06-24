@@ -5,10 +5,11 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const limit = Math.min(Number(searchParams.get("limit")) || 10, 50);
   const supabase = await createClient();
+  const now = new Date().toISOString();
   const { data, error } = await supabase
     .from("blog_posts")
     .select("id, title, slug, excerpt, cover_image, published_at")
-    .eq("published", true)
+    .or(`published.eq.true,and(published.eq.false,published_at.lte.${now})`)
     .order("published_at", { ascending: false })
     .limit(limit);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });

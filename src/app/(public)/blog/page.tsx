@@ -8,11 +8,12 @@ export const metadata = { title: "Money Talks — Finance with Anne" };
 export default async function BlogPage() {
   const supabase = await createClient();
 
+  const now = new Date().toISOString();
   const [{ data: posts }, { data: categories }, { data: postCats }, { data: curated }] = await Promise.all([
     supabase
       .from("blog_posts")
       .select("*")
-      .eq("published", true)
+      .or(`published.eq.true,and(published.eq.false,published_at.lte.${now})`)
       .order("published_at", { ascending: false }),
     supabase
       .from("blog_categories")

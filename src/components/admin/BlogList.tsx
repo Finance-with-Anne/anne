@@ -14,6 +14,7 @@ type PostCat   = { post_id: string; category_id: string };
 function getStatus(post: BlogPost): PostStatus {
   if (post.published) return "published";
   if (post.published_at && new Date(post.published_at) > new Date()) return "scheduled";
+  if (post.published_at && new Date(post.published_at) <= new Date()) return "published";
   return "draft";
 }
 

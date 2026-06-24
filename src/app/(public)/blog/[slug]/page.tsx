@@ -20,17 +20,20 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   const { slug } = await params;
   const supabase = await createClient();
 
+  const now = new Date().toISOString();
+  const liveFilter = `published.eq.true,and(published.eq.false,published_at.lte.${now})`;
+
   const [{ data: post }, { data: latestRaw }] = await Promise.all([
     supabase
       .from("blog_posts")
       .select("*")
       .eq("slug", slug)
-      .eq("published", true)
+      .or(liveFilter)
       .single(),
     supabase
       .from("blog_posts")
       .select("id, title, slug, cover_image, published_at, excerpt")
-      .eq("published", true)
+      .or(liveFilter)
       .neq("slug", slug)
       .order("published_at", { ascending: false })
       .limit(4),
