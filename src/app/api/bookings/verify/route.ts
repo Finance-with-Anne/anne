@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
   }
 
   // Send emails
-  await Promise.allSettled([
+  const [clientEmail, adminEmail] = await Promise.allSettled([
     resend.emails.send({
       from: EMAIL_FROM,
       to: booking.client_email,
@@ -97,5 +97,15 @@ export async function POST(req: NextRequest) {
     }),
   ]);
 
-  return NextResponse.json({ success: true });
+  if (clientEmail.status === "rejected") console.error("Client email failed:", clientEmail.reason);
+  else if (clientEmail.value.error) console.error("Client email error:", clientEmail.value.error);
+  if (adminEmail.status === "rejected") console.error("Admin email failed:", adminEmail.reason);
+  else if (adminEmail.value.error) console.error("Admin email error:", adminEmail.value.error);
+
+  return NextResponse.json({
+    success: true,
+    emailSent: clientEmail.status === "fulfilled" && !clientEmail.value.error,
+    emailFrom: EMAIL_FROM,
+    emailTo: booking.client_email,
+  });
 }
