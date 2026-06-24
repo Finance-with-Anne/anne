@@ -259,19 +259,15 @@ export default function ProductsShopClient({ products, categories, currency }: P
                             Add to Cart
                           </button>
                         )}
-                        {salesPage && !isCourse ? (
+                        {salesPage ? (
                           <Link
                             href={salesPage}
                             onClick={e => e.stopPropagation()}
                             className="flex-1 text-center rounded-xl bg-white/20 backdrop-blur text-white text-xs font-bold py-2.5 border border-white/30 hover:bg-white/30 transition-colors"
                           >
-                            Learn More
-                          </Link>
-                        ) : (
-                          <span className="flex-1 text-center rounded-xl bg-white/20 backdrop-blur text-white text-xs font-bold py-2.5 border border-white/30">
                             {isCourse ? "View Course" : "Learn More"}
-                          </span>
-                        )}
+                          </Link>
+                        ) : null}
                       </div>
                     </Wrapper>
                   );
