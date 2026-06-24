@@ -25,26 +25,26 @@ export default async function HomePage() {
       ══════════════════════════════════════ */}
       <section className="relative overflow-hidden border-b border-gray-100 dark:border-white/6">
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#0822C0]/6 via-transparent to-transparent dark:from-[#0822C0]/12" />
-        <div className="relative mx-auto max-w-6xl px-6 min-h-[calc(100vh-4rem)] flex flex-col justify-center lg:flex-row lg:items-center lg:gap-16 py-16">
+        <div className="relative mx-auto max-w-7xl px-8 min-h-[calc(100vh-4rem)] flex flex-col justify-center lg:flex-row lg:items-center lg:gap-24 py-16">
 
           {/* Left — text */}
-          <div className="flex-1 max-w-xl">
-            <span className="inline-block rounded-full bg-[#0822C0]/8 dark:bg-[#0822C0]/20 border border-[#0822C0]/15 dark:border-[#0822C0]/30 px-4 py-1.5 text-xs font-semibold text-[#0822C0] dark:text-blue-400 tracking-widest uppercase mb-6">
+          <div className="flex-1 max-w-2xl">
+            <span className="inline-block rounded-full bg-[#0822C0]/8 dark:bg-[#0822C0]/20 border border-[#0822C0]/15 dark:border-[#0822C0]/30 px-5 py-2 text-sm font-semibold text-[#0822C0] dark:text-blue-400 tracking-widest uppercase mb-8">
               Finance with Anne
             </span>
 
             <HeroSlider />
 
             {/* Social proof */}
-            <div className="mt-8 flex items-center gap-3">
-              <div className="flex -space-x-2.5">
+            <div className="mt-10 flex items-center gap-4">
+              <div className="flex -space-x-3">
                 {avatars.length > 0 ? (
                   avatars.map((t) => (
                     <img
                       key={t.id}
                       src={t.image_url!}
                       alt={t.name}
-                      className="w-9 h-9 rounded-full border-2 border-white dark:border-[#05090f] object-cover"
+                      className="w-11 h-11 rounded-full border-2 border-white dark:border-[#05090f] object-cover"
                     />
                   ))
                 ) : (
@@ -54,29 +54,29 @@ export default async function HomePage() {
                     "https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?w=80&h=80&fit=crop&crop=face&auto=format",
                     "https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=80&h=80&fit=crop&crop=face&auto=format",
                   ].map((src, i) => (
-                    <img key={i} src={src} alt="Client" className="w-9 h-9 rounded-full border-2 border-white dark:border-[#05090f] object-cover" />
+                    <img key={i} src={src} alt="Client" className="w-11 h-11 rounded-full border-2 border-white dark:border-[#05090f] object-cover" />
                   ))
                 )}
-                <div className="w-9 h-9 rounded-full border-2 border-white dark:border-[#05090f] bg-gray-900 dark:bg-white flex items-center justify-center">
-                  <span className="text-white dark:text-gray-900 text-[9px] font-bold">1K+</span>
+                <div className="w-11 h-11 rounded-full border-2 border-white dark:border-[#05090f] bg-gray-900 dark:bg-white flex items-center justify-center">
+                  <span className="text-white dark:text-gray-900 text-[11px] font-bold">1K+</span>
                 </div>
               </div>
-              <p className="text-sm text-gray-500 dark:text-white/40">
+              <p className="text-base text-gray-500 dark:text-white/40">
                 500+ clients trust Finance with Anne.
               </p>
             </div>
 
             {/* CTAs */}
-            <div className="mt-10 flex flex-wrap items-center gap-3">
+            <div className="mt-12 flex flex-wrap items-center gap-4">
               <Link
                 href="/booking"
-                className="inline-flex items-center gap-2 rounded-xl bg-[#0822C0] text-white font-semibold text-sm px-6 py-3 hover:bg-[#0618a0] transition-colors"
+                className="inline-flex items-center gap-2 rounded-xl bg-[#0822C0] text-white font-semibold text-base px-8 py-4 hover:bg-[#0618a0] transition-colors"
               >
                 Book a Session
               </Link>
               <Link
                 href="/about"
-                className="inline-flex items-center gap-2 rounded-xl border border-gray-200 dark:border-white/10 text-gray-700 dark:text-white/70 font-semibold text-sm px-6 py-3 hover:border-gray-300 dark:hover:border-white/20 transition-colors"
+                className="inline-flex items-center gap-2 rounded-xl border border-gray-200 dark:border-white/10 text-gray-700 dark:text-white/70 font-semibold text-base px-8 py-4 hover:border-gray-300 dark:hover:border-white/20 transition-colors"
               >
                 Learn More
               </Link>
@@ -90,8 +90,8 @@ export default async function HomePage() {
               <Image
                 src="/anne-profile.png"
                 alt="Anne — Financial Coach"
-                width={400}
-                height={480}
+                width={520}
+                height={620}
                 className="relative rounded-3xl object-cover shadow-2xl"
                 priority
               />

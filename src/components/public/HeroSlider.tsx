@@ -41,10 +41,10 @@ export default function HeroSlider() {
     <div
       style={{ opacity: visible ? 1 : 0, transition: "opacity 0.4s ease" }}
     >
-      <h1 className="text-5xl sm:text-6xl lg:text-[3.5rem] font-bold text-gray-900 dark:text-white leading-[1.1] tracking-tight">
+      <h1 className="text-6xl sm:text-7xl lg:text-[5rem] font-bold text-gray-900 dark:text-white leading-[1.05] tracking-tight">
         {slide.line1}<br />{slide.line2}
       </h1>
-      <p className="mt-6 text-gray-500 dark:text-white/45 text-lg leading-relaxed max-w-[520px]">
+      <p className="mt-8 text-gray-500 dark:text-white/45 text-xl leading-relaxed max-w-[620px]">
         {slide.sub}
       </p>
     </div>
