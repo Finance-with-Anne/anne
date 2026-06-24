@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import HeroSlider from "@/components/public/HeroSlider";
 import CoreFeatures from "@/components/public/CoreFeatures";
 import { supabaseAdmin } from "@/lib/supabase/admin";
@@ -17,20 +18,20 @@ export default async function HomePage() {
   const avatars = testimonials.filter((t) => t.image_url).slice(0, 4);
 
   return (
-    <div className="bg-white dark:bg-[#0a0d14]">
+    <div className="bg-white dark:bg-[#05090f]">
 
       {/* ══════════════════════════════════════
           HERO
       ══════════════════════════════════════ */}
-      <section className="w-full bg-[#eef1ff] dark:bg-[#070d1a] p-4 sm:p-6 lg:p-8 mt-6 lg:mt-10">
-        <div className="overflow-hidden rounded-2xl grid lg:grid-cols-2 min-h-[660px] bg-white dark:bg-[#0d1220] shadow-sm">
+      <section className="relative overflow-hidden border-b border-gray-100 dark:border-white/6">
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#0822C0]/6 via-transparent to-transparent dark:from-[#0822C0]/12" />
+        <div className="relative mx-auto max-w-6xl px-6 py-20 sm:py-28 lg:flex lg:items-center lg:gap-16">
 
           {/* Left — text */}
-          <div className="flex flex-col justify-center py-16 pl-16 pr-10 lg:pl-24 lg:pr-14">
-            <div className="w-full max-w-lg">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-gray-400 dark:text-white/30 mb-6">
+          <div className="flex-1 max-w-xl">
+            <span className="inline-block rounded-full bg-[#0822C0]/8 dark:bg-[#0822C0]/20 border border-[#0822C0]/15 dark:border-[#0822C0]/30 px-4 py-1.5 text-xs font-semibold text-[#0822C0] dark:text-blue-400 tracking-widest uppercase mb-6">
               Finance with Anne
-            </p>
+            </span>
 
             <HeroSlider />
 
@@ -43,7 +44,7 @@ export default async function HomePage() {
                       key={t.id}
                       src={t.image_url!}
                       alt={t.name}
-                      className="w-9 h-9 rounded-full border-2 border-white dark:border-[#0d1220] object-cover"
+                      className="w-9 h-9 rounded-full border-2 border-white dark:border-[#05090f] object-cover"
                     />
                   ))
                 ) : (
@@ -53,10 +54,10 @@ export default async function HomePage() {
                     "https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?w=80&h=80&fit=crop&crop=face&auto=format",
                     "https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=80&h=80&fit=crop&crop=face&auto=format",
                   ].map((src, i) => (
-                    <img key={i} src={src} alt="Client" className="w-9 h-9 rounded-full border-2 border-white dark:border-[#0d1220] object-cover" />
+                    <img key={i} src={src} alt="Client" className="w-9 h-9 rounded-full border-2 border-white dark:border-[#05090f] object-cover" />
                   ))
                 )}
-                <div className="w-9 h-9 rounded-full border-2 border-white dark:border-[#0d1220] bg-gray-900 dark:bg-white flex items-center justify-center">
+                <div className="w-9 h-9 rounded-full border-2 border-white dark:border-[#05090f] bg-gray-900 dark:bg-white flex items-center justify-center">
                   <span className="text-white dark:text-gray-900 text-[9px] font-bold">1K+</span>
                 </div>
               </div>
@@ -66,31 +67,35 @@ export default async function HomePage() {
             </div>
 
             {/* CTAs */}
-            <div className="mt-10 flex items-center gap-3">
+            <div className="mt-10 flex flex-wrap items-center gap-3">
               <Link
                 href="/booking"
-                className="rounded-full px-8 py-3.5 text-sm font-semibold text-white hover:opacity-85 transition-opacity"
-                style={{ backgroundColor: "#0822C0" }}
+                className="inline-flex items-center gap-2 rounded-xl bg-[#0822C0] text-white font-semibold text-sm px-6 py-3 hover:bg-[#0618a0] transition-colors"
               >
                 Book a Session
               </Link>
               <Link
                 href="/about"
-                className="rounded-full px-8 py-3.5 text-sm font-semibold text-gray-700 dark:text-white bg-white dark:bg-white/10 border border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/15 transition-colors"
+                className="inline-flex items-center gap-2 rounded-xl border border-gray-200 dark:border-white/10 text-gray-700 dark:text-white/70 font-semibold text-sm px-6 py-3 hover:border-gray-300 dark:hover:border-white/20 transition-colors"
               >
                 Learn More
               </Link>
             </div>
-            </div>
           </div>
 
           {/* Right — Anne portrait */}
-          <div className="relative hidden lg:block overflow-hidden bg-white dark:bg-[#0d1220]">
-            <img
-              src="/anne-hero.png"
-              alt="Anne — Financial Coach"
-              className="absolute inset-0 w-full h-full object-cover object-center"
-            />
+          <div className="mt-14 lg:mt-0 flex-shrink-0 flex justify-center lg:justify-end">
+            <div className="relative">
+              <div className="absolute inset-0 rounded-3xl bg-[#0822C0]/10 dark:bg-[#0822C0]/20 blur-3xl scale-110" />
+              <Image
+                src="/anne-profile.png"
+                alt="Anne — Financial Coach"
+                width={400}
+                height={480}
+                className="relative rounded-3xl object-cover shadow-2xl"
+                priority
+              />
+            </div>
           </div>
 
         </div>
