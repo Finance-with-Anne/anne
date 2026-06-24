@@ -68,7 +68,7 @@ export default function BookingDetailAdmin({ booking }: { booking: BookingWithRe
     await fetch(`/api/bookings/${booking.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ date: newDate, time: newTime, notes: rescheduleNote || undefined, status: "confirmed" }),
+      body: JSON.stringify({ date: newDate, time: newTime, notes: rescheduleNote || undefined, status: "confirmed", _action: "reschedule" }),
     });
     setRescheduling(false);
     setShowReschedule(false);

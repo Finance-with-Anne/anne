@@ -10,8 +10,9 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   if (!user) return NextResponse.json({ error: "Unauthorised." }, { status: 401 });
 
   const body = await req.json();
+  const { _action, ...update } = body;
 
-  // Fetch current booking before update to detect what changed
+  // Fetch current booking before update (needed for email context)
   const { data: existing } = await supabaseAdmin
     .from("bookings")
     .select("client_name, client_email, service, date, time, status, notes")
@@ -20,7 +21,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
   const { data, error } = await supabase
     .from("bookings")
-    .update({ ...body, updated_at: new Date().toISOString() })
+    .update({ ...update, updated_at: new Date().toISOString() })
     .eq("id", id)
     .select()
     .single();
@@ -28,15 +29,15 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
   if (existing) {
-    const isCancelling = body.status === "cancelled" && existing.status !== "cancelled";
-    const isRescheduling = (body.date && body.date !== existing.date) || (body.time && body.time !== existing.time);
+    const isCancelling = update.status === "cancelled" && existing.status !== "cancelled";
+    const isRescheduling = _action === "reschedule";
 
     if (isCancelling) {
       sendCancellationEmail(existing).catch(console.error);
     } else if (isRescheduling) {
-      const newDate = body.date ?? existing.date;
-      const newTime = body.time ?? existing.time;
-      const note = body.notes ?? null;
+      const newDate = update.date ?? existing.date;
+      const newTime = update.time ?? existing.time;
+      const note = update.notes ?? null;
       sendRescheduleEmail(existing, newDate, newTime, note).catch(console.error);
     }
   }
