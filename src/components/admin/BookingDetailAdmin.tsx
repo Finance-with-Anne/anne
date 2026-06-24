@@ -10,10 +10,10 @@ const STATUSES = ["pending", "confirmed", "completed", "cancelled"] as const;
 type Status = typeof STATUSES[number];
 
 const statusStyle: Record<Status, { dark: string; light: string }> = {
-  pending:   { dark: "bg-yellow-400/15 text-yellow-400", light: "bg-yellow-50 text-yellow-600" },
-  confirmed: { dark: "bg-blue-400/15 text-blue-400",    light: "bg-blue-50 text-blue-600" },
-  completed: { dark: "bg-green-400/15 text-green-400",  light: "bg-green-50 text-green-600" },
-  cancelled: { dark: "bg-red-400/15 text-red-400",      light: "bg-red-50 text-red-600" },
+  pending:   { dark: "bg-yellow-400/15 text-yellow-300", light: "bg-yellow-50 text-yellow-700" },
+  confirmed: { dark: "bg-blue-400/15 text-blue-300",    light: "bg-blue-50 text-blue-700" },
+  completed: { dark: "bg-green-400/15 text-green-300",  light: "bg-green-50 text-green-700" },
+  cancelled: { dark: "bg-red-400/15 text-red-300",      light: "bg-red-50 text-red-700" },
 };
 
 type BookingWithRelations = Booking & {
@@ -32,22 +32,22 @@ export default function BookingDetailAdmin({ booking }: { booking: BookingWithRe
   const [rescheduleNote, setRescheduleNote] = useState("");
   const [rescheduling, setRescheduling] = useState(false);
 
-  const card = dark ? "bg-[#111318] border-white/5" : "bg-white border-gray-200";
-  const heading = dark ? "text-white" : "text-gray-900";
-  const sub = dark ? "text-white/40" : "text-gray-400";
-  const label = dark ? "text-white/50" : "text-gray-500";
-  const value = dark ? "text-white/80" : "text-gray-800";
-  const divider = dark ? "border-white/5" : "border-gray-100";
+  const bg       = dark ? "bg-[#0d1017]" : "bg-gray-50";
+  const card     = dark ? "bg-[#111318] border-white/6" : "bg-white border-gray-200";
+  const heading  = dark ? "text-white" : "text-gray-900";
+  const sub      = dark ? "text-white/35" : "text-gray-400";
+  const label    = dark ? "text-white/45" : "text-gray-500";
+  const value    = dark ? "text-white/85" : "text-gray-800";
+  const divider  = dark ? "divide-white/6" : "divide-gray-100";
   const inputCls = dark
     ? "bg-white/5 border-white/10 text-white placeholder-white/20 focus:border-white/30"
     : "bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400 focus:border-gray-400";
 
   const questions = booking.session?.questions ?? [];
-  const answers = (booking.answers ?? {}) as Record<string, string>;
+  const answers   = (booking.answers ?? {}) as Record<string, string>;
 
   const isMeetLink = (s: string) => s.startsWith("https://meet.google.com/");
-
-  const meetLink = booking.notes && isMeetLink(booking.notes) ? booking.notes : null;
+  const meetLink   = booking.notes && isMeetLink(booking.notes) ? booking.notes : null;
   const plainNotes = booking.notes && !isMeetLink(booking.notes) ? booking.notes : null;
 
   async function updateStatus(s: Status) {
@@ -68,131 +68,137 @@ export default function BookingDetailAdmin({ booking }: { booking: BookingWithRe
     await fetch(`/api/bookings/${booking.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        date: newDate,
-        time: newTime,
-        notes: rescheduleNote || undefined,
-        status: "confirmed",
-      }),
+      body: JSON.stringify({ date: newDate, time: newTime, notes: rescheduleNote || undefined, status: "confirmed" }),
     });
     setRescheduling(false);
     setShowReschedule(false);
     router.refresh();
   }
 
-  async function handleCancel() {
-    if (!confirm("Cancel this booking?")) return;
-    await updateStatus("cancelled");
-  }
-
   async function handleDelete() {
-    if (!confirm("Delete this booking permanently?")) return;
+    if (!confirm("Delete this booking permanently? This cannot be undone.")) return;
     await fetch(`/api/bookings/${booking.id}`, { method: "DELETE" });
     router.push("/admin/booking");
     router.refresh();
   }
 
+  const fmtDate = (d: string) => new Date(d).toLocaleDateString("en-GB", {
+    weekday: "short", day: "numeric", month: "short", year: "numeric",
+  });
+
   return (
-    <div className="max-w-2xl space-y-5">
-      <div className="flex items-center gap-3">
-        <Link href="/admin/booking" className={`text-sm ${sub} hover:opacity-70`}>← All Bookings</Link>
-      </div>
+    <div className="max-w-3xl space-y-4">
 
-      <div className="flex items-start justify-between">
-        <div>
-          <h1 className={`text-xl font-bold ${heading}`}>{booking.client_name}</h1>
-          <p className={`text-sm mt-0.5 ${sub}`}>{booking.client_email}</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium capitalize ${dark ? statusStyle[status].dark : statusStyle[status].light}`}>
-            {status}
-          </span>
-          {status !== "cancelled" && (
-            <button onClick={handleCancel} disabled={updating}
-              className="rounded-lg px-3 py-1.5 text-xs font-medium bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors">
-              Cancel
-            </button>
-          )}
-          <button onClick={() => setShowReschedule(true)}
-            className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${dark ? "bg-white/8 text-white/70 hover:bg-white/12" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}>
-            Reschedule
-          </button>
-        </div>
-      </div>
+      {/* Back */}
+      <Link href="/admin/booking" className={`inline-flex items-center gap-1.5 text-sm ${sub} hover:opacity-80 transition-opacity`}>
+        <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
+        All Bookings
+      </Link>
 
-      {/* Client Details */}
-      <div className={`rounded-xl border ${card} divide-y ${divider}`}>
-        <div className="px-5 py-3">
-          <p className={`text-xs font-semibold uppercase tracking-wide ${sub} mb-3`}>Client</p>
-          <div className="grid grid-cols-2 gap-y-3">
-            {[
-              { l: "Name", v: booking.client_name },
-              { l: "Email", v: booking.client_email },
-              { l: "Phone", v: booking.phone ?? "—" },
-            ].map(r => (
-              <div key={r.l}>
-                <p className={`text-xs ${label}`}>{r.l}</p>
-                <p className={`text-sm font-medium mt-0.5 ${value}`}>{r.v}</p>
-              </div>
-            ))}
+      {/* Header card */}
+      <div className={`rounded-2xl border ${card} p-5`}>
+        <div className="flex items-start justify-between gap-4">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h1 className={`text-lg font-bold ${heading} truncate`}>{booking.client_name}</h1>
+              <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${dark ? statusStyle[status].dark : statusStyle[status].light}`}>
+                {status}
+              </span>
+            </div>
+            <p className={`text-sm mt-0.5 ${sub} truncate`}>{booking.client_email}{booking.phone ? ` · ${booking.phone}` : ""}</p>
           </div>
-        </div>
 
-        <div className="px-5 py-3">
-          <p className={`text-xs font-semibold uppercase tracking-wide ${sub} mb-3`}>Session</p>
-          <div className="grid grid-cols-2 gap-y-3">
-            {[
-              { l: "Session", v: booking.service },
-              { l: "Date", v: new Date(booking.date).toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" }) },
-              { l: "Time", v: booking.time },
-              { l: "Duration", v: booking.session?.duration_minutes ? `${booking.session.duration_minutes} min` : "—" },
-            ].map(r => (
-              <div key={r.l}>
-                <p className={`text-xs ${label}`}>{r.l}</p>
-                <p className={`text-sm font-medium mt-0.5 ${value}`}>{r.v}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="px-5 py-3">
-          <p className={`text-xs font-semibold uppercase tracking-wide ${sub} mb-3`}>Payment</p>
-          <div className="grid grid-cols-2 gap-y-3">
-            {[
-              { l: "Status", v: booking.is_paid ? "Paid" : booking.session?.is_free !== false ? "Free" : "Unpaid" },
-              { l: "Amount", v: booking.amount_paid ? `${booking.currency} ${booking.amount_paid.toLocaleString()}` : "—" },
-              { l: "Reference", v: booking.payment_ref ?? "—" },
-            ].map(r => (
-              <div key={r.l}>
-                <p className={`text-xs ${label}`}>{r.l}</p>
-                <p className={`text-sm font-medium mt-0.5 ${r.l === "Status" && booking.is_paid ? dark ? "text-green-400" : "text-green-600" : value}`}>{r.v}</p>
-              </div>
-            ))}
+          {/* Action buttons */}
+          <div className="flex items-center gap-2 shrink-0">
+            {status === "pending" && (
+              <button onClick={() => updateStatus("confirmed")} disabled={updating}
+                className="rounded-lg bg-[#0822C0] px-4 py-2 text-xs font-semibold text-white hover:bg-[#0620a8] disabled:opacity-40 transition-colors">
+                Confirm
+              </button>
+            )}
+            {status !== "completed" && status !== "cancelled" && (
+              <button onClick={() => updateStatus("completed")} disabled={updating}
+                className={`rounded-lg px-4 py-2 text-xs font-semibold transition-colors disabled:opacity-40 ${dark ? "bg-green-500/15 text-green-300 hover:bg-green-500/25 border border-green-500/20" : "bg-green-50 text-green-700 hover:bg-green-100 border border-green-200"}`}>
+                Complete
+              </button>
+            )}
+            {status !== "cancelled" && (
+              <>
+                <button onClick={() => setShowReschedule(true)}
+                  className={`rounded-lg px-4 py-2 text-xs font-semibold transition-colors border ${dark ? "bg-white/5 text-white/70 hover:bg-white/10 border-white/10" : "bg-white text-gray-700 hover:bg-gray-50 border-gray-200"}`}>
+                  Reschedule
+                </button>
+                <button onClick={() => { if (confirm("Cancel this booking?")) updateStatus("cancelled"); }} disabled={updating}
+                  className={`rounded-lg px-4 py-2 text-xs font-semibold transition-colors border disabled:opacity-40 ${dark ? "bg-red-500/10 text-red-300 hover:bg-red-500/20 border-red-500/20" : "bg-red-50 text-red-600 hover:bg-red-100 border-red-200"}`}>
+                  Cancel
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>
 
-      {/* Google Meet Link */}
+      {/* Info grid — client + session side by side */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+        {/* Session */}
+        <div className={`rounded-2xl border ${card} p-5`}>
+          <p className={`text-xs font-semibold uppercase tracking-widest ${sub} mb-4`}>Session</p>
+          <div className="space-y-3">
+            <Row label="Service" value={booking.service} l={label} v={value} />
+            <Row label="Date" value={fmtDate(booking.date)} l={label} v={value} />
+            <Row label="Time" value={booking.time} l={label} v={value} />
+            {booking.session?.duration_minutes && (
+              <Row label="Duration" value={`${booking.session.duration_minutes} min`} l={label} v={value} />
+            )}
+          </div>
+        </div>
+
+        {/* Payment */}
+        <div className={`rounded-2xl border ${card} p-5`}>
+          <p className={`text-xs font-semibold uppercase tracking-widest ${sub} mb-4`}>Payment</p>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <span className={`text-xs ${label}`}>Status</span>
+              <span className={`text-xs font-semibold ${booking.is_paid ? dark ? "text-green-400" : "text-green-600" : dark ? "text-white/50" : "text-gray-400"}`}>
+                {booking.is_paid ? "Paid" : booking.session?.is_free !== false ? "Free" : "Unpaid"}
+              </span>
+            </div>
+            {booking.amount_paid && (
+              <Row label="Amount" value={`${booking.currency} ${booking.amount_paid.toLocaleString()}`} l={label} v={value} />
+            )}
+            {booking.payment_ref && (
+              <div>
+                <span className={`text-xs ${label}`}>Reference</span>
+                <p className={`text-xs font-mono mt-0.5 break-all ${dark ? "text-white/50" : "text-gray-400"}`}>{booking.payment_ref}</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Google Meet */}
       {meetLink && (
-        <div className={`rounded-xl border ${card} p-5`}>
-          <p className={`text-xs font-semibold uppercase tracking-wide ${sub} mb-3`}>Google Meet</p>
-          <div className={`flex items-center justify-between gap-3 rounded-lg px-4 py-3 ${dark ? "bg-blue-400/8 border border-blue-400/15" : "bg-blue-50 border border-blue-100"}`}>
-            <span className={`text-xs font-mono truncate ${dark ? "text-blue-300" : "text-blue-700"}`}>{meetLink}</span>
+        <div className={`rounded-2xl border ${card} p-5`}>
+          <p className={`text-xs font-semibold uppercase tracking-widest ${sub} mb-3`}>Google Meet</p>
+          <div className={`flex items-center gap-3 rounded-xl px-4 py-3 ${dark ? "bg-blue-400/8 border border-blue-400/15" : "bg-blue-50 border border-blue-100"}`}>
+            <svg className={`h-4 w-4 shrink-0 ${dark ? "text-blue-400" : "text-blue-600"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M15 10l4.553-2.069A1 1 0 0121 8.82v6.36a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z" /></svg>
+            <span className={`text-xs font-mono flex-1 truncate ${dark ? "text-blue-300" : "text-blue-700"}`}>{meetLink}</span>
             <a href={meetLink} target="_blank" rel="noopener noreferrer"
-              className="shrink-0 rounded-lg bg-[#0822C0] px-3 py-1.5 text-xs font-semibold text-white hover:opacity-90 transition-opacity">
+              className="shrink-0 rounded-lg bg-[#0822C0] px-4 py-1.5 text-xs font-semibold text-white hover:opacity-90 transition-opacity">
               Join →
             </a>
           </div>
         </div>
       )}
 
-      {/* Q&A Answers */}
+      {/* Q&A */}
       {questions.length > 0 && (
-        <div className={`rounded-xl border ${card} p-5`}>
-          <p className={`text-xs font-semibold uppercase tracking-wide ${sub} mb-4`}>Client Responses</p>
-          <div className="space-y-4">
+        <div className={`rounded-2xl border ${card} p-5`}>
+          <p className={`text-xs font-semibold uppercase tracking-widest ${sub} mb-4`}>Client Responses</p>
+          <div className={`divide-y ${divider} space-y-0`}>
             {questions.map(q => (
-              <div key={q.id}>
+              <div key={q.id} className="py-3 first:pt-0 last:pb-0">
                 <p className={`text-xs ${label} mb-1`}>{q.question}</p>
                 <p className={`text-sm font-medium ${value}`}>{answers[q.id] ?? "—"}</p>
               </div>
@@ -201,38 +207,24 @@ export default function BookingDetailAdmin({ booking }: { booking: BookingWithRe
         </div>
       )}
 
-      {/* Plain Notes */}
+      {/* Notes */}
       {plainNotes && (
-        <div className={`rounded-xl border ${card} p-5`}>
-          <p className={`text-xs font-semibold uppercase tracking-wide ${sub} mb-2`}>Notes</p>
+        <div className={`rounded-2xl border ${card} p-5`}>
+          <p className={`text-xs font-semibold uppercase tracking-widest ${sub} mb-2`}>Notes</p>
           <p className={`text-sm ${value}`}>{plainNotes}</p>
         </div>
       )}
 
-      {/* Quick Actions */}
-      {(status === "pending" || status === "confirmed") && (
-        <div className={`rounded-xl border ${card} p-5`}>
-          <p className={`text-xs font-semibold uppercase tracking-wide ${sub} mb-3`}>Actions</p>
-          <div className="flex gap-2 flex-wrap">
-            {status === "pending" && (
-              <button onClick={() => updateStatus("confirmed")} disabled={updating}
-                className="rounded-lg px-4 py-2 text-xs font-medium bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 transition-colors disabled:opacity-40">
-                Confirm Booking
-              </button>
-            )}
-            {status !== "completed" && (
-              <button onClick={() => updateStatus("completed")} disabled={updating}
-                className="rounded-lg px-4 py-2 text-xs font-medium bg-green-500/10 text-green-400 hover:bg-green-500/20 transition-colors disabled:opacity-40">
-                Mark as Complete
-              </button>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Metadata */}
-      <p className={`text-xs ${sub}`}>Booked on {new Date(booking.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" })}</p>
-      <button onClick={handleDelete} className="text-xs text-red-400 hover:opacity-70 transition-opacity">Delete booking</button>
+      {/* Footer */}
+      <div className="flex items-center justify-between pt-1">
+        <p className={`text-xs ${sub}`}>
+          Booked {new Date(booking.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}
+        </p>
+        <button onClick={handleDelete}
+          className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors border ${dark ? "bg-red-500/8 text-red-400 hover:bg-red-500/15 border-red-500/15" : "bg-red-50 text-red-600 hover:bg-red-100 border-red-200"}`}>
+          Delete booking
+        </button>
+      </div>
 
       {/* Reschedule Modal */}
       {showReschedule && (
@@ -240,7 +232,6 @@ export default function BookingDetailAdmin({ booking }: { booking: BookingWithRe
           <div className={`w-full max-w-md rounded-2xl border p-6 shadow-2xl ${dark ? "bg-[#111318] border-white/10" : "bg-white border-gray-200"}`}>
             <h2 className={`text-base font-bold mb-1 ${heading}`}>Reschedule Booking</h2>
             <p className={`text-xs mb-5 ${sub}`}>{booking.client_name} — {booking.service}</p>
-
             <div className="space-y-4">
               <div>
                 <label className={`block text-xs font-medium mb-1.5 ${label}`}>New Date</label>
@@ -253,26 +244,34 @@ export default function BookingDetailAdmin({ booking }: { booking: BookingWithRe
                   className={`w-full rounded-lg border px-3 py-2 text-sm focus:outline-none ${inputCls}`} />
               </div>
               <div>
-                <label className={`block text-xs font-medium mb-1.5 ${label}`}>Note (optional)</label>
+                <label className={`block text-xs font-medium mb-1.5 ${label}`}>Note to client (optional)</label>
                 <textarea rows={3} value={rescheduleNote} onChange={e => setRescheduleNote(e.target.value)}
-                  placeholder="Reason for rescheduling, any additional info…"
+                  placeholder="Reason for rescheduling, additional info…"
                   className={`w-full rounded-lg border px-3 py-2 text-sm focus:outline-none resize-none ${inputCls}`} />
               </div>
             </div>
-
             <div className="flex items-center gap-2 mt-5">
               <button onClick={handleReschedule} disabled={rescheduling || !newDate || !newTime}
                 className="flex-1 rounded-lg bg-[#0822C0] py-2.5 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-40 transition-opacity">
                 {rescheduling ? "Saving…" : "Confirm Reschedule"}
               </button>
               <button onClick={() => setShowReschedule(false)}
-                className={`rounded-lg px-4 py-2.5 text-sm font-medium transition-colors ${dark ? "bg-white/8 text-white/60 hover:bg-white/12" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
+                className={`rounded-lg px-4 py-2.5 text-sm font-medium transition-colors border ${dark ? "bg-white/5 text-white/60 hover:bg-white/10 border-white/10" : "bg-white text-gray-600 hover:bg-gray-50 border-gray-200"}`}>
                 Cancel
               </button>
             </div>
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+function Row({ label: l, value: v, l: lCls, v: vCls }: { label: string; value: string; l: string; v: string }) {
+  return (
+    <div className="flex items-center justify-between gap-2">
+      <span className={`text-xs ${lCls} shrink-0`}>{l}</span>
+      <span className={`text-xs font-semibold text-right ${vCls}`}>{v}</span>
     </div>
   );
 }
