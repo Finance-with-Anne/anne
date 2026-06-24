@@ -172,7 +172,9 @@ export default function ProductsShopClient({ products, categories, currency }: P
                   const cat = product.category;
                   const isCourse = product.source_type === "course" && product.source_id;
                   const isTemplate = product.source_type === "template";
-                  const salesPage = product.sales_page_url ?? null;
+                  const isBooking = product.source_type === "booking";
+                  const salesPage = product.sales_page_url
+                    ?? (isBooking ? "/booking" : null);
                   const cardHref = isCourse
                     ? `/courses/${product.source_id}`
                     : salesPage ?? null;
@@ -224,6 +226,14 @@ export default function ProductsShopClient({ products, categories, currency }: P
                           <span className="flex-1 text-center rounded-xl bg-white text-gray-900 text-xs font-bold py-2.5">
                             Enroll Now
                           </span>
+                        ) : isBooking ? (
+                          <Link
+                            href="/booking"
+                            onClick={e => e.stopPropagation()}
+                            className="flex-1 text-center rounded-xl bg-white text-gray-900 text-xs font-bold py-2.5 hover:bg-gray-50 transition-colors"
+                          >
+                            Book Now
+                          </Link>
                         ) : isTemplate && salesPage ? (
                           <Link
                             href={`${salesPage}/checkout`}
