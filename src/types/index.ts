@@ -58,7 +58,7 @@ export type Product = {
   stock: number;
   active: boolean;
   download_url: string | null;
-  source_type: "manual" | "course" | "booking" | null;
+  source_type: "manual" | "course" | "booking" | "template" | null;
   source_id: string | null;
   created_at: string;
   updated_at: string;

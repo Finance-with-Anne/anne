@@ -159,7 +159,7 @@ export default function ProductForm({ initialData }: ProductFormProps) {
         {initialData?.source_type && initialData.source_type !== "manual" && (
           <div className={`rounded-lg px-4 py-2.5 text-xs flex items-center gap-2 ${dark ? "bg-white/3 border border-white/5 text-white/40" : "bg-blue-50 border border-blue-100 text-blue-600"}`}>
             <svg className="h-3.5 w-3.5 shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-            Imported from {initialData.source_type === "course" ? "a Course" : "a Booking Session"}. You can edit all fields freely.
+            {initialData.source_type === "template" ? "Template product" : `Imported from ${initialData.source_type === "course" ? "a Course" : "a Booking Session"}`}. You can edit all fields freely.
           </div>
         )}
 

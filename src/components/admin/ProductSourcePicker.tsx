@@ -5,7 +5,7 @@ import { useAdminTheme } from "@/lib/admin-theme";
 import ProductForm from "./ProductForm";
 import type { Course, BookingSession } from "@/types";
 
-type Source = "manual" | "course" | "booking" | null;
+type Source = "manual" | "course" | "booking" | "template" | null;
 
 interface Props {
   courses: Course[];
@@ -35,6 +35,10 @@ export default function ProductSourcePicker({ courses, sessions }: Props) {
   // If source picker is done and item is selected (or manual chosen), show the form
   if (source === "manual") {
     return <ProductForm initialData={{ source_type: "manual" }} />;
+  }
+
+  if (source === "template") {
+    return <ProductForm initialData={{ source_type: "template" }} />;
   }
 
   if (selected) {
@@ -75,7 +79,7 @@ export default function ProductSourcePicker({ courses, sessions }: Props) {
       </div>
 
       {source === null && (
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl">
           {/* Manual */}
           <button
             onClick={() => setSource("manual")}
@@ -118,6 +122,20 @@ export default function ProductSourcePicker({ courses, sessions }: Props) {
             <p className={`font-semibold text-sm ${heading}`}>From Booking Session</p>
             <p className={`text-xs mt-1 leading-relaxed ${sub}`}>Turn a bookable session into a purchasable product.</p>
             <p className={`text-xs mt-2 font-medium ${dark ? "text-white/30" : "text-gray-400"}`}>{sessions.length} session{sessions.length !== 1 ? "s" : ""} available</p>
+          </button>
+
+          {/* Template */}
+          <button
+            onClick={() => setSource("template")}
+            className={`rounded-xl border p-6 text-left group transition-all hover:shadow-md ${card} ${dark ? "hover:border-white/15" : "hover:border-violet-400/40"}`}
+          >
+            <span className={`inline-flex h-10 w-10 items-center justify-center rounded-xl mb-4 ${dark ? "bg-violet-400/10" : "bg-violet-50"} transition-colors`}>
+              <svg className="h-5 w-5 text-violet-500" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </span>
+            <p className={`font-semibold text-sm ${heading}`}>Template</p>
+            <p className={`text-xs mt-1 leading-relaxed ${sub}`}>Sell a downloadable spreadsheet, tracker, or digital template.</p>
           </button>
         </div>
       )}
