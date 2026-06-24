@@ -4,15 +4,18 @@ import { useState, useEffect } from "react";
 
 const slides = [
   {
-    headline: "Secure Your Financial Future",
+    line1: "Secure Your",
+    line2: "Financial Future",
     sub: "Simple, practical strategies to help you earn more, budget better, save consistently, and invest with confidence.",
   },
   {
-    headline: "Build Wealth With Clarity & Intention",
+    line1: "Build Wealth With",
+    line2: "Clarity & Intention",
     sub: "Clear guidance, real strategies, and practical steps to help you grow financially without confusion.",
   },
   {
-    headline: "Master Money With Confidence",
+    line1: "Master Money",
+    line2: "With Confidence",
     sub: "Actionable advice and easy-to-follow frameworks to help you manage your money effectively and confidently.",
   },
 ];
@@ -36,11 +39,10 @@ export default function HeroSlider() {
 
   return (
     <div
-      className="transition-opacity duration-400"
       style={{ opacity: visible ? 1 : 0, transition: "opacity 0.4s ease" }}
     >
       <h1 className="text-5xl sm:text-6xl lg:text-[3.5rem] font-bold text-gray-900 dark:text-white leading-[1.1] tracking-tight">
-        {slide.headline}
+        {slide.line1}<br />{slide.line2}
       </h1>
       <p className="mt-6 text-gray-500 dark:text-white/45 text-lg leading-relaxed max-w-[520px]">
         {slide.sub}
