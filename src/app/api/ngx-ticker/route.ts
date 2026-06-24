@@ -25,7 +25,7 @@ export async function GET() {
         "Referer": "https://ngxgroup.com/",
         "Accept": "application/json",
       },
-      next: { revalidate: 300 },
+      cache: "no-store",
     });
 
     if (!res.ok) throw new Error(`NGX API ${res.status}`);
