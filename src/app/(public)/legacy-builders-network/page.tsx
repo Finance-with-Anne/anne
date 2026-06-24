@@ -182,7 +182,7 @@ export default function LegacyBuildersNetworkPage() {
               The opportunity you've been waiting for all in one premium community.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/payment">
+              <Link href="/legacy-builders-network/checkout">
                 <button className="hidden sm:inline-flex items-center gap-2 bg-yellow-400 hover:bg-yellow-300 text-gray-900 px-8 py-4 rounded-lg font-bold text-lg transition-colors group">
                   Join the Premium Community Today
                   <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1.5" />
@@ -314,7 +314,7 @@ export default function LegacyBuildersNetworkPage() {
                 </ul>
               </div>
               <div className="p-6 pt-4 sm:pt-6">
-                <Link href="/payment" className="w-full">
+                <Link href="/legacy-builders-network/checkout" className="w-full">
                   <button className="inline-flex items-center justify-center gap-2 w-full bg-yellow-400 hover:bg-yellow-300 text-gray-900 px-6 py-5 sm:py-6 rounded-lg font-bold text-base sm:text-xl transition-colors duration-300 shadow-md hover:shadow-lg group">
                     <span>Join now</span>
                     <span className="hidden sm:inline"> — ₦150,000</span>
