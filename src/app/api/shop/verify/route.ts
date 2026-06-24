@@ -33,6 +33,15 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true, downloads });
   }
 
+  // Link order to user account by email so it appears in /account/files
+  if (!order.user_id) {
+    const { data: { users } } = await supabaseAdmin.auth.admin.listUsers({ perPage: 1000 });
+    const match = users.find(u => u.email?.toLowerCase() === (order.email as string).toLowerCase());
+    if (match) {
+      await supabaseAdmin.from("orders").update({ user_id: match.id }).eq("id", order_id);
+    }
+  }
+
   await supabaseAdmin
     .from("orders")
     .update({ status: "paid", transaction_id: String(transaction_id) })
