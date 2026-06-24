@@ -5,6 +5,13 @@ import { supabaseAdmin } from "@/lib/supabase/admin";
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Files & Templates — Finance with Anne" };
 
+interface Purchase {
+  id: string;
+  name: string;
+  download_url: string | null;
+  purchased_at: string;
+}
+
 interface Lesson {
   id: string;
   title: string;
@@ -30,6 +37,32 @@ export default async function AccountFilesPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/auth");
+
+  // Purchased template products (orders linked to this user)
+  const { data: ordersData } = await supabaseAdmin
+    .from("orders")
+    .select("id, items, created_at")
+    .eq("user_id", user.id)
+    .eq("status", "paid")
+    .order("created_at", { ascending: false });
+
+  const purchases: Purchase[] = [];
+  for (const order of ordersData ?? []) {
+    const items: { id: string; name: string }[] = order.items ?? [];
+    for (const item of items) {
+      const { data: product } = await supabaseAdmin
+        .from("products")
+        .select("download_url")
+        .eq("id", item.id)
+        .maybeSingle();
+      purchases.push({
+        id: `${order.id}-${item.id}`,
+        name: item.name,
+        download_url: product?.download_url ?? null,
+        purchased_at: order.created_at,
+      });
+    }
+  }
 
   // Get enrolled course IDs + curriculum
   const { data: enrollData } = await supabase
@@ -101,14 +134,62 @@ export default async function AccountFilesPage() {
   };
 
   return (
-    <div className="space-y-6 max-w-3xl">
+    <div className="space-y-8 max-w-3xl">
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Files &amp; Templates</h1>
-        <p className="text-sm text-gray-400 mt-1">PDFs, templates and resources from your enrolled courses.</p>
+        <p className="text-sm text-gray-400 mt-1">Your purchased templates and course resources.</p>
       </div>
 
-      {files.length === 0 ? (
+      {/* ── Purchased templates ── */}
+      {purchases.length > 0 && (
+        <div>
+          <h2 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
+            <svg className="h-4 w-4 text-violet-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            Purchased Templates
+          </h2>
+          <div className="rounded-2xl border border-violet-100 bg-white overflow-hidden">
+            <ul className="divide-y divide-gray-50">
+              {purchases.map(p => (
+                <li key={p.id} className="flex items-center gap-4 px-5 py-4 hover:bg-gray-50/60 transition-colors group">
+                  <div className="h-10 w-10 rounded-xl bg-violet-50 flex items-center justify-center shrink-0">
+                    <svg className="h-5 w-5 text-violet-500" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-900 truncate">{p.name}</p>
+                    <p className="text-xs text-gray-400 mt-0.5">
+                      Purchased {new Date(p.purchased_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
+                    </p>
+                  </div>
+                  {p.download_url ? (
+                    <a
+                      href={p.download_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="shrink-0 inline-flex items-center gap-1.5 rounded-xl border border-violet-200 text-xs font-semibold text-violet-600 px-3.5 py-2 hover:border-violet-400 hover:bg-violet-50 transition-colors"
+                    >
+                      <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                      </svg>
+                      Open
+                    </a>
+                  ) : (
+                    <span className="shrink-0 text-xs text-gray-400 px-3.5 py-2">Coming soon</span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
+
+      {/* ── Course files ── */}
+      {files.length === 0 && purchases.length === 0 ? (
+        // empty state — no purchases AND no course files
         <div className="rounded-3xl border border-gray-100 bg-white overflow-hidden">
           <div className="h-1.5 bg-gradient-to-r from-[#0822C0] via-blue-400 to-[#0822C0]/30" />
           <div className="px-8 py-16 text-center">
@@ -123,8 +204,16 @@ export default async function AccountFilesPage() {
             </p>
           </div>
         </div>
-      ) : (
+      ) : files.length > 0 ? (
         <div className="space-y-4">
+          {purchases.length > 0 && (
+            <h2 className="text-sm font-bold text-gray-900 flex items-center gap-2">
+              <svg className="h-4 w-4 text-[#0822C0]" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 10l4.553-2.069A1 1 0 0121 8.82v6.36a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z" />
+              </svg>
+              Course Resources
+            </h2>
+          )}
           {Object.entries(grouped).map(([courseId, items]) => (
             <div key={courseId} className="rounded-2xl border border-gray-100 bg-white overflow-hidden">
               {/* Course header */}
@@ -171,7 +260,7 @@ export default async function AccountFilesPage() {
             </div>
           ))}
         </div>
-      )}
+      ) : null}
     </div>
   );
 }

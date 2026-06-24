@@ -18,6 +18,7 @@ interface InitialData {
   stock?: number;
   active?: boolean;
   download_url?: string | null;
+  sales_page_url?: string | null;
   source_type?: string | null;
   source_id?: string | null;
 }
@@ -41,6 +42,7 @@ export default function ProductForm({ initialData }: ProductFormProps) {
   const [active, setActive] = useState(initialData?.active ?? true);
   const [imageUrl, setImageUrl] = useState(initialData?.image_url ?? "");
   const [downloadUrl, setDownloadUrl] = useState(initialData?.download_url ?? "");
+  const [salesPageUrl, setSalesPageUrl] = useState(initialData?.sales_page_url ?? "");
   const [uploading, setUploading] = useState(false);
   const [dragging, setDragging] = useState(false);
   const dragCounter = useRef(0);
@@ -117,6 +119,7 @@ export default function ProductForm({ initialData }: ProductFormProps) {
       active,
       image_url: imageUrl || null,
       download_url: downloadUrl || null,
+      sales_page_url: salesPageUrl || null,
       source_type: initialData?.source_type ?? "manual",
       source_id: initialData?.source_id ?? null,
     };
@@ -236,6 +239,37 @@ export default function ProductForm({ initialData }: ProductFormProps) {
                 placeholder="https://…"
                 className={`w-full rounded-lg border px-3 py-2.5 text-sm focus:outline-none transition-colors ${inputClass}`}
               />
+            </div>
+
+            <div className={`rounded-xl border p-5 ${card}`}>
+              <p className={`text-xs font-semibold uppercase tracking-wide mb-1 ${labelClass}`}>Sales Page URL</p>
+              <p className={`text-xs mb-3 ${dark ? "text-white/25" : "text-gray-400"}`}>
+                Path to the dedicated sales page for this product (e.g. <code className="font-mono">/money-tracker</code>).
+                The &quot;Learn More&quot; card button will link here, and &quot;Buy Now&quot; goes to{" "}
+                <code className="font-mono">/money-tracker/checkout</code>.
+              </p>
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  value={salesPageUrl}
+                  onChange={e => setSalesPageUrl(e.target.value)}
+                  placeholder="/money-tracker"
+                  className={`flex-1 rounded-lg border px-3 py-2.5 text-sm focus:outline-none transition-colors ${inputClass}`}
+                />
+                {salesPageUrl && (
+                  <a
+                    href={salesPageUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`shrink-0 inline-flex items-center gap-1.5 rounded-lg border px-3 py-2.5 text-xs font-semibold transition-colors ${dark ? "border-white/10 text-white/50 hover:text-white hover:border-white/20" : "border-gray-200 text-gray-500 hover:text-gray-800 hover:border-gray-300"}`}
+                  >
+                    <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                    Preview
+                  </a>
+                )}
+              </div>
             </div>
           </div>
 

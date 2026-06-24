@@ -171,7 +171,11 @@ export default function ProductsShopClient({ products, categories, currency }: P
                   const priceStr = formatPrice(product, currency);
                   const cat = product.category;
                   const isCourse = product.source_type === "course" && product.source_id;
-                  const cardHref = isCourse ? `/courses/${product.source_id}` : null;
+                  const isTemplate = product.source_type === "template";
+                  const salesPage = product.sales_page_url ?? null;
+                  const cardHref = isCourse
+                    ? `/courses/${product.source_id}`
+                    : salesPage ?? null;
                   const Wrapper = cardHref
                     ? ({ children }: { children: React.ReactNode }) => (
                         <Link href={cardHref} className="group relative rounded-2xl overflow-hidden block" style={{ aspectRatio: "4/3" }}>{children}</Link>
@@ -220,6 +224,14 @@ export default function ProductsShopClient({ products, categories, currency }: P
                           <span className="flex-1 text-center rounded-xl bg-white text-gray-900 text-xs font-bold py-2.5">
                             Enroll Now
                           </span>
+                        ) : isTemplate && salesPage ? (
+                          <Link
+                            href={`${salesPage}/checkout`}
+                            onClick={e => e.stopPropagation()}
+                            className="flex-1 text-center rounded-xl bg-white text-gray-900 text-xs font-bold py-2.5 hover:bg-gray-50 transition-colors"
+                          >
+                            Buy Now
+                          </Link>
                         ) : (
                           <button
                             onClick={e => {
@@ -237,9 +249,19 @@ export default function ProductsShopClient({ products, categories, currency }: P
                             Add to Cart
                           </button>
                         )}
-                        <span className="flex-1 text-center rounded-xl bg-white/20 backdrop-blur text-white text-xs font-bold py-2.5 border border-white/30">
-                          {isCourse ? "View Course" : "Learn More"}
-                        </span>
+                        {salesPage && !isCourse ? (
+                          <Link
+                            href={salesPage}
+                            onClick={e => e.stopPropagation()}
+                            className="flex-1 text-center rounded-xl bg-white/20 backdrop-blur text-white text-xs font-bold py-2.5 border border-white/30 hover:bg-white/30 transition-colors"
+                          >
+                            Learn More
+                          </Link>
+                        ) : (
+                          <span className="flex-1 text-center rounded-xl bg-white/20 backdrop-blur text-white text-xs font-bold py-2.5 border border-white/30">
+                            {isCourse ? "View Course" : "Learn More"}
+                          </span>
+                        )}
                       </div>
                     </Wrapper>
                   );

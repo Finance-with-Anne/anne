@@ -60,6 +60,7 @@ export type Product = {
   download_url: string | null;
   source_type: "manual" | "course" | "booking" | "template" | null;
   source_id: string | null;
+  sales_page_url: string | null;
   created_at: string;
   updated_at: string;
 };

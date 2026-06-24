@@ -61,11 +61,12 @@ export async function POST(req: NextRequest) {
 
   let password: string | null = null;
   let isNewUser = false;
+  let userId: string | null = existingUser?.id ?? null;
 
   if (!existingUser) {
     password = generatePassword();
     isNewUser = true;
-    const { error: createErr } = await supabaseAdmin.auth.admin.createUser({
+    const { data: created, error: createErr } = await supabaseAdmin.auth.admin.createUser({
       email,
       password,
       email_confirm: true,
@@ -73,7 +74,14 @@ export async function POST(req: NextRequest) {
     });
     if (createErr) {
       console.error("createUser error:", createErr);
+    } else {
+      userId = created.user?.id ?? null;
     }
+  }
+
+  // Link the order to the user so it shows in their files dashboard
+  if (userId) {
+    await supabaseAdmin.from("orders").update({ user_id: userId }).eq("id", order_id);
   }
 
   // Send delivery email
