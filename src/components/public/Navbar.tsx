@@ -130,6 +130,7 @@ const topLinks = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about" },
   { label: "Money-Talks", href: "/blog" },
+  { label: "Products & Services", href: "/products-services" },
 ];
 
 // ── Component ─────────────────────────────────────────────────────────────────
