@@ -3,18 +3,18 @@ import Image from "next/image";
 import HeroSlider from "@/components/public/HeroSlider";
 import CoreFeatures from "@/components/public/CoreFeatures";
 import { supabaseAdmin } from "@/lib/supabase/admin";
-import type { Testimonial, BookingSession } from "@/types";
+import type { Testimonial } from "@/types";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const [{ data: testimonialsData }, { data: sessionsData }] = await Promise.all([
-    supabaseAdmin.from("testimonials").select("*").eq("published", true).limit(4),
-    supabaseAdmin.from("booking_sessions").select("cover_image").eq("is_active", true).limit(1),
-  ]);
+  const { data: testimonialsData } = await supabaseAdmin
+    .from("testimonials")
+    .select("*")
+    .eq("published", true)
+    .limit(4);
 
   const testimonials = (testimonialsData ?? []) as Testimonial[];
-  const heroImage = (sessionsData as Pick<BookingSession, "cover_image">[] | null)?.[0]?.cover_image ?? null;
   const avatars = testimonials.filter((t) => t.image_url).slice(0, 4);
 
   return (
