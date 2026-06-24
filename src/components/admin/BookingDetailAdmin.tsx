@@ -209,18 +209,26 @@ export default function BookingDetailAdmin({ booking }: { booking: BookingWithRe
         </div>
       )}
 
-      {/* Status Update */}
-      <div className={`rounded-xl border ${card} p-5`}>
-        <p className={`text-xs font-semibold uppercase tracking-wide ${sub} mb-3`}>Update Status</p>
-        <div className="grid grid-cols-4 gap-2">
-          {STATUSES.map(s => (
-            <button key={s} disabled={updating || status === s} onClick={() => updateStatus(s)}
-              className={`rounded-lg py-2 text-xs font-medium capitalize transition-colors ${status === s ? dark ? "bg-white/15 text-white" : "bg-gray-900 text-white" : dark ? "bg-white/5 text-white/50 hover:bg-white/10 hover:text-white" : "bg-gray-100 text-gray-500 hover:bg-gray-200"}`}>
-              {s}
-            </button>
-          ))}
+      {/* Quick Actions */}
+      {(status === "pending" || status === "confirmed") && (
+        <div className={`rounded-xl border ${card} p-5`}>
+          <p className={`text-xs font-semibold uppercase tracking-wide ${sub} mb-3`}>Actions</p>
+          <div className="flex gap-2 flex-wrap">
+            {status === "pending" && (
+              <button onClick={() => updateStatus("confirmed")} disabled={updating}
+                className="rounded-lg px-4 py-2 text-xs font-medium bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 transition-colors disabled:opacity-40">
+                Confirm Booking
+              </button>
+            )}
+            {status !== "completed" && (
+              <button onClick={() => updateStatus("completed")} disabled={updating}
+                className="rounded-lg px-4 py-2 text-xs font-medium bg-green-500/10 text-green-400 hover:bg-green-500/20 transition-colors disabled:opacity-40">
+                Mark as Complete
+              </button>
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Metadata */}
       <p className={`text-xs ${sub}`}>Booked on {new Date(booking.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" })}</p>
