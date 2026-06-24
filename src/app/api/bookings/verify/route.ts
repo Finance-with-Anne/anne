@@ -92,10 +92,11 @@ export async function POST(req: NextRequest) {
         <h2 style="font-size:18px">New Paid Booking</h2>
         <table width="100%" style="background:#f9fafb;border-radius:8px;padding:20px;margin-top:16px">
           <tr><td style="color:#6b7280;font-size:13px;padding-bottom:8px">Client</td><td style="font-weight:600;text-align:right;font-size:13px;padding-bottom:8px">${booking.client_name}</td></tr>
-          <tr><td style="color:#6b7280;font-size:13px;padding-bottom:8px">Email</td><td style="font-weight:600;text-align:right;font-size:13px;padding-bottom:8px">${booking.client_email}</td></tr>
+          <tr><td style="color:#6b7280;font-size:13px;padding-bottom:8px">Email</td><td style="font-weight:600;text-align:right;font-size:13px;padding-bottom:8px"><a href="mailto:${booking.client_email}">${booking.client_email}</a></td></tr>
           <tr><td style="color:#6b7280;font-size:13px;padding-bottom:8px">Session</td><td style="font-weight:600;text-align:right;font-size:13px;padding-bottom:8px">${session.title}</td></tr>
           <tr><td style="color:#6b7280;font-size:13px;padding-bottom:8px">Date</td><td style="font-weight:600;text-align:right;font-size:13px;padding-bottom:8px">${formattedDate}</td></tr>
-          <tr><td style="color:#6b7280;font-size:13px">Time</td><td style="font-weight:600;text-align:right;font-size:13px">${booking.time}</td></tr>
+          <tr><td style="color:#6b7280;font-size:13px${meetLink ? ";padding-bottom:8px" : ""}">Time</td><td style="font-weight:600;text-align:right;font-size:13px${meetLink ? ";padding-bottom:8px" : ""}">${booking.time}</td></tr>
+          ${meetLink ? `<tr><td style="color:#6b7280;font-size:13px">Google Meet</td><td style="font-weight:600;text-align:right;font-size:13px"><a href="${meetLink}" style="color:#0822C0">${meetLink}</a></td></tr>` : ""}
         </table>
       </td></tr>
     </table>
