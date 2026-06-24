@@ -31,16 +31,24 @@ export async function GET() {
     if (!res.ok) throw new Error(`NGX API ${res.status}`);
     const raw: Array<Record<string, unknown>> = await res.json();
 
+    const featuredArr = [...FEATURED];
     const stocks = raw
       .filter(s => FEATURED.has(String(s.Symbol).trim()))
-      .map(s => ({
-        symbol:  String(s.Symbol).trim(),
-        price:   Number(s.ClosePrice),
-        change:  Number(s.Change),
-        pct:     Number(s.PercChange),
-        date:    String(s.TradeDate ?? ""),
-      }))
-      .sort((a, b) => FEATURED.size - [...FEATURED].indexOf(a.symbol) - (FEATURED.size - [...FEATURED].indexOf(b.symbol)));
+      .map(s => {
+        const close = s.ClosePrice != null ? Number(s.ClosePrice) : null;
+        const prev  = s.PrevClosingPrice != null ? Number(s.PrevClosingPrice) : null;
+        const price = close ?? prev ?? 0;
+        return {
+          symbol: String(s.Symbol).trim(),
+          price,
+          change: s.Change != null ? Number(s.Change) : 0,
+          pct:    s.PercChange != null ? Number(s.PercChange) : 0,
+          live:   close != null,
+          date:   String(s.TradeDate ?? ""),
+        };
+      })
+      .filter(s => s.price > 0)
+      .sort((a, b) => featuredArr.indexOf(a.symbol) - featuredArr.indexOf(b.symbol));
 
     const payload = { stocks, fetchedAt: new Date().toISOString() };
     cache = { data: payload, ts: Date.now() };
