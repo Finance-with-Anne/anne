@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { resend, EMAIL_FROM } from "@/lib/resend";
-import { BookingConfirmationEmail } from "@/lib/emails/booking-confirmation";
-import { AdminBookingNotifyEmail } from "@/lib/emails/booking-admin-notify";
 import { createMeetEvent } from "@/lib/google-calendar";
-import * as React from "react";
 
 const FLW_SECRET = process.env.FLW_SECRET_KEY ?? "";
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? EMAIL_FROM;
@@ -60,52 +57,63 @@ export async function POST(req: NextRequest) {
     await supabaseAdmin.from("bookings").update({ notes: autoMeetLink }).eq("id", booking_id);
   }
 
-  // Send emails
+  const meetSection = meetLink
+    ? `<div style="margin-top:24px;background:#eff6ff;border-radius:8px;padding:20px;text-align:center">
+        <p style="color:#1e40af;font-weight:600;margin:0 0 12px">Join your session via Google Meet</p>
+        <a href="${meetLink}" style="display:inline-block;background:#0822C0;color:#fff;padding:10px 24px;border-radius:6px;text-decoration:none;font-weight:600">Join Google Meet →</a>
+        <p style="font-size:11px;color:#6b7280;margin-top:8px">${meetLink}</p>
+       </div>`
+    : "";
+
+  const clientHtml = `<html><body style="font-family:Arial,sans-serif;color:#111;background:#fff;margin:0;padding:0">
+    <table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;margin:40px auto;padding:0 20px">
+      <tr><td>
+        <h1 style="font-size:24px;font-weight:700">Finance with Anne</h1>
+        <hr style="border-color:#e5e7eb;margin:16px 0"/>
+        <h2 style="font-size:18px">Booking Confirmed — Payment Received</h2>
+        <p style="color:#4b5563">Hi ${booking.client_name}, your session has been confirmed.</p>
+        <table width="100%" style="background:#f9fafb;border-radius:8px;padding:20px;margin-top:16px">
+          <tr><td style="color:#6b7280;font-size:13px;padding-bottom:8px">Session</td><td style="font-weight:600;text-align:right;font-size:13px;padding-bottom:8px">${session.title}</td></tr>
+          <tr><td style="color:#6b7280;font-size:13px;padding-bottom:8px">Date</td><td style="font-weight:600;text-align:right;font-size:13px;padding-bottom:8px">${formattedDate}</td></tr>
+          <tr><td style="color:#6b7280;font-size:13px">Time</td><td style="font-weight:600;text-align:right;font-size:13px">${booking.time}</td></tr>
+        </table>
+        ${meetSection}
+        <p style="color:#4b5563;margin-top:20px">If you have any questions, reply to this email.</p>
+        <p style="color:#4b5563;margin-top:20px">Warm regards,<br/><strong>Anne</strong></p>
+        <hr style="border-color:#e5e7eb;margin:32px 0 16px"/>
+        <p style="font-size:11px;color:#9ca3af;text-align:center">Finance with Anne — Building Wealth, One Step at a Time</p>
+      </td></tr>
+    </table>
+  </body></html>`;
+
+  const adminHtml = `<html><body style="font-family:Arial,sans-serif;color:#111;background:#fff;margin:0;padding:0">
+    <table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;margin:40px auto;padding:0 20px">
+      <tr><td>
+        <h2 style="font-size:18px">New Paid Booking</h2>
+        <table width="100%" style="background:#f9fafb;border-radius:8px;padding:20px;margin-top:16px">
+          <tr><td style="color:#6b7280;font-size:13px;padding-bottom:8px">Client</td><td style="font-weight:600;text-align:right;font-size:13px;padding-bottom:8px">${booking.client_name}</td></tr>
+          <tr><td style="color:#6b7280;font-size:13px;padding-bottom:8px">Email</td><td style="font-weight:600;text-align:right;font-size:13px;padding-bottom:8px">${booking.client_email}</td></tr>
+          <tr><td style="color:#6b7280;font-size:13px;padding-bottom:8px">Session</td><td style="font-weight:600;text-align:right;font-size:13px;padding-bottom:8px">${session.title}</td></tr>
+          <tr><td style="color:#6b7280;font-size:13px;padding-bottom:8px">Date</td><td style="font-weight:600;text-align:right;font-size:13px;padding-bottom:8px">${formattedDate}</td></tr>
+          <tr><td style="color:#6b7280;font-size:13px">Time</td><td style="font-weight:600;text-align:right;font-size:13px">${booking.time}</td></tr>
+        </table>
+      </td></tr>
+    </table>
+  </body></html>`;
+
   const [clientEmail, adminEmail] = await Promise.allSettled([
-    resend.emails.send({
-      from: EMAIL_FROM,
-      to: booking.client_email,
-      subject: `Booking Confirmed — ${session.title}`,
-      react: React.createElement(BookingConfirmationEmail, {
-        clientName: booking.client_name,
-        service: session.title,
-        date: formattedDate,
-        time: booking.time,
-        googleMeetLink: meetLink,
-        answers: booking.answers ?? undefined,
-        questions: session.questions ?? [],
-        isPaid: true,
-      }),
-    }),
-    resend.emails.send({
-      from: EMAIL_FROM,
-      to: ADMIN_EMAIL,
-      subject: `Booking Paid: ${booking.client_name} — ${session.title}`,
-      react: React.createElement(AdminBookingNotifyEmail, {
-        clientName: booking.client_name,
-        clientEmail: booking.client_email,
-        phone: booking.phone ?? undefined,
-        service: session.title,
-        date: formattedDate,
-        time: booking.time,
-        answers: booking.answers ?? undefined,
-        questions: session.questions ?? [],
-        isPaid: true,
-        amountPaid: booking.amount_paid ?? undefined,
-        currency: booking.currency ?? undefined,
-      }),
-    }),
+    resend.emails.send({ from: EMAIL_FROM, to: booking.client_email, subject: `Booking Confirmed — ${session.title}`, html: clientHtml }),
+    resend.emails.send({ from: EMAIL_FROM, to: ADMIN_EMAIL, subject: `Booking Paid: ${booking.client_name} — ${session.title}`, html: adminHtml }),
   ]);
 
   if (clientEmail.status === "rejected") console.error("Client email failed:", clientEmail.reason);
-  else if (clientEmail.value.error) console.error("Client email error:", clientEmail.value.error);
+  else if (clientEmail.value.error) console.error("Client email error:", JSON.stringify(clientEmail.value.error));
   if (adminEmail.status === "rejected") console.error("Admin email failed:", adminEmail.reason);
-  else if (adminEmail.value.error) console.error("Admin email error:", adminEmail.value.error);
+  else if (adminEmail.value.error) console.error("Admin email error:", JSON.stringify(adminEmail.value.error));
 
   return NextResponse.json({
     success: true,
     emailSent: clientEmail.status === "fulfilled" && !clientEmail.value.error,
-    emailFrom: EMAIL_FROM,
     emailTo: booking.client_email,
   });
 }
