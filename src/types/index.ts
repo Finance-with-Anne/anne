@@ -61,6 +61,7 @@ export type Product = {
   source_type: "manual" | "course" | "booking" | "template" | null;
   source_id: string | null;
   sales_page_url: string | null;
+  community_links: { type: "whatsapp" | "telegram"; label: string; url: string }[];
   created_at: string;
   updated_at: string;
 };
