@@ -215,15 +215,15 @@ export default function HomeHeroBelowSection() {
             {/* Cards — different heights for organic feel */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 items-start">
               {[
-                { n: "01", title: "Understand Your Financial Situation", desc: "Review your income, expenses, debt, and financial goals to gain a clear picture of where you stand.", minH: "min-h-[200px]", bg: "#eef2ff", numColor: "#0822C0", titleColor: "#111", descColor: "rgba(0,0,0,0.55)" },
-                { n: "02", title: "Create a Smart Money Plan", desc: "Develop a practical system for budgeting, saving, and managing your money effectively.", minH: "min-h-[260px]", bg: "#dce6ff", numColor: "#0822C0", titleColor: "#111", descColor: "rgba(0,0,0,0.55)" },
-                { n: "03", title: "Build Strong Financial Habits", desc: "Learn the daily and monthly money habits that help you stay consistent and avoid financial stress.", minH: "min-h-[230px]", bg: "#cdd9ff", numColor: "#0822C0", titleColor: "#111", descColor: "rgba(0,0,0,0.55)" },
-                { n: "04", title: "Grow and Invest Your Wealth", desc: "Start building long-term wealth through smart saving strategies and beginner-friendly investment guidance.", minH: "min-h-[180px]", bg: "#becdff", numColor: "#0822C0", titleColor: "#111", descColor: "rgba(0,0,0,0.55)" },
+                { n: "01", title: "Understand Your Financial Situation", desc: "Review your income, expenses, debt, and financial goals to gain a clear picture of where you stand.", minH: "min-h-[200px]", bg: "#eef2ff", numColor: "#0822C0", titleColor: "#111", descColor: "rgba(0,0,0,0.55)", delay: "0.1s" },
+                { n: "02", title: "Create a Smart Money Plan", desc: "Develop a practical system for budgeting, saving, and managing your money effectively.", minH: "min-h-[260px]", bg: "#dce6ff", numColor: "#0822C0", titleColor: "#111", descColor: "rgba(0,0,0,0.55)", delay: "0.22s" },
+                { n: "03", title: "Build Strong Financial Habits", desc: "Learn the daily and monthly money habits that help you stay consistent and avoid financial stress.", minH: "min-h-[230px]", bg: "#cdd9ff", numColor: "#0822C0", titleColor: "#111", descColor: "rgba(0,0,0,0.55)", delay: "0.34s" },
+                { n: "04", title: "Grow and Invest Your Wealth", desc: "Start building long-term wealth through smart saving strategies and beginner-friendly investment guidance.", minH: "min-h-[180px]", bg: "#becdff", numColor: "#0822C0", titleColor: "#111", descColor: "rgba(0,0,0,0.55)", delay: "0.46s" },
               ].map((step) => (
                 <div
                   key={step.n}
-                  className={`${step.minH} rounded-xl p-5 flex flex-col justify-between`}
-                  style={{ backgroundColor: step.bg }}
+                  className={`process-card ${step.minH} rounded-xl p-5 flex flex-col justify-between`}
+                  style={{ backgroundColor: step.bg, animationDelay: step.delay }}
                 >
                   <p className="text-xs font-semibold mb-3" style={{ color: step.numColor }}>{step.n}.</p>
                   <div>
