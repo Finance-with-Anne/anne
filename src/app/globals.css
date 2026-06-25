@@ -31,10 +31,9 @@ body {
   font-family: var(--font-dm-sans), sans-serif;
 }
 
-/* Dark mode: catch-all for pages not yet fully converted */
-.dark main section,
-.dark main > div,
-.dark main > article {
+/* Dark mode: catch-all for pages not yet fully converted.
+   Uses :where() so specificity is 0 — explicit Tailwind utilities always win. */
+:where(.dark main section, .dark main > div, .dark main > article) {
   background-color: inherit;
 }
 
