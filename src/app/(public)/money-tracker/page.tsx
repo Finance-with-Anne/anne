@@ -213,18 +213,18 @@ export default function MoneyTrackerPage() {
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight uppercase mb-10">
             What You Get
           </h2>
-          <div className="rounded-2xl border border-[#0822C0]/15 bg-white p-8 text-left inline-block w-full max-w-lg">
-            <p className="font-bold text-base text-gray-900 mb-5">🎁 The Complete Tracker</p>
-            <div className="space-y-3">
+          <div className="rounded-2xl border border-[#0822C0]/15 bg-white p-8 text-left inline-block w-full max-w-xl">
+            <p className="font-bold text-base text-gray-900 mb-6">🎁 The Complete Tracker</p>
+            <div className="grid grid-cols-2 gap-3">
               {[
                 "Income tracking (all sources)",
                 "Expense management (comprehensive categories)",
                 "Investment & wealth building tracker",
                 "Fully customizable for your life",
               ].map((item) => (
-                <div key={item} className="flex items-start gap-3">
+                <div key={item} className="flex items-start gap-2">
                   <CheckIcon color="#16a34a" />
-                  <span className="text-sm text-gray-700">{item}</span>
+                  <span className="text-sm text-gray-700 leading-snug">{item}</span>
                 </div>
               ))}
             </div>
@@ -235,6 +235,9 @@ export default function MoneyTrackerPage() {
       {/* ── Urgency CTA ── */}
       <section className="bg-gradient-to-br from-red-600 to-orange-500 text-white">
         <div className="mx-auto max-w-3xl px-6 py-20 text-center">
+          <div className="h-12 w-12 rounded-full bg-white/15 flex items-center justify-center mx-auto mb-6 text-2xl">
+            ⏰
+          </div>
           <p className="text-base font-semibold text-white/80 mb-3">
             This price is only for the first 100 customers
           </p>
