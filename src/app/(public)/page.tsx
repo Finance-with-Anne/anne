@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import HeroSlider from "@/components/public/HeroSlider";
 import CoreFeatures from "@/components/public/CoreFeatures";
+import ImpactSection from "@/components/public/ImpactSection";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import type { Testimonial } from "@/types";
 
@@ -100,6 +101,11 @@ export default async function HomePage() {
 
         </div>
       </section>
+
+      {/* ══════════════════════════════════════
+          IMPACT — stats + animated chart
+      ══════════════════════════════════════ */}
+      <ImpactSection />
 
       {/* ══════════════════════════════════════
           CORE FEATURES — dark blue section
