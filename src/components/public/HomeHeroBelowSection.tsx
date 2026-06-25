@@ -107,7 +107,7 @@ const cards = [
 /* ── Component ──────────────────────────────────────────── */
 export default function HomeHeroBelowSection() {
   return (
-    <section style={{ backgroundColor: "#111111", color: "#ffffff" }} className="px-6 sm:px-10 lg:px-16 py-16 lg:py-20">
+    <section style={{ backgroundColor: "#070F1E", color: "#ffffff" }} className="px-6 sm:px-10 lg:px-16 py-16 lg:py-20">
       <div className="mx-auto max-w-7xl">
 
         {/* Heading + CTA */}
