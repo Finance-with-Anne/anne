@@ -110,10 +110,19 @@ export default function HomeHeroBelowSection() {
     <section style={{ backgroundColor: "#111111", color: "#ffffff" }} className="px-6 sm:px-10 lg:px-16 py-16 lg:py-20">
       <div className="mx-auto max-w-7xl">
 
-        {/* Heading */}
-        <h2 className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.05] text-white mb-14 max-w-3xl">
-          Financial freedom is a skill and we'll teach you
-        </h2>
+        {/* Heading + CTA */}
+        <div className="flex items-center justify-between gap-8 mb-14">
+          <h2 className="text-3xl sm:text-4xl font-bold leading-snug text-white max-w-lg">
+            Financial freedom is a skill and we'll teach you
+          </h2>
+          <Link
+            href="/legacy-builders-network"
+            className="shrink-0 rounded-full px-6 py-3 text-sm font-semibold transition-colors"
+            style={{ backgroundColor: "#ffffff", color: "#111111" }}
+          >
+            Join Paid Community
+          </Link>
+        </div>
 
         {/* Stats row */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 mb-14 border-t border-white/10 pt-10">
