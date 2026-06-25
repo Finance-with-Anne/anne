@@ -185,51 +185,53 @@ export default function HomeHeroBelowSection() {
         </div>
 
         {/* My Process */}
-        <div className="mt-6 rounded-2xl overflow-hidden flex flex-col lg:flex-row">
-          {/* Image */}
-          <div className="relative lg:w-[55%] min-h-[320px]">
-            <Image src="/anne-hero.png" alt="Anne — Financial Coach" fill className="object-cover object-center" />
-          </div>
+        <div className="mt-6 relative rounded-2xl overflow-hidden">
+          {/* Background image */}
+          <Image src="/anne-hero.png" alt="Anne — Financial Coach" fill className="object-cover object-center" />
+          {/* Dark overlay */}
+          <div className="absolute inset-0" style={{ backgroundColor: "rgba(7,15,30,0.78)" }} />
 
           {/* Content */}
-          <div className="lg:w-[45%] p-8 lg:p-12 flex flex-col justify-between" style={{ backgroundColor: "#f7f7f2" }}>
-            <div>
-              <span className="inline-block text-xs font-semibold tracking-widest uppercase px-3 py-1 rounded-full mb-6" style={{ backgroundColor: "#d8f04a", color: "#111" }}>
-                My Process
-              </span>
-              <h3 className="text-2xl lg:text-3xl font-bold leading-snug mb-4" style={{ color: "#111" }}>
-                How FWA Helps You Take Control of Your Money
-              </h3>
-              <p className="text-sm leading-relaxed mb-8" style={{ color: "rgba(0,0,0,0.5)" }}>
-                Anne simplifies personal finance by guiding individuals through practical steps that help them understand money, build better habits, and grow long-term financial security.
-              </p>
-              <ul className="space-y-0">
-                {[
-                  { title: "Understand Your Financial Situation", desc: "Review your income, expenses, debt, and financial goals to gain a clear picture of where you stand." },
-                  { title: "Create a Smart Money Plan", desc: "Develop a practical system for budgeting, saving, and managing your money effectively." },
-                  { title: "Build Strong Financial Habits", desc: "Learn the daily and monthly money habits that help you stay consistent and avoid financial stress." },
-                  { title: "Grow and Invest Your Wealth", desc: "Start building long-term wealth through smart saving strategies and beginner-friendly investment guidance." },
-                ].map((item) => (
-                  <li key={item.title} className="border-l-2 border-black/15 pl-4 py-3 mb-3 last:mb-0">
-                    <p className="text-sm font-semibold mb-0.5" style={{ color: "#111" }}>{item.title}</p>
-                    <p className="text-sm" style={{ color: "rgba(0,0,0,0.5)" }}>{item.desc}</p>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="mt-10">
+          <div className="relative z-10 p-8 lg:p-12 pb-10">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10">
+              <div>
+                <span className="inline-block text-xs font-semibold tracking-widest uppercase px-3 py-1 rounded-full mb-4" style={{ backgroundColor: "#d8f04a", color: "#111" }}>
+                  My Process
+                </span>
+                <h3 className="text-2xl lg:text-4xl font-bold leading-snug text-white max-w-lg">
+                  How FWA Helps You Take Control of Your Money
+                </h3>
+              </div>
               <Link
                 href="/booking"
-                className="inline-flex items-center gap-3 text-sm font-semibold px-5 py-3 rounded-full"
-                style={{ backgroundColor: "#111", color: "#fff" }}
+                className="inline-flex items-center gap-3 text-sm font-semibold px-5 py-3 rounded-full shrink-0"
+                style={{ backgroundColor: "#fff", color: "#111" }}
               >
                 Book a session
-                <span className="w-6 h-6 rounded-full flex items-center justify-center" style={{ backgroundColor: "#d8f04a" }}>
-                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                    <path d="M2 6h8M7 3l3 3-3 3" stroke="#111" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </span>
               </Link>
+            </div>
+
+            {/* Cards — different heights for organic feel */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 items-start">
+              {[
+                { n: "01", title: "Understand Your Financial Situation", desc: "Review your income, expenses, debt, and financial goals to gain a clear picture of where you stand.", minH: "min-h-[200px]" },
+                { n: "02", title: "Create a Smart Money Plan", desc: "Develop a practical system for budgeting, saving, and managing your money effectively.", minH: "min-h-[260px]" },
+                { n: "03", title: "Build Strong Financial Habits", desc: "Learn the daily and monthly money habits that help you stay consistent and avoid financial stress.", minH: "min-h-[230px]" },
+                { n: "04", title: "Grow and Invest Your Wealth", desc: "Start building long-term wealth through smart saving strategies and beginner-friendly investment guidance.", minH: "min-h-[180px]" },
+              ].map((step) => (
+                <div
+                  key={step.n}
+                  className={`${step.minH} rounded-xl p-5 flex flex-col justify-between`}
+                  style={{ backgroundColor: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.12)" }}
+                >
+                  <p className="text-xs font-semibold mb-3" style={{ color: "#d8f04a" }}>{step.n}.</p>
+                  <div>
+                    <h4 className="text-sm font-bold text-white mb-2">{step.title}</h4>
+                    <p className="text-xs leading-relaxed" style={{ color: "rgba(255,255,255,0.55)" }}>{step.desc}</p>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
