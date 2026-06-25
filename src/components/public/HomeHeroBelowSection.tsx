@@ -215,20 +215,20 @@ export default function HomeHeroBelowSection() {
             {/* Cards — different heights for organic feel */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 items-start">
               {[
-                { n: "01", title: "Understand Your Financial Situation", desc: "Review your income, expenses, debt, and financial goals to gain a clear picture of where you stand.", minH: "min-h-[200px]" },
-                { n: "02", title: "Create a Smart Money Plan", desc: "Develop a practical system for budgeting, saving, and managing your money effectively.", minH: "min-h-[260px]" },
-                { n: "03", title: "Build Strong Financial Habits", desc: "Learn the daily and monthly money habits that help you stay consistent and avoid financial stress.", minH: "min-h-[230px]" },
-                { n: "04", title: "Grow and Invest Your Wealth", desc: "Start building long-term wealth through smart saving strategies and beginner-friendly investment guidance.", minH: "min-h-[180px]" },
+                { n: "01", title: "Understand Your Financial Situation", desc: "Review your income, expenses, debt, and financial goals to gain a clear picture of where you stand.", minH: "min-h-[200px]", bg: "#f4b8d4", numColor: "#111", titleColor: "#111", descColor: "rgba(0,0,0,0.55)" },
+                { n: "02", title: "Create a Smart Money Plan", desc: "Develop a practical system for budgeting, saving, and managing your money effectively.", minH: "min-h-[260px]", bg: "#d8f04a", numColor: "#111", titleColor: "#111", descColor: "rgba(0,0,0,0.55)" },
+                { n: "03", title: "Build Strong Financial Habits", desc: "Learn the daily and monthly money habits that help you stay consistent and avoid financial stress.", minH: "min-h-[230px]", bg: "#f5c842", numColor: "#111", titleColor: "#111", descColor: "rgba(0,0,0,0.55)" },
+                { n: "04", title: "Grow and Invest Your Wealth", desc: "Start building long-term wealth through smart saving strategies and beginner-friendly investment guidance.", minH: "min-h-[180px]", bg: "#0822C0", numColor: "#d8f04a", titleColor: "#fff", descColor: "rgba(255,255,255,0.6)" },
               ].map((step) => (
                 <div
                   key={step.n}
                   className={`${step.minH} rounded-xl p-5 flex flex-col justify-between`}
-                  style={{ backgroundColor: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.12)" }}
+                  style={{ backgroundColor: step.bg }}
                 >
-                  <p className="text-xs font-semibold mb-3" style={{ color: "#d8f04a" }}>{step.n}.</p>
+                  <p className="text-xs font-semibold mb-3" style={{ color: step.numColor }}>{step.n}.</p>
                   <div>
-                    <h4 className="text-sm font-bold text-white mb-2">{step.title}</h4>
-                    <p className="text-xs leading-relaxed" style={{ color: "rgba(255,255,255,0.55)" }}>{step.desc}</p>
+                    <h4 className="text-sm font-bold mb-2" style={{ color: step.titleColor }}>{step.title}</h4>
+                    <p className="text-xs leading-relaxed" style={{ color: step.descColor }}>{step.desc}</p>
                   </div>
                 </div>
               ))}
