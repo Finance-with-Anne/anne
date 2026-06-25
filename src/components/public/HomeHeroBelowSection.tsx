@@ -125,9 +125,9 @@ export default function HomeHeroBelowSection() {
         </div>
 
         {/* Stats row */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 mb-14 border-t border-white/10 pt-10">
+        <div className="grid grid-cols-2 lg:grid-cols-4 mb-14 border-t border-white/10 divide-x divide-white/10">
           {stats.map((s) => (
-            <div key={s.metric} className="flex flex-col gap-3">
+            <div key={s.metric} className="flex flex-col gap-3 px-8 py-8 first:pl-0">
               <p className="text-sm text-white/50 leading-relaxed">{s.text}</p>
               <p className="text-base font-semibold text-white">
                 {s.metric} <span className="font-normal text-white/60">{s.unit}</span>
