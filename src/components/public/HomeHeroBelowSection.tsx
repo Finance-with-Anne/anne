@@ -78,7 +78,8 @@ const cards = [
     title: "1:1 Coaching",
     bg: "#f4b8d4",
     Icon: IconCoaching,
-    desc: null,
+    desc: "Personalised sessions to build your financial confidence and create a clear money plan.",
+    featured: false,
   },
   {
     n: "02",
@@ -93,14 +94,16 @@ const cards = [
     title: "Courses & Resources",
     bg: "#f5c842",
     Icon: IconCourses,
-    desc: null,
+    desc: "Self-paced courses and downloadable templates to help you manage money and build wealth.",
+    featured: false,
   },
   {
     n: "04",
     title: "Financial Planning",
     bg: "#ffffff",
     Icon: IconPlanning,
-    desc: null,
+    desc: "Structured plans that map your income, expenses and goals into a clear financial roadmap.",
+    featured: false,
   },
 ];
 
@@ -143,34 +146,37 @@ export default function HomeHeroBelowSection() {
           {cards.map((card) => (
             <div
               key={card.n}
-              className="rounded-2xl p-6 flex flex-col justify-between min-h-[300px] lg:min-h-[340px]"
+              className="group rounded-2xl p-6 flex flex-col justify-between min-h-[300px] lg:min-h-[340px] cursor-pointer"
               style={{ backgroundColor: card.bg, color: "#111111" }}
             >
-              {/* Icon */}
-              <div>
+              {/* Icon — lifts on hover */}
+              <div className="w-fit transition-transform duration-300 ease-out group-hover:-translate-y-2 group-hover:scale-110">
                 <card.Icon />
               </div>
 
               {/* Bottom content */}
               <div>
-                {card.featured && card.desc && (
-                  <>
-                    <p className="text-xs font-semibold mb-1" style={{ color: "#111" }}>{card.n}.</p>
-                    <h3 className="text-xl font-bold mb-3" style={{ color: "#111" }}>{card.title}</h3>
-                    <p className="text-sm leading-relaxed mb-4" style={{ color: "rgba(0,0,0,0.65)" }}>{card.desc}</p>
-                    <div className="w-9 h-9 rounded-full border-2 border-black/30 flex items-center justify-center">
+                <p className="text-xs font-semibold mb-1" style={{ color: card.featured ? "#111" : "rgba(0,0,0,0.5)" }}>{card.n}.</p>
+                <h3 className="text-xl font-bold" style={{ color: "#111" }}>{card.title}</h3>
+
+                {/* Expandable content: always open for featured, opens on hover for others */}
+                <div className={`grid transition-all duration-500 ease-in-out ${card.featured ? "grid-rows-[1fr]" : "grid-rows-[0fr] group-hover:grid-rows-[1fr]"}`}>
+                  <div className="overflow-hidden">
+                    <p
+                      className={`text-sm leading-relaxed mt-3 mb-4 transition-opacity duration-300 ${card.featured ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}
+                      style={{ color: "rgba(0,0,0,0.65)" }}
+                    >
+                      {card.desc}
+                    </p>
+                    <div
+                      className={`w-9 h-9 rounded-full border-2 border-black/30 flex items-center justify-center transition-opacity duration-300 ${card.featured ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}
+                    >
                       <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
                         <path d="M2 7h10M8 3l4 4-4 4" stroke="#111" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
                     </div>
-                  </>
-                )}
-                {!card.featured && (
-                  <>
-                    <p className="text-xs font-semibold mb-1" style={{ color: "rgba(0,0,0,0.5)" }}>{card.n}.</p>
-                    <h3 className="text-xl font-bold" style={{ color: "#111" }}>{card.title}</h3>
-                  </>
-                )}
+                  </div>
+                </div>
               </div>
             </div>
           ))}
