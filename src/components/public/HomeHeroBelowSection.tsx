@@ -185,7 +185,7 @@ export default function HomeHeroBelowSection() {
         </div>
 
         {/* Why Choose Anne */}
-        <div className="mt-6 relative rounded-2xl overflow-hidden min-h-[600px] lg:min-h-[640px]">
+        <div className="mt-6 relative rounded-2xl overflow-hidden min-h-[720px] lg:min-h-[740px]">
           {/* Full-bleed coach image */}
           <Image
             src="/anne-hero.png"
@@ -198,28 +198,28 @@ export default function HomeHeroBelowSection() {
 
           {/* Details card — sits on the left inside the container */}
           <div
-            className="absolute top-6 left-6 bottom-6 w-[90%] sm:w-[60%] lg:w-[42%] rounded-xl p-7 lg:p-9 flex flex-col justify-between overflow-hidden"
+            className="absolute top-6 left-6 bottom-6 w-[90%] sm:w-[60%] lg:w-[42%] rounded-xl p-6 lg:p-8 flex flex-col justify-between"
             style={{ backgroundColor: "rgba(255,255,255,0.96)", backdropFilter: "blur(8px)" }}
           >
             <div>
-              <span className="inline-block text-xs font-semibold tracking-widest uppercase px-3 py-1 rounded-full mb-5" style={{ backgroundColor: "#d8f04a", color: "#111" }}>
+              <span className="inline-block text-xs font-semibold tracking-widest uppercase px-3 py-1 rounded-full mb-4" style={{ backgroundColor: "#d8f04a", color: "#111" }}>
                 My Process
               </span>
-              <h3 className="text-xl lg:text-2xl font-bold leading-snug mb-3" style={{ color: "#111" }}>
+              <h3 className="text-lg lg:text-xl font-bold leading-snug mb-2" style={{ color: "#111" }}>
                 How FWA Helps You Take Control of Your Money
               </h3>
-              <p className="text-sm leading-relaxed mb-5" style={{ color: "rgba(0,0,0,0.55)" }}>
+              <p className="text-xs leading-relaxed mb-4" style={{ color: "rgba(0,0,0,0.55)" }}>
                 Anne simplifies personal finance by guiding individuals through practical steps that help them understand money, build better habits, and grow long-term financial security.
               </p>
-              <ul className="space-y-0">
+              <ul>
                 {[
                   { title: "Understand Your Financial Situation", desc: "Review your income, expenses, debt, and financial goals to gain a clear picture of where you stand." },
                   { title: "Create a Smart Money Plan", desc: "Develop a practical system for budgeting, saving, and managing your money effectively." },
                   { title: "Build Strong Financial Habits", desc: "Learn the daily and monthly money habits that help you stay consistent and avoid financial stress." },
                   { title: "Grow and Invest Your Wealth", desc: "Start building long-term wealth through smart saving strategies and beginner-friendly investment guidance." },
                 ].map((item) => (
-                  <li key={item.title} className="flex flex-col gap-0.5 py-3 border-l-2 border-black/20 pl-4 mb-3 last:mb-0">
-                    <span className="text-sm font-semibold" style={{ color: "#111" }}>{item.title}</span>
+                  <li key={item.title} className="flex flex-col gap-0.5 py-2.5 border-l-2 border-black/20 pl-3 mb-2.5 last:mb-0">
+                    <span className="text-xs font-semibold" style={{ color: "#111" }}>{item.title}</span>
                     <span className="text-xs leading-relaxed" style={{ color: "rgba(0,0,0,0.55)" }}>{item.desc}</span>
                   </li>
                 ))}
