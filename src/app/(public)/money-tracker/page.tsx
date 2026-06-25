@@ -6,201 +6,215 @@ export const metadata: Metadata = {
   description: "The Complete Money Tracker That Finds Your 'Lost Money' in Just 10 Minutes a Day!",
 };
 
-function CheckIcon({ color = "#0822C0" }: { color?: string }) {
+function CircleXIcon() {
   return (
-    <svg className="h-4 w-4 shrink-0 mt-0.5" fill="none" stroke={color} strokeWidth={2.5} viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+    <svg className="w-6 h-6 text-red-500 shrink-0 mt-1" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="12" cy="12" r="10" />
+      <path d="m15 9-6 6" /><path d="m9 9 6 6" />
+    </svg>
+  );
+}
+
+function CircleCheckIcon({ className = "w-6 h-6 text-green-500 shrink-0 mt-1" }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M21.801 10A10 10 0 1 1 17 3.335" />
+      <path d="m9 11 3 3L22 4" />
+    </svg>
+  );
+}
+
+function ZapIcon({ className }: { className: string }) {
+  return (
+    <svg className={className} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z" />
+    </svg>
+  );
+}
+
+function ShieldIcon({ className }: { className: string }) {
+  return (
+    <svg className={className} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
+    </svg>
+  );
+}
+
+function ArrowRightIcon({ className }: { className: string }) {
+  return (
+    <svg className={className} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M5 12h14" /><path d="m12 5 7 7-7 7" />
     </svg>
   );
 }
 
 export default function MoneyTrackerPage() {
   return (
-    <div className="bg-white text-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
 
       {/* ── Hero ── */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-[#0822C0] via-[#1a3ed4] to-[#2563EB] text-white">
-        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(ellipse_at_top_right,_#ffffff_0%,_transparent_60%)]" />
-        <div className="relative mx-auto max-w-4xl px-6 py-20 sm:py-28 text-center">
+      <section className="relative overflow-hidden bg-gradient-to-r from-[#0822C0] to-[#1a3ed4] text-white">
+        <div className="absolute inset-0 bg-black/10" />
+        <div className="relative mx-auto max-w-4xl px-4 py-8 md:py-16 text-center">
 
-          <span className="inline-block rounded-full bg-white/15 border border-white/25 px-5 py-1.5 text-xs font-semibold tracking-widest uppercase mb-8">
-            Limited Time Offer · First 100 Customers Only
-          </span>
-
-          <h1 className="text-4xl sm:text-5xl lg:text-[3.5rem] font-extrabold leading-tight tracking-tight mb-6">
-            Stop Wondering Where Your<br className="hidden sm:block" /> Money Goes{" "}
-            <span className="text-yellow-400">Every Month</span>
-          </h1>
-
-          <p className="text-lg sm:text-xl text-white/75 max-w-2xl mx-auto mb-10">
-            The Complete Money Tracker That Finds Your &ldquo;Lost Money&rdquo; in Just{" "}
-            <span className="text-yellow-300 font-semibold">10 Minutes a Day!</span>
-          </p>
-
-          <div className="flex flex-col items-center gap-3">
-            <Link
-              href="/money-tracker/checkout"
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-white text-[#0822C0] font-bold text-base px-10 py-4 hover:bg-yellow-50 transition-colors shadow-xl"
-            >
-              Get Your Tracker Now →
-            </Link>
-            <p className="text-sm text-white/50">🔒 Secure Checkout + Instant Access</p>
+          <div className="inline-flex items-center bg-yellow-400/20 text-yellow-300 px-4 py-2 rounded-full text-sm font-medium mb-6">
+            <ZapIcon className="w-4 h-4 mr-2" />
+            Limited Time Offer - First 100 Customers Only
           </div>
 
-          {/* Stats */}
-          <div className="mt-14 grid grid-cols-3 divide-x divide-white/15 border border-white/15 rounded-2xl bg-white/8 backdrop-blur-sm overflow-hidden">
+          <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight text-white">
+            Stop Wondering Where Your Money Goes
+            <span className="text-yellow-400"> Every Month</span>
+          </h1>
+
+          <p className="text-xl md:text-2xl mb-8 opacity-90 leading-relaxed">
+            The Complete Money Tracker That Finds Your &ldquo;Lost Money&rdquo; in Just
+            <span className="font-bold text-yellow-400"> 10 Minutes a Day!</span>
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
+            <Link href="/money-tracker/checkout">
+              <button className="inline-flex items-center gap-2 bg-white hover:bg-yellow-50 text-[#0822C0] font-bold px-8 py-4 text-lg rounded-md transition-colors group">
+                Get Your Tracker Now
+                <ArrowRightIcon className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1.5" />
+              </button>
+            </Link>
+            <div className="flex items-center text-yellow-300">
+              <ShieldIcon className="w-5 h-5 mr-2" />
+              <span>Secure Checkout • Instant Access</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
             {[
-              { value: "76%", label: "Live paycheck to paycheck" },
+              { value: "78%", label: "Live paycheck to paycheck" },
               { value: "10 min", label: "Daily time investment" },
               { value: "100%", label: "Customizable to your life" },
             ].map((s) => (
-              <div key={s.value} className="py-5 px-4">
-                <p className="text-2xl sm:text-3xl font-extrabold text-white">{s.value}</p>
-                <p className="text-xs text-white/50 mt-1 leading-tight">{s.label}</p>
+              <div key={s.value} className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
+                <div className="text-2xl font-bold text-yellow-400">{s.value}</div>
+                <div className="text-sm opacity-90">{s.label}</div>
               </div>
             ))}
           </div>
-
         </div>
       </section>
 
       {/* ── The Problem ── */}
-      <section className="mx-auto max-w-4xl px-6 py-20">
-        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-center uppercase mb-12">
-          The Problem
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {[
-            "You check your bank account thinking \"Where did all my money go?\"",
-            "You want to save but there's never anything left over",
-            "You've tried budgeting apps but they're too complicated or don't work",
-            "You feel stressed about money but don't know where to start",
-          ].map((text, i) => (
-            <div key={i} className="flex items-start gap-3 rounded-xl border border-red-100 bg-red-50/60 p-5">
-              <svg className="h-4 w-4 text-red-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-              <p className="text-gray-700 text-sm leading-relaxed">{text}</p>
-            </div>
-          ))}
+      <section className="py-8 md:py-16">
+        <div className="mx-auto max-w-4xl px-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-900">THE PROBLEM</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {[
+              "You check your bank account thinking \"Where did all my money go?\"",
+              "You want to save but there's never anything left over",
+              "You've tried budgeting apps but they're too complicated or don't work",
+              "You feel stressed about money but don't know where to start",
+            ].map((text, i) => (
+              <div key={i} className="rounded-lg border border-red-200 bg-red-50 shadow-sm">
+                <div className="p-6">
+                  <div className="flex items-start space-x-3">
+                    <CircleXIcon />
+                    <p className="text-gray-800 font-medium">{text}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="text-center mt-12">
+            <p className="text-lg text-gray-700 max-w-3xl mx-auto">
+              You&apos;re not alone.{" "}
+              <span className="font-bold text-[#0822C0]">78% of people live paycheck to paycheck</span>{" "}
+              not because they don&apos;t earn enough, but because they don&apos;t know where their money is going.
+            </p>
+          </div>
         </div>
-        <p className="mt-10 text-center text-sm text-gray-500 max-w-xl mx-auto leading-relaxed">
-          You&apos;re not alone.{" "}
-          <span className="font-semibold text-gray-900">78% of people live paycheck to paycheck</span>{" "}
-          not because they don&apos;t earn enough, but because they don&apos;t know where their money is going.
-        </p>
       </section>
 
-      {/* ── Solution ── */}
-      <section className="bg-[#f0f2ff] border-y border-[#0822C0]/8">
-        <div className="mx-auto max-w-4xl px-6 py-20 text-center">
-          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight uppercase mb-4">
-            The Solution
-          </h2>
-          <p className="text-[#0822C0] font-bold text-xl sm:text-2xl mb-2">
-            The Complete Budget and Money Tracker
+      {/* ── The Solution ── */}
+      <section className="py-8 md:py-16 bg-gradient-to-r from-[#0822C0]/5 to-yellow-400/5">
+        <div className="mx-auto max-w-4xl px-4 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold mb-6 text-gray-900">THE SOLUTION</h2>
+          <h3 className="text-2xl md:text-3xl font-bold mb-4 text-[#0822C0]">The Complete Budget and Money Tracker</h3>
+          <p className="text-xl mb-12 text-gray-700">
+            The Only Budget Tracker That Actually Adapts to{" "}
+            <span className="font-bold text-green-500">YOUR Life</span>
           </p>
-          <p className="text-gray-600 text-base mb-12">
-            The Only Budget Tracker That Actually Adapts to <span className="font-semibold text-gray-900">YOUR Life</span>
-          </p>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-left max-w-2xl mx-auto mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
             {[
-              "Track ALL Income Sources - Salary, Freelance, business, investments, rental income",
+              "Track ALL Income Sources - Salary, freelance, business, investments, rental income",
               "Comprehensive Expenses - Every category you actually spend money on",
               "Investment Tracking - See how much you're building for your future",
               "100% Customizable - Adapts to YOUR unique situation",
               "Works Any Currency - Perfect for anyone, anywhere",
               "Simple & Clean - Takes 10 minutes a day, not hours",
             ].map((item, i) => (
-              <div key={i} className="flex items-start gap-3 bg-white rounded-xl border border-[#0822C0]/10 px-4 py-3">
-                <CheckIcon color="#0822C0" />
-                <span className="text-sm text-gray-700 leading-relaxed">{item}</span>
+              <div key={i} className="rounded-lg border border-green-200 bg-green-50 shadow-sm">
+                <div className="p-6">
+                  <div className="flex items-start space-x-3">
+                    <CircleCheckIcon />
+                    <p className="text-gray-800 font-medium">{item}</p>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
-
-          <Link
-            href="/money-tracker/checkout"
-            className="inline-flex items-center gap-2 rounded-xl bg-[#0822C0] text-white font-bold text-base px-8 py-4 hover:bg-[#0618a0] transition-colors shadow-lg"
-          >
-            Start Tracking Your Money Today →
+          <Link href="/money-tracker/checkout">
+            <button className="inline-flex items-center gap-2 bg-[#0822C0] hover:bg-[#0618a0] text-white font-bold px-8 py-4 text-lg rounded-md transition-colors group">
+              Start Tracking Your Money Today
+              <ArrowRightIcon className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1.5" />
+            </button>
           </Link>
         </div>
       </section>
 
-      {/* ── What Happens Week by Week ── */}
-      <section className="mx-auto max-w-3xl px-6 py-20">
-        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-center uppercase mb-14">
-          What Happens When You Use This
-        </h2>
-        <div className="space-y-6">
-          {[
-            {
-              week: "Week 1",
-              text: "Find your \"money leaks\" - small expenses that add up to thousands monthly",
-              color: "bg-blue-500",
-            },
-            {
-              week: "Week 2",
-              text: "Discover money you didn't know you had",
-              color: "bg-green-500",
-            },
-            {
-              week: "Week 3",
-              text: "Start making smarter spending decisions automatically",
-              color: "bg-purple-500",
-            },
-            {
-              week: "Week 4",
-              text: "See exactly how much you can save and invest each month",
-              color: "bg-orange-500",
-            },
-          ].map((item, i) => (
-            <div key={i} className="flex items-center gap-5">
-              <div className={`h-10 w-10 rounded-full ${item.color} text-white font-bold text-sm flex items-center justify-center shrink-0`}>
-                {i + 1}
+      {/* ── What Happens When You Use This ── */}
+      <section className="py-8 md:py-16">
+        <div className="mx-auto max-w-4xl px-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-900">WHAT HAPPENS WHEN YOU USE THIS</h2>
+          <div className="space-y-8">
+            {[
+              { n: 1, week: "Week 1", text: "Find your \"money leaks\" - small expenses that add up to thousands monthly", color: "bg-blue-500" },
+              { n: 2, week: "Week 2", text: "Discover money you didn't know you had", color: "bg-green-500" },
+              { n: 3, week: "Week 3", text: "Start making smarter spending decisions automatically", color: "bg-purple-500" },
+              { n: 4, week: "Week 4", text: "See exactly how much you can save and invest each month", color: "bg-orange-500" },
+            ].map((item) => (
+              <div key={item.n} className="flex items-center space-x-6">
+                <div className={`w-16 h-16 ${item.color} rounded-full flex items-center justify-center text-white font-bold text-lg shrink-0`}>
+                  {item.n}
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">{item.week}</h3>
+                  <p className="text-gray-700 text-lg">{item.text}</p>
+                </div>
               </div>
-              <div>
-                <p className="font-bold text-sm text-gray-900">{item.week}</p>
-                <p className="text-sm text-gray-500 leading-relaxed">{item.text}</p>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* ── Testimonials ── */}
-      <section className="bg-gray-50 border-y border-gray-100">
-        <div className="mx-auto max-w-5xl px-6 py-20">
-          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-center uppercase mb-14">
-            Real Results
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+      {/* ── Real Results ── */}
+      <section className="py-8 md:py-16 bg-gray-50">
+        <div className="mx-auto max-w-4xl px-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-900">REAL RESULTS</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              {
-                name: "Sarah M.",
-                quote: "I found ₦40,320 in forgotten subscriptions in my first week!",
-              },
-              {
-                name: "Michael T.",
-                quote: "Finally a tracker that doesn't feel like math homework.",
-              },
-              {
-                name: "David R.",
-                quote: "I've saved more in 3 months than I did all last year.",
-              },
+              { name: "Sarah M.", quote: "I found ₦80,000 in forgotten subscriptions in my first week!" },
+              { name: "Michael T.", quote: "Finally, a tracker that doesn't feel like math homework." },
+              { name: "David R.", quote: "I've saved more in 3 months than I did all last year." },
             ].map((t) => (
-              <div key={t.name} className="rounded-2xl bg-white border border-gray-100 p-6">
-                <div className="flex gap-1 mb-4">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <svg key={i} className="h-4 w-4 text-amber-400 fill-amber-400" viewBox="0 0 24 24">
-                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                    </svg>
-                  ))}
+              <div key={t.name} className="rounded-lg border bg-white shadow-lg">
+                <div className="p-6">
+                  <div className="flex mb-4">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <svg key={i} className="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z" />
+                      </svg>
+                    ))}
+                  </div>
+                  <p className="text-gray-700 mb-4 italic">&ldquo;{t.quote}&rdquo;</p>
+                  <p className="font-semibold text-[#0822C0]">- {t.name}</p>
                 </div>
-                <p className="text-sm text-gray-600 leading-relaxed mb-4">&ldquo;{t.quote}&rdquo;</p>
-                <p className="font-semibold text-sm text-gray-900">— {t.name}</p>
               </div>
             ))}
           </div>
@@ -208,130 +222,113 @@ export default function MoneyTrackerPage() {
       </section>
 
       {/* ── What You Get ── */}
-      <section className="bg-[#f0f2ff] border-b border-[#0822C0]/8">
-        <div className="mx-auto max-w-3xl px-6 py-20 text-center">
-          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight uppercase mb-10">
-            What You Get
-          </h2>
-          <div className="rounded-2xl border border-[#0822C0]/15 bg-white p-8 text-left inline-block w-full max-w-xl">
-            <p className="font-bold text-base text-gray-900 mb-6">🎁 The Complete Tracker</p>
-            <div className="grid grid-cols-2 gap-3">
-              {[
-                "Income tracking (all sources)",
-                "Expense management (comprehensive categories)",
-                "Investment & wealth building tracker",
-                "Fully customizable for your life",
-              ].map((item) => (
-                <div key={item} className="flex items-start gap-2">
-                  <CheckIcon color="#16a34a" />
-                  <span className="text-sm text-gray-700 leading-snug">{item}</span>
-                </div>
-              ))}
+      <section className="py-8 md:py-16">
+        <div className="mx-auto max-w-4xl px-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-900">WHAT YOU GET</h2>
+          <div className="rounded-lg border shadow-sm bg-gradient-to-r from-[#0822C0]/10 to-yellow-400/10 border-[#0822C0]/20">
+            <div className="p-8">
+              <div className="text-center mb-8">
+                <h3 className="text-2xl font-bold text-[#0822C0] mb-4">🎯 The Complete Tracker</h3>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {[
+                  "Income tracking (all sources)",
+                  "Expense management (comprehensive categories)",
+                  "Investment & wealth building tracker",
+                  "Fully customizable for your life",
+                ].map((item) => (
+                  <div key={item} className="flex items-center space-x-3">
+                    <CircleCheckIcon className="w-5 h-5 text-green-500 shrink-0" />
+                    <span className="text-gray-800 font-medium">{item}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── Urgency CTA ── */}
-      <section className="bg-gradient-to-br from-red-600 to-orange-500 text-white">
-        <div className="mx-auto max-w-3xl px-6 py-20 text-center">
-          <div className="h-12 w-12 rounded-full bg-white/15 flex items-center justify-center mx-auto mb-6 text-2xl">
-            ⏰
-          </div>
-          <p className="text-base font-semibold text-white/80 mb-3">
-            This price is only for the first 100 customers
+      {/* ── Urgency ── */}
+      <section className="py-8 md:py-16 bg-gradient-to-r from-red-500 to-orange-500 text-white">
+        <div className="mx-auto max-w-4xl px-4 text-center">
+          <h2 className="text-6xl font-bold mb-6">⏰</h2>
+          <p className="text-xl mb-4">
+            This price is only for the <span className="font-bold">first 100 customers</span>
           </p>
-          <p className="text-white/60 text-sm mb-8">
-            After that, price returns to the original price.
-          </p>
-          <p className="text-2xl sm:text-3xl font-bold mb-10">
-            Every day you wait is another day money slips away.
-          </p>
-          <Link
-            href="/money-tracker/checkout"
-            className="inline-flex items-center gap-2 rounded-xl bg-white text-red-600 font-bold text-base px-10 py-4 hover:bg-red-50 transition-colors shadow-xl"
-          >
-            Get Your Complete Budget and Money Tracker Today! →
+          <p className="text-lg mb-8 opacity-90">After that, price returns to the original price.</p>
+          <p className="text-2xl font-bold mb-8">Every day you wait is another day money slips away.</p>
+          <Link href="/money-tracker/checkout">
+            <button className="inline-flex items-center gap-2 bg-white hover:bg-gray-100 text-red-600 font-bold px-8 py-4 text-lg rounded-md transition-colors group">
+              Get Your Complete Budget and Money Tracker Today!
+              <ArrowRightIcon className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1.5" />
+            </button>
           </Link>
         </div>
       </section>
 
       {/* ── FAQ ── */}
-      <section className="mx-auto max-w-3xl px-6 py-20">
-        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-center uppercase mb-12">FAQ</h2>
-        <div className="space-y-6">
-          {[
-            {
-              q: "Do I need spreadsheet skills?",
-              a: "No. If you can type numbers, you can use this.",
-            },
-            {
-              q: "Works with my currency?",
-              a: "Yes. Any currency worldwide.",
-            },
-            {
-              q: "How much time does this take?",
-              a: "Just 10 minutes per day.",
-            },
-            {
-              q: "Can it work with my phone?",
-              a: "Yes, you can use it on your phone and it updates online for you.",
-            },
-            {
-              q: "Do I need Excel to use this?",
-              a: "No, this works with Google Sheets, you don't need Excel.",
-            },
-          ].map((item) => (
-            <div key={item.q} className="border-b border-gray-100 pb-6">
-              <p className="font-semibold text-sm text-[#0822C0] mb-1">Q: {item.q}</p>
-              <p className="text-sm text-gray-500 leading-relaxed">A: {item.a}</p>
-            </div>
-          ))}
+      <section className="py-8 md:py-16 bg-gray-50">
+        <div className="mx-auto max-w-4xl px-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-900">FAQ</h2>
+          <div className="space-y-6">
+            {[
+              { q: "Do I need spreadsheet skills?", a: "No! If you can type numbers, you can use this." },
+              { q: "Works with my currency?", a: "Yes! Any currency worldwide." },
+              { q: "How much time does this take?", a: "Just 10 minutes per day." },
+              { q: "Can it work with my phone?", a: "Yes, you can use it on your phone and it updates online for you." },
+              { q: "Do I need Excel to use this?", a: "No, this works with Google sheets, you don't need excel." },
+            ].map((item) => (
+              <div key={item.q} className="rounded-lg border bg-white shadow-sm">
+                <div className="p-6">
+                  <h3 className="font-bold text-[#0822C0] mb-2">Q: {item.q}</h3>
+                  <p className="text-gray-700">A: {item.a}</p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* ── Two Choices ── */}
-      <section className="bg-gradient-to-br from-[#050D2A] to-[#0822C0] text-white">
-        <div className="mx-auto max-w-3xl px-6 py-20 text-center">
-          <h2 className="text-2xl sm:text-3xl font-bold mb-10">
-            You have two choices:
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-12">
-            {/* Choice 1 */}
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-6 text-left">
-              <div className="h-9 w-9 rounded-full bg-red-500/20 border border-red-400/30 flex items-center justify-center mb-4">
-                <svg className="h-4 w-4 text-red-400" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+      <section className="py-8 md:py-16 bg-gradient-to-r from-[#0822C0] to-[#1a3ed4] text-white">
+        <div className="mx-auto max-w-4xl px-4 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold mb-8">You have two choices:</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+            <div className="rounded-lg border border-red-200 bg-red-50 shadow-sm">
+              <div className="p-6 text-center">
+                <svg className="w-12 h-12 text-red-500 mx-auto mb-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="m15 9-6 6" /><path d="m9 9 6 6" />
                 </svg>
+                <p className="text-gray-800 font-medium">Keep wondering where your money goes...</p>
               </div>
-              <p className="text-white/70 text-sm leading-relaxed">
-                Keep wondering where your money goes...
-              </p>
             </div>
-            {/* Choice 2 */}
-            <div className="rounded-2xl border border-green-400/25 bg-green-400/8 p-6 text-left">
-              <div className="h-9 w-9 rounded-full bg-green-500/20 border border-green-400/30 flex items-center justify-center mb-4">
-                <svg className="h-4 w-4 text-green-400" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+            <div className="rounded-lg border border-green-200 bg-green-50 shadow-sm">
+              <div className="p-6 text-center">
+                <svg className="w-12 h-12 text-green-500 mx-auto mb-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M21.801 10A10 10 0 1 1 17 3.335" />
+                  <path d="m9 11 3 3L22 4" />
                 </svg>
+                <p className="text-gray-800 font-medium">Take control today with the Complete Money Mastery Tracker.</p>
               </div>
-              <p className="text-white/85 text-sm leading-relaxed font-medium">
-                Take control today with the Complete Money Mastery Tracker
-              </p>
             </div>
           </div>
-          <p className="text-white/50 text-sm mb-8">
-            Don&apos;t let another day of financial uncertainty slip by.
-          </p>
-          <Link
-            href="/money-tracker/checkout"
-            className="inline-flex items-center gap-2 rounded-xl bg-white text-[#0822C0] font-bold text-base px-10 py-4 hover:bg-blue-50 transition-colors shadow-xl"
-          >
-            Get Your Tracker Now →
+          <p className="text-xl mb-8 opacity-90">Don&apos;t let another day of financial uncertainty slip by.</p>
+          <Link href="/money-tracker/checkout">
+            <button className="inline-flex items-center gap-2 bg-white hover:bg-blue-50 text-[#0822C0] font-bold px-8 py-4 text-lg rounded-md transition-colors mb-6 group">
+              Get Your Tracker Now
+              <ArrowRightIcon className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1.5" />
+            </button>
           </Link>
-          <div className="mt-5 flex items-center justify-center gap-6 text-xs text-white/35">
-            <span>🔒 Instant Access</span>
-            <span>🔒 Secure Checkout</span>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center text-yellow-300">
+            <div className="flex items-center">
+              <ZapIcon className="w-5 h-5 mr-2" />
+              <span>Instant Access</span>
+            </div>
+            <div className="flex items-center">
+              <ShieldIcon className="w-5 h-5 mr-2" />
+              <span>Secure Checkout</span>
+            </div>
           </div>
         </div>
       </section>
