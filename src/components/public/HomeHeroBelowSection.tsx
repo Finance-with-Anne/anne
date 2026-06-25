@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 /* ── Abstract geometric icons ───────────────────────────── */
 function IconCoaching() {
@@ -181,6 +182,57 @@ export default function HomeHeroBelowSection() {
               </div>
             </Link>
           ))}
+        </div>
+
+        {/* Why Choose Anne */}
+        <div className="mt-6 rounded-2xl overflow-hidden flex flex-col lg:flex-row" style={{ backgroundColor: "#f5f5f0" }}>
+          {/* Left — text */}
+          <div className="flex-1 p-8 lg:p-12 flex flex-col justify-between">
+            <div>
+              <span className="inline-block text-xs font-semibold tracking-widest uppercase px-3 py-1 rounded-full mb-6" style={{ backgroundColor: "#d8f04a", color: "#111" }}>
+                Why Choose Anne
+              </span>
+              <h3 className="text-2xl lg:text-3xl font-bold leading-snug mb-8" style={{ color: "#111" }}>
+                A personal approach to<br />your financial freedom
+              </h3>
+              <ul className="space-y-5">
+                {[
+                  { title: "Practical & Relatable", desc: "Real-world money advice that fits your life — no jargon, no judgement." },
+                  { title: "Community-Driven", desc: "Join a growing network of people actively building wealth together." },
+                  { title: "Proven Results", desc: "Clients who have transformed their finances through coaching and community." },
+                ].map((item) => (
+                  <li key={item.title} className="flex flex-col gap-1 pb-5 border-b border-black/10 last:border-0 last:pb-0">
+                    <span className="text-sm font-semibold" style={{ color: "#111" }}>{item.title}</span>
+                    <span className="text-sm" style={{ color: "rgba(0,0,0,0.55)" }}>{item.desc}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="mt-8">
+              <Link
+                href="/booking"
+                className="inline-flex items-center gap-3 text-sm font-semibold px-5 py-3 rounded-full transition-colors"
+                style={{ backgroundColor: "#111", color: "#fff" }}
+              >
+                Book a session
+                <span className="w-6 h-6 rounded-full flex items-center justify-center" style={{ backgroundColor: "#d8f04a" }}>
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <path d="M2 6h8M7 3l3 3-3 3" stroke="#111" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </span>
+              </Link>
+            </div>
+          </div>
+
+          {/* Right — image */}
+          <div className="lg:w-[45%] min-h-[320px] relative">
+            <Image
+              src="/anne-hero.png"
+              alt="Anne — Financial Coach"
+              fill
+              className="object-cover object-top"
+            />
+          </div>
         </div>
 
       </div>
