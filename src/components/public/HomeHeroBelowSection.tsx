@@ -160,16 +160,16 @@ export default function HomeHeroBelowSection() {
                 <h3 className="text-xl font-bold" style={{ color: "#111" }}>{card.title}</h3>
 
                 {/* Expandable content: always open for featured, opens on hover for others */}
-                <div className={`grid transition-all duration-500 ease-in-out ${card.featured ? "grid-rows-[1fr]" : "grid-rows-[0fr] group-hover:grid-rows-[1fr]"}`}>
+                <div className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-all duration-500 ease-in-out">
                   <div className="overflow-hidden">
                     <p
-                      className={`text-sm leading-relaxed mt-3 mb-4 transition-opacity duration-300 ${card.featured ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}
+                      className="text-sm leading-relaxed mt-3 mb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                       style={{ color: "rgba(0,0,0,0.65)" }}
                     >
                       {card.desc}
                     </p>
                     <div
-                      className={`w-9 h-9 rounded-full border-2 border-black/30 flex items-center justify-center transition-opacity duration-300 ${card.featured ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}
+                      className="w-9 h-9 rounded-full border-2 border-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                     >
                       <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
                         <path d="M2 7h10M8 3l4 4-4 4" stroke="#111" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
