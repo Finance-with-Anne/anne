@@ -32,9 +32,11 @@ body {
 }
 
 /* Dark mode: catch-all for pages not yet fully converted.
-   Uses :where() so specificity is 0 — explicit Tailwind utilities always win. */
-:where(.dark main section, .dark main > div, .dark main > article) {
-  background-color: inherit;
+   In @layer base so Tailwind utilities (@layer utilities) always override it. */
+@layer base {
+  :where(.dark main section, .dark main > div, .dark main > article) {
+    background-color: inherit;
+  }
 }
 
 /* Light mode — lift low-contrast grays to be readable on off-white bg */
