@@ -79,7 +79,7 @@ const cards = [
     bg: "#f4b8d4",
     Icon: IconCoaching,
     desc: "Personalised sessions to build your financial confidence and create a clear money plan.",
-    featured: false,
+    href: "/booking",
   },
   {
     n: "02",
@@ -87,7 +87,7 @@ const cards = [
     bg: "#d8f04a",
     Icon: IconMoneyTalks,
     desc: "A live community where we talk money, mindset and long-term wealth strategies together.",
-    featured: true,
+    href: "/blog",
   },
   {
     n: "03",
@@ -95,7 +95,7 @@ const cards = [
     bg: "#f5c842",
     Icon: IconCourses,
     desc: "Self-paced courses and downloadable templates to help you manage money and build wealth.",
-    featured: false,
+    href: "/products-services",
   },
   {
     n: "04",
@@ -103,7 +103,7 @@ const cards = [
     bg: "#ffffff",
     Icon: IconPlanning,
     desc: "Structured plans that map your income, expenses and goals into a clear financial roadmap.",
-    featured: false,
+    href: "/legacy-builders-network",
   },
 ];
 
@@ -144,9 +144,10 @@ export default function HomeHeroBelowSection() {
         {/* Service cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {cards.map((card) => (
-            <div
+            <Link
               key={card.n}
-              className="group rounded-2xl p-6 flex flex-col justify-between min-h-[300px] lg:min-h-[340px] cursor-pointer"
+              href={card.href}
+              className="group rounded-2xl p-6 flex flex-col justify-between min-h-[300px] lg:min-h-[340px]"
               style={{ backgroundColor: card.bg, color: "#111111" }}
             >
               {/* Icon — lifts on hover */}
@@ -156,7 +157,7 @@ export default function HomeHeroBelowSection() {
 
               {/* Bottom content */}
               <div>
-                <p className="text-xs font-semibold mb-1" style={{ color: card.featured ? "#111" : "rgba(0,0,0,0.5)" }}>{card.n}.</p>
+                <p className="text-xs font-semibold mb-1" style={{ color: "rgba(0,0,0,0.5)" }}>{card.n}.</p>
                 <h3 className="text-xl font-bold" style={{ color: "#111" }}>{card.title}</h3>
 
                 {/* Expandable content: always open for featured, opens on hover for others */}
@@ -178,7 +179,7 @@ export default function HomeHeroBelowSection() {
                   </div>
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
 
