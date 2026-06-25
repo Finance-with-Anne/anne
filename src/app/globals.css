@@ -233,3 +233,56 @@ body {
   height: 0;
   opacity: 0.3;
 }
+
+/* Join Paid Community animated button */
+.btn-animated {
+  outline: none;
+  cursor: pointer;
+  border: none;
+  padding: 0.9rem 2rem;
+  margin: 0;
+  font-family: inherit;
+  font-size: 17px;
+  position: relative;
+  display: inline-block;
+  letter-spacing: 0.05rem;
+  font-weight: 700;
+  border-radius: 500px;
+  overflow: hidden;
+  background: #66ff66;
+  color: ghostwhite;
+  text-decoration: none;
+}
+
+.btn-animated span {
+  position: relative;
+  z-index: 10;
+  transition: color 0.4s;
+}
+
+.btn-animated:hover span {
+  color: black;
+}
+
+.btn-animated::before,
+.btn-animated::after {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.btn-animated::before {
+  content: "";
+  background: #000;
+  width: 120%;
+  left: -10%;
+  transform: skew(30deg);
+  transition: transform 0.4s cubic-bezier(0.3, 1, 0.8, 1);
+}
+
+.btn-animated:hover::before {
+  transform: translate3d(100%, 0, 0);
+}
