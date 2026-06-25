@@ -196,9 +196,9 @@ export default function HomeHeroBelowSection() {
           {/* Subtle left fade so image doesn't fight the card */}
           <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-transparent" />
 
-          {/* Details card — sits on the right inside the container */}
+          {/* Details card — sits on the left inside the container */}
           <div
-            className="absolute top-6 right-6 bottom-6 w-[90%] sm:w-[60%] lg:w-[42%] rounded-xl p-7 lg:p-9 flex flex-col justify-between"
+            className="absolute top-6 left-6 bottom-6 w-[90%] sm:w-[60%] lg:w-[42%] rounded-xl p-7 lg:p-9 flex flex-col justify-between overflow-hidden"
             style={{ backgroundColor: "rgba(255,255,255,0.96)", backdropFilter: "blur(8px)" }}
           >
             <div>
