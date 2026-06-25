@@ -50,7 +50,7 @@ const stats = [
     href: "/blog",
   },
   {
-    text: "Live monthly sessions where we talk budgeting, investing and wealth mindset openly",
+    text: "Live monthly sessions where we talk budgeting, investing and wealth mindset",
     metric: "500+",
     unit: "members",
     link: "Join the talks",
