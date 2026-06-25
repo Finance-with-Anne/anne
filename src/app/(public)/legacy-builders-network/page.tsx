@@ -198,7 +198,7 @@ export default function LegacyBuildersNetworkPage() {
       </section>
 
       {/* ── PAIN POINTS ── */}
-      <section className="py-8 sm:py-16" style={{backgroundColor:"#ffffff"}}>
+      <section className="py-8 sm:py-16" style={{backgroundColor:"#ffffff", color:"#111827"}}>
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center">
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-center mb-8 sm:mb-12" style={{color:"#111827"}}>
             Does this sound familiar?
@@ -330,7 +330,7 @@ export default function LegacyBuildersNetworkPage() {
       </section>
 
       {/* ── TESTIMONIALS ── */}
-      <section className="py-8 sm:py-12 md:py-16 px-4 sm:px-6 md:px-8" style={{backgroundColor:"#ffffff"}}>
+      <section className="py-8 sm:py-12 md:py-16 px-4 sm:px-6 md:px-8" style={{backgroundColor:"#ffffff", color:"#111827"}}>
         <div className="w-full text-center mb-8 sm:mb-12">
           <h2 className="text-xl sm:text-3xl md:text-4xl font-bold text-center mb-3" style={{color:"#111827"}}>
             Don&apos;t just take my word for it

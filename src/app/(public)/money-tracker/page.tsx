@@ -50,7 +50,7 @@ function ArrowRightIcon({ className }: { className: string }) {
 
 export default function MoneyTrackerPage() {
   return (
-    <div style={{ backgroundColor: "#f8fafc" }}>
+    <div style={{ backgroundColor: "#f8fafc", color: "#111827" }}>
 
       {/* ── Hero ── */}
       <section style={{ background: "linear-gradient(to right, #0822C0, #1a3ed4)", color: "#ffffff", position: "relative", overflow: "hidden" }}>
