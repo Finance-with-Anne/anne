@@ -236,9 +236,10 @@ body {
 
 /* Join Paid Community animated button */
 .btn-animated {
-  outline: none;
+  outline: none !important;
   cursor: pointer;
   border: none;
+  text-decoration: none !important;
   padding: 0.55rem 1.4rem;
   margin: 0;
   font-family: inherit;
