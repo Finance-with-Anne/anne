@@ -23,8 +23,8 @@ export default async function HomePage() {
       {/* ══════════════════════════════════════
           HERO
       ══════════════════════════════════════ */}
-      <section className="relative overflow-hidden border-b border-gray-100 dark:border-white/6">
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#0822C0]/6 via-transparent to-transparent dark:from-[#0822C0]/12" />
+      <section className="relative overflow-hidden border-b border-gray-100 dark:border-white/6 dark:bg-[#050910]">
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#0822C0]/6 via-transparent to-transparent dark:hidden" />
         <div className="relative mx-auto max-w-7xl px-8 min-h-[calc(100vh-4rem)] flex flex-col justify-center lg:flex-row lg:items-center lg:gap-24 py-16">
 
           {/* Left — text */}
