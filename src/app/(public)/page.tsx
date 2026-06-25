@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import HeroSlider from "@/components/public/HeroSlider";
+import HomeHeroBelowSection from "@/components/public/HomeHeroBelowSection";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import type { Testimonial } from "@/types";
 
@@ -100,6 +101,7 @@ export default async function HomePage() {
         </div>
       </section>
 
+      <HomeHeroBelowSection />
 
     </div>
   );
