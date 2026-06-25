@@ -185,30 +185,43 @@ export default function HomeHeroBelowSection() {
         </div>
 
         {/* Why Choose Anne */}
-        <div className="mt-6 rounded-2xl overflow-hidden flex flex-col lg:flex-row" style={{ backgroundColor: "#f5f5f0" }}>
-          {/* Left — text */}
-          <div className="flex-1 p-8 lg:p-12 flex flex-col justify-between">
+        <div className="mt-6 relative rounded-2xl overflow-hidden min-h-[480px] lg:min-h-[520px]">
+          {/* Full-bleed coach image */}
+          <Image
+            src="/anne-hero.png"
+            alt="Anne — Financial Coach"
+            fill
+            className="object-cover object-center"
+          />
+          {/* Subtle left fade so image doesn't fight the card */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-transparent" />
+
+          {/* Details card — sits on the right inside the container */}
+          <div
+            className="absolute top-6 right-6 bottom-6 w-[90%] sm:w-[60%] lg:w-[42%] rounded-xl p-7 lg:p-9 flex flex-col justify-between"
+            style={{ backgroundColor: "rgba(255,255,255,0.96)", backdropFilter: "blur(8px)" }}
+          >
             <div>
-              <span className="inline-block text-xs font-semibold tracking-widest uppercase px-3 py-1 rounded-full mb-6" style={{ backgroundColor: "#d8f04a", color: "#111" }}>
+              <span className="inline-block text-xs font-semibold tracking-widest uppercase px-3 py-1 rounded-full mb-5" style={{ backgroundColor: "#d8f04a", color: "#111" }}>
                 Why Choose Anne
               </span>
-              <h3 className="text-2xl lg:text-3xl font-bold leading-snug mb-8" style={{ color: "#111" }}>
+              <h3 className="text-xl lg:text-2xl font-bold leading-snug mb-7" style={{ color: "#111" }}>
                 A personal approach to<br />your financial freedom
               </h3>
-              <ul className="space-y-5">
+              <ul className="space-y-0">
                 {[
                   { title: "Practical & Relatable", desc: "Real-world money advice that fits your life — no jargon, no judgement." },
                   { title: "Community-Driven", desc: "Join a growing network of people actively building wealth together." },
                   { title: "Proven Results", desc: "Clients who have transformed their finances through coaching and community." },
                 ].map((item) => (
-                  <li key={item.title} className="flex flex-col gap-1 pb-5 border-b border-black/10 last:border-0 last:pb-0">
+                  <li key={item.title} className="flex flex-col gap-0.5 py-4 border-b border-black/10 last:border-0">
                     <span className="text-sm font-semibold" style={{ color: "#111" }}>{item.title}</span>
-                    <span className="text-sm" style={{ color: "rgba(0,0,0,0.55)" }}>{item.desc}</span>
+                    <span className="text-sm leading-relaxed" style={{ color: "rgba(0,0,0,0.55)" }}>{item.desc}</span>
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="mt-8">
+            <div className="mt-6">
               <Link
                 href="/booking"
                 className="inline-flex items-center gap-3 text-sm font-semibold px-5 py-3 rounded-full transition-colors"
@@ -222,16 +235,6 @@ export default function HomeHeroBelowSection() {
                 </span>
               </Link>
             </div>
-          </div>
-
-          {/* Right — image */}
-          <div className="lg:w-[45%] min-h-[320px] relative">
-            <Image
-              src="/anne-hero.png"
-              alt="Anne — Financial Coach"
-              fill
-              className="object-cover object-top"
-            />
           </div>
         </div>
 
