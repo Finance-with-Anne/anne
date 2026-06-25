@@ -8,16 +8,16 @@ export const metadata: Metadata = {
 
 function CircleXIcon() {
   return (
-    <svg className="w-6 h-6 text-red-500 shrink-0 mt-1" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+    <svg className="w-6 h-6 shrink-0 mt-1" style={{ color: "#ef4444" }} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24" aria-hidden="true">
       <circle cx="12" cy="12" r="10" />
       <path d="m15 9-6 6" /><path d="m9 9 6 6" />
     </svg>
   );
 }
 
-function CircleCheckIcon({ className = "w-6 h-6 text-green-500 shrink-0 mt-1" }: { className?: string }) {
+function CircleCheckIcon({ size = 6 }: { size?: number }) {
   return (
-    <svg className={className} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+    <svg className={`w-${size} h-${size} shrink-0 mt-1`} style={{ color: "#22c55e" }} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24" aria-hidden="true">
       <path d="M21.801 10A10 10 0 1 1 17 3.335" />
       <path d="m9 11 3 3L22 4" />
     </svg>
@@ -50,36 +50,41 @@ function ArrowRightIcon({ className }: { className: string }) {
 
 export default function MoneyTrackerPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <div style={{ backgroundColor: "#f8fafc" }}>
 
       {/* ── Hero ── */}
-      <section className="relative overflow-hidden bg-gradient-to-r from-[#0822C0] to-[#1a3ed4] text-white">
-        <div className="absolute inset-0 bg-black/10" />
+      <section style={{ background: "linear-gradient(to right, #0822C0, #1a3ed4)", color: "#ffffff", position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", inset: 0, backgroundColor: "rgba(0,0,0,0.10)" }} />
         <div className="relative mx-auto max-w-4xl px-4 py-8 md:py-16 text-center">
 
-          <div className="inline-flex items-center bg-yellow-400/20 text-yellow-300 px-4 py-2 rounded-full text-sm font-medium mb-6">
+          <div className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium mb-6" style={{ backgroundColor: "rgba(250,204,21,0.20)", color: "#fde68a" }}>
             <ZapIcon className="w-4 h-4 mr-2" />
             Limited Time Offer - First 100 Customers Only
           </div>
 
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight text-white">
+          <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight" style={{ color: "#ffffff" }}>
             Stop Wondering Where Your Money Goes
-            <span className="text-yellow-400"> Every Month</span>
+            <span style={{ color: "#facc15" }}> Every Month</span>
           </h1>
 
-          <p className="text-xl md:text-2xl mb-8 opacity-90 leading-relaxed">
+          <p className="text-xl md:text-2xl mb-8 leading-relaxed" style={{ color: "rgba(255,255,255,0.90)" }}>
             The Complete Money Tracker That Finds Your &ldquo;Lost Money&rdquo; in Just
-            <span className="font-bold text-yellow-400"> 10 Minutes a Day!</span>
+            <span className="font-bold" style={{ color: "#facc15" }}> 10 Minutes a Day!</span>
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
             <Link href="/money-tracker/checkout">
-              <button className="inline-flex items-center gap-2 bg-white hover:bg-yellow-50 text-[#0822C0] font-bold px-8 py-4 text-lg rounded-md transition-colors group">
+              <button
+                className="inline-flex items-center gap-2 font-bold px-8 py-4 text-lg rounded-md transition-colors group"
+                style={{ backgroundColor: "#ffffff", color: "#0822C0" }}
+                onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#fefce8")}
+                onMouseLeave={e => (e.currentTarget.style.backgroundColor = "#ffffff")}
+              >
                 Get Your Tracker Now
                 <ArrowRightIcon className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1.5" />
               </button>
             </Link>
-            <div className="flex items-center text-yellow-300">
+            <div className="flex items-center" style={{ color: "#fde68a" }}>
               <ShieldIcon className="w-5 h-5 mr-2" />
               <span>Secure Checkout • Instant Access</span>
             </div>
@@ -91,9 +96,9 @@ export default function MoneyTrackerPage() {
               { value: "10 min", label: "Daily time investment" },
               { value: "100%", label: "Customizable to your life" },
             ].map((s) => (
-              <div key={s.value} className="bg-white/10 backdrop-blur-sm rounded-lg p-4">
-                <div className="text-2xl font-bold text-yellow-400">{s.value}</div>
-                <div className="text-sm opacity-90">{s.label}</div>
+              <div key={s.value} className="backdrop-blur-sm rounded-lg p-4" style={{ backgroundColor: "rgba(255,255,255,0.10)" }}>
+                <div className="text-2xl font-bold" style={{ color: "#facc15" }}>{s.value}</div>
+                <div className="text-sm" style={{ color: "rgba(255,255,255,0.90)" }}>{s.label}</div>
               </div>
             ))}
           </div>
@@ -101,9 +106,9 @@ export default function MoneyTrackerPage() {
       </section>
 
       {/* ── The Problem ── */}
-      <section className="py-8 md:py-16">
+      <section className="py-8 md:py-16" style={{ backgroundColor: "#ffffff" }}>
         <div className="mx-auto max-w-4xl px-4">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-900">THE PROBLEM</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12" style={{ color: "#111827" }}>THE PROBLEM</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {[
               "You check your bank account thinking \"Where did all my money go?\"",
@@ -111,20 +116,20 @@ export default function MoneyTrackerPage() {
               "You've tried budgeting apps but they're too complicated or don't work",
               "You feel stressed about money but don't know where to start",
             ].map((text, i) => (
-              <div key={i} className="rounded-lg border border-red-200 bg-red-50 shadow-sm">
+              <div key={i} className="rounded-lg shadow-sm" style={{ border: "1px solid #fecaca", backgroundColor: "#fef2f2" }}>
                 <div className="p-6">
                   <div className="flex items-start space-x-3">
                     <CircleXIcon />
-                    <p className="text-gray-800 font-medium">{text}</p>
+                    <p className="font-medium" style={{ color: "#1f2937" }}>{text}</p>
                   </div>
                 </div>
               </div>
             ))}
           </div>
           <div className="text-center mt-12">
-            <p className="text-lg text-gray-700 max-w-3xl mx-auto">
+            <p className="text-lg max-w-3xl mx-auto" style={{ color: "#374151" }}>
               You&apos;re not alone.{" "}
-              <span className="font-bold text-[#0822C0]">78% of people live paycheck to paycheck</span>{" "}
+              <span className="font-bold" style={{ color: "#0822C0" }}>78% of people live paycheck to paycheck</span>{" "}
               not because they don&apos;t earn enough, but because they don&apos;t know where their money is going.
             </p>
           </div>
@@ -132,13 +137,13 @@ export default function MoneyTrackerPage() {
       </section>
 
       {/* ── The Solution ── */}
-      <section className="py-8 md:py-16 bg-gradient-to-r from-[#0822C0]/5 to-yellow-400/5">
+      <section className="py-8 md:py-16" style={{ background: "linear-gradient(to right, rgba(8,34,192,0.05), rgba(250,204,21,0.05))" }}>
         <div className="mx-auto max-w-4xl px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6 text-gray-900">THE SOLUTION</h2>
-          <h3 className="text-2xl md:text-3xl font-bold mb-4 text-[#0822C0]">The Complete Budget and Money Tracker</h3>
-          <p className="text-xl mb-12 text-gray-700">
+          <h2 className="text-3xl md:text-4xl font-bold mb-6" style={{ color: "#111827" }}>THE SOLUTION</h2>
+          <h3 className="text-2xl md:text-3xl font-bold mb-4" style={{ color: "#0822C0" }}>The Complete Budget and Money Tracker</h3>
+          <p className="text-xl mb-12" style={{ color: "#374151" }}>
             The Only Budget Tracker That Actually Adapts to{" "}
-            <span className="font-bold text-green-500">YOUR Life</span>
+            <span className="font-bold" style={{ color: "#22c55e" }}>YOUR Life</span>
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
             {[
@@ -149,18 +154,23 @@ export default function MoneyTrackerPage() {
               "Works Any Currency - Perfect for anyone, anywhere",
               "Simple & Clean - Takes 10 minutes a day, not hours",
             ].map((item, i) => (
-              <div key={i} className="rounded-lg border border-green-200 bg-green-50 shadow-sm">
+              <div key={i} className="rounded-lg shadow-sm" style={{ border: "1px solid #bbf7d0", backgroundColor: "#f0fdf4" }}>
                 <div className="p-6">
                   <div className="flex items-start space-x-3">
-                    <CircleCheckIcon />
-                    <p className="text-gray-800 font-medium">{item}</p>
+                    <CircleCheckIcon size={6} />
+                    <p className="font-medium" style={{ color: "#1f2937" }}>{item}</p>
                   </div>
                 </div>
               </div>
             ))}
           </div>
           <Link href="/money-tracker/checkout">
-            <button className="inline-flex items-center gap-2 bg-[#0822C0] hover:bg-[#0618a0] text-white font-bold px-8 py-4 text-lg rounded-md transition-colors group">
+            <button
+              className="inline-flex items-center gap-2 font-bold px-8 py-4 text-lg rounded-md transition-colors group"
+              style={{ backgroundColor: "#0822C0", color: "#ffffff" }}
+              onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#0618a0")}
+              onMouseLeave={e => (e.currentTarget.style.backgroundColor = "#0822C0")}
+            >
               Start Tracking Your Money Today
               <ArrowRightIcon className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1.5" />
             </button>
@@ -169,23 +179,23 @@ export default function MoneyTrackerPage() {
       </section>
 
       {/* ── What Happens When You Use This ── */}
-      <section className="py-8 md:py-16">
+      <section className="py-8 md:py-16" style={{ backgroundColor: "#ffffff" }}>
         <div className="mx-auto max-w-4xl px-4">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-900">WHAT HAPPENS WHEN YOU USE THIS</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12" style={{ color: "#111827" }}>WHAT HAPPENS WHEN YOU USE THIS</h2>
           <div className="space-y-8">
             {[
-              { n: 1, week: "Week 1", text: "Find your \"money leaks\" - small expenses that add up to thousands monthly", color: "bg-blue-500" },
-              { n: 2, week: "Week 2", text: "Discover money you didn't know you had", color: "bg-green-500" },
-              { n: 3, week: "Week 3", text: "Start making smarter spending decisions automatically", color: "bg-purple-500" },
-              { n: 4, week: "Week 4", text: "See exactly how much you can save and invest each month", color: "bg-orange-500" },
+              { n: 1, week: "Week 1", text: "Find your \"money leaks\" - small expenses that add up to thousands monthly", bg: "#3b82f6" },
+              { n: 2, week: "Week 2", text: "Discover money you didn't know you had", bg: "#22c55e" },
+              { n: 3, week: "Week 3", text: "Start making smarter spending decisions automatically", bg: "#a855f7" },
+              { n: 4, week: "Week 4", text: "See exactly how much you can save and invest each month", bg: "#f97316" },
             ].map((item) => (
               <div key={item.n} className="flex items-center space-x-6">
-                <div className={`w-16 h-16 ${item.color} rounded-full flex items-center justify-center text-white font-bold text-lg shrink-0`}>
+                <div className="w-16 h-16 rounded-full flex items-center justify-center font-bold text-lg shrink-0" style={{ backgroundColor: item.bg, color: "#ffffff" }}>
                   {item.n}
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">{item.week}</h3>
-                  <p className="text-gray-700 text-lg">{item.text}</p>
+                  <h3 className="text-xl font-bold mb-2" style={{ color: "#111827" }}>{item.week}</h3>
+                  <p className="text-lg" style={{ color: "#374151" }}>{item.text}</p>
                 </div>
               </div>
             ))}
@@ -194,26 +204,26 @@ export default function MoneyTrackerPage() {
       </section>
 
       {/* ── Real Results ── */}
-      <section className="py-8 md:py-16 bg-gray-50">
+      <section className="py-8 md:py-16" style={{ backgroundColor: "#f9fafb" }}>
         <div className="mx-auto max-w-4xl px-4">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-900">REAL RESULTS</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12" style={{ color: "#111827" }}>REAL RESULTS</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
               { name: "Sarah M.", quote: "I found ₦80,000 in forgotten subscriptions in my first week!" },
               { name: "Michael T.", quote: "Finally, a tracker that doesn't feel like math homework." },
               { name: "David R.", quote: "I've saved more in 3 months than I did all last year." },
             ].map((t) => (
-              <div key={t.name} className="rounded-lg border bg-white shadow-lg">
+              <div key={t.name} className="rounded-lg shadow-lg" style={{ backgroundColor: "#ffffff", border: "1px solid #f3f4f6" }}>
                 <div className="p-6">
                   <div className="flex mb-4">
                     {Array.from({ length: 5 }).map((_, i) => (
-                      <svg key={i} className="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <svg key={i} className="w-5 h-5 fill-current" style={{ color: "#facc15" }} viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z" />
                       </svg>
                     ))}
                   </div>
-                  <p className="text-gray-700 mb-4 italic">&ldquo;{t.quote}&rdquo;</p>
-                  <p className="font-semibold text-[#0822C0]">- {t.name}</p>
+                  <p className="mb-4 italic" style={{ color: "#374151" }}>&ldquo;{t.quote}&rdquo;</p>
+                  <p className="font-semibold" style={{ color: "#0822C0" }}>- {t.name}</p>
                 </div>
               </div>
             ))}
@@ -222,13 +232,13 @@ export default function MoneyTrackerPage() {
       </section>
 
       {/* ── What You Get ── */}
-      <section className="py-8 md:py-16">
+      <section className="py-8 md:py-16" style={{ backgroundColor: "#ffffff" }}>
         <div className="mx-auto max-w-4xl px-4">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-900">WHAT YOU GET</h2>
-          <div className="rounded-lg border shadow-sm bg-gradient-to-r from-[#0822C0]/10 to-yellow-400/10 border-[#0822C0]/20">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12" style={{ color: "#111827" }}>WHAT YOU GET</h2>
+          <div className="rounded-lg shadow-sm" style={{ background: "linear-gradient(to right, rgba(8,34,192,0.10), rgba(250,204,21,0.10))", border: "1px solid rgba(8,34,192,0.20)" }}>
             <div className="p-8">
               <div className="text-center mb-8">
-                <h3 className="text-2xl font-bold text-[#0822C0] mb-4">🎯 The Complete Tracker</h3>
+                <h3 className="text-2xl font-bold mb-4" style={{ color: "#0822C0" }}>🎯 The Complete Tracker</h3>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {[
@@ -238,8 +248,10 @@ export default function MoneyTrackerPage() {
                   "Fully customizable for your life",
                 ].map((item) => (
                   <div key={item} className="flex items-center space-x-3">
-                    <CircleCheckIcon className="w-5 h-5 text-green-500 shrink-0" />
-                    <span className="text-gray-800 font-medium">{item}</span>
+                    <svg className="w-5 h-5 shrink-0" style={{ color: "#22c55e" }} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                      <path d="M21.801 10A10 10 0 1 1 17 3.335" /><path d="m9 11 3 3L22 4" />
+                    </svg>
+                    <span className="font-medium" style={{ color: "#1f2937" }}>{item}</span>
                   </div>
                 ))}
               </div>
@@ -249,16 +261,21 @@ export default function MoneyTrackerPage() {
       </section>
 
       {/* ── Urgency ── */}
-      <section className="py-8 md:py-16 bg-gradient-to-r from-red-500 to-orange-500 text-white">
+      <section className="py-8 md:py-16" style={{ background: "linear-gradient(to right, #ef4444, #f97316)", color: "#ffffff" }}>
         <div className="mx-auto max-w-4xl px-4 text-center">
           <h2 className="text-6xl font-bold mb-6">⏰</h2>
           <p className="text-xl mb-4">
             This price is only for the <span className="font-bold">first 100 customers</span>
           </p>
-          <p className="text-lg mb-8 opacity-90">After that, price returns to the original price.</p>
+          <p className="text-lg mb-8" style={{ color: "rgba(255,255,255,0.90)" }}>After that, price returns to the original price.</p>
           <p className="text-2xl font-bold mb-8">Every day you wait is another day money slips away.</p>
           <Link href="/money-tracker/checkout">
-            <button className="inline-flex items-center gap-2 bg-white hover:bg-gray-100 text-red-600 font-bold px-8 py-4 text-lg rounded-md transition-colors group">
+            <button
+              className="inline-flex items-center gap-2 font-bold px-8 py-4 text-lg rounded-md transition-colors group"
+              style={{ backgroundColor: "#ffffff", color: "#dc2626" }}
+              onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#f3f4f6")}
+              onMouseLeave={e => (e.currentTarget.style.backgroundColor = "#ffffff")}
+            >
               Get Your Complete Budget and Money Tracker Today!
               <ArrowRightIcon className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1.5" />
             </button>
@@ -267,9 +284,9 @@ export default function MoneyTrackerPage() {
       </section>
 
       {/* ── FAQ ── */}
-      <section className="py-8 md:py-16 bg-gray-50">
+      <section className="py-8 md:py-16" style={{ backgroundColor: "#f9fafb" }}>
         <div className="mx-auto max-w-4xl px-4">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-900">FAQ</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12" style={{ color: "#111827" }}>FAQ</h2>
           <div className="space-y-6">
             {[
               { q: "Do I need spreadsheet skills?", a: "No! If you can type numbers, you can use this." },
@@ -278,10 +295,10 @@ export default function MoneyTrackerPage() {
               { q: "Can it work with my phone?", a: "Yes, you can use it on your phone and it updates online for you." },
               { q: "Do I need Excel to use this?", a: "No, this works with Google sheets, you don't need excel." },
             ].map((item) => (
-              <div key={item.q} className="rounded-lg border bg-white shadow-sm">
+              <div key={item.q} className="rounded-lg shadow-sm" style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb" }}>
                 <div className="p-6">
-                  <h3 className="font-bold text-[#0822C0] mb-2">Q: {item.q}</h3>
-                  <p className="text-gray-700">A: {item.a}</p>
+                  <h3 className="font-bold mb-2" style={{ color: "#0822C0" }}>Q: {item.q}</h3>
+                  <p style={{ color: "#374151" }}>A: {item.a}</p>
                 </div>
               </div>
             ))}
@@ -290,37 +307,42 @@ export default function MoneyTrackerPage() {
       </section>
 
       {/* ── Two Choices ── */}
-      <section className="py-8 md:py-16 bg-gradient-to-r from-[#0822C0] to-[#1a3ed4] text-white">
+      <section className="py-8 md:py-16" style={{ background: "linear-gradient(to right, #0822C0, #1a3ed4)", color: "#ffffff" }}>
         <div className="mx-auto max-w-4xl px-4 text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-8">You have two choices:</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-            <div className="rounded-lg border border-red-200 bg-red-50 shadow-sm">
+            <div className="rounded-lg shadow-sm" style={{ backgroundColor: "#fef2f2", border: "1px solid #fecaca" }}>
               <div className="p-6 text-center">
-                <svg className="w-12 h-12 text-red-500 mx-auto mb-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+                <svg className="w-12 h-12 mx-auto mb-4" style={{ color: "#ef4444" }} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
                   <circle cx="12" cy="12" r="10" />
                   <path d="m15 9-6 6" /><path d="m9 9 6 6" />
                 </svg>
-                <p className="text-gray-800 font-medium">Keep wondering where your money goes...</p>
+                <p className="font-medium" style={{ color: "#1f2937" }}>Keep wondering where your money goes...</p>
               </div>
             </div>
-            <div className="rounded-lg border border-green-200 bg-green-50 shadow-sm">
+            <div className="rounded-lg shadow-sm" style={{ backgroundColor: "#f0fdf4", border: "1px solid #bbf7d0" }}>
               <div className="p-6 text-center">
-                <svg className="w-12 h-12 text-green-500 mx-auto mb-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+                <svg className="w-12 h-12 mx-auto mb-4" style={{ color: "#22c55e" }} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
                   <path d="M21.801 10A10 10 0 1 1 17 3.335" />
                   <path d="m9 11 3 3L22 4" />
                 </svg>
-                <p className="text-gray-800 font-medium">Take control today with the Complete Money Mastery Tracker.</p>
+                <p className="font-medium" style={{ color: "#1f2937" }}>Take control today with the Complete Money Mastery Tracker.</p>
               </div>
             </div>
           </div>
-          <p className="text-xl mb-8 opacity-90">Don&apos;t let another day of financial uncertainty slip by.</p>
+          <p className="text-xl mb-8" style={{ color: "rgba(255,255,255,0.90)" }}>Don&apos;t let another day of financial uncertainty slip by.</p>
           <Link href="/money-tracker/checkout">
-            <button className="inline-flex items-center gap-2 bg-white hover:bg-blue-50 text-[#0822C0] font-bold px-8 py-4 text-lg rounded-md transition-colors mb-6 group">
+            <button
+              className="inline-flex items-center gap-2 font-bold px-8 py-4 text-lg rounded-md transition-colors mb-6 group"
+              style={{ backgroundColor: "#ffffff", color: "#0822C0" }}
+              onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#eff6ff")}
+              onMouseLeave={e => (e.currentTarget.style.backgroundColor = "#ffffff")}
+            >
               Get Your Tracker Now
               <ArrowRightIcon className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1.5" />
             </button>
           </Link>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center text-yellow-300">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center" style={{ color: "#fde68a" }}>
             <div className="flex items-center">
               <ZapIcon className="w-5 h-5 mr-2" />
               <span>Instant Access</span>
