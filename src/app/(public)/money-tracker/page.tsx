@@ -75,10 +75,8 @@ export default function MoneyTrackerPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
             <Link href="/money-tracker/checkout">
               <button
-                className="inline-flex items-center gap-2 font-bold px-8 py-4 text-lg rounded-md transition-colors group"
+                className="inline-flex items-center gap-2 font-bold px-8 py-4 text-lg rounded-md transition-all hover:brightness-95 group"
                 style={{ backgroundColor: "#ffffff", color: "#0822C0" }}
-                onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#fefce8")}
-                onMouseLeave={e => (e.currentTarget.style.backgroundColor = "#ffffff")}
               >
                 Get Your Tracker Now
                 <ArrowRightIcon className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1.5" />
@@ -168,8 +166,6 @@ export default function MoneyTrackerPage() {
             <button
               className="inline-flex items-center gap-2 font-bold px-8 py-4 text-lg rounded-md transition-colors group"
               style={{ backgroundColor: "#0822C0", color: "#ffffff" }}
-              onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#0618a0")}
-              onMouseLeave={e => (e.currentTarget.style.backgroundColor = "#0822C0")}
             >
               Start Tracking Your Money Today
               <ArrowRightIcon className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1.5" />
@@ -273,8 +269,6 @@ export default function MoneyTrackerPage() {
             <button
               className="inline-flex items-center gap-2 font-bold px-8 py-4 text-lg rounded-md transition-colors group"
               style={{ backgroundColor: "#ffffff", color: "#dc2626" }}
-              onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#f3f4f6")}
-              onMouseLeave={e => (e.currentTarget.style.backgroundColor = "#ffffff")}
             >
               Get Your Complete Budget and Money Tracker Today!
               <ArrowRightIcon className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1.5" />
@@ -333,10 +327,8 @@ export default function MoneyTrackerPage() {
           <p className="text-xl mb-8" style={{ color: "rgba(255,255,255,0.90)" }}>Don&apos;t let another day of financial uncertainty slip by.</p>
           <Link href="/money-tracker/checkout">
             <button
-              className="inline-flex items-center gap-2 font-bold px-8 py-4 text-lg rounded-md transition-colors mb-6 group"
+              className="inline-flex items-center gap-2 font-bold px-8 py-4 text-lg rounded-md transition-all hover:brightness-95 mb-6 group"
               style={{ backgroundColor: "#ffffff", color: "#0822C0" }}
-              onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#eff6ff")}
-              onMouseLeave={e => (e.currentTarget.style.backgroundColor = "#ffffff")}
             >
               Get Your Tracker Now
               <ArrowRightIcon className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1.5" />
