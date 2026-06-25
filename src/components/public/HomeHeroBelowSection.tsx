@@ -203,20 +203,24 @@ export default function HomeHeroBelowSection() {
           >
             <div>
               <span className="inline-block text-xs font-semibold tracking-widest uppercase px-3 py-1 rounded-full mb-5" style={{ backgroundColor: "#d8f04a", color: "#111" }}>
-                Why Choose Anne
+                My Process
               </span>
-              <h3 className="text-xl lg:text-2xl font-bold leading-snug mb-7" style={{ color: "#111" }}>
-                A personal approach to<br />your financial freedom
+              <h3 className="text-xl lg:text-2xl font-bold leading-snug mb-3" style={{ color: "#111" }}>
+                How FWA Helps You Take Control of Your Money
               </h3>
+              <p className="text-sm leading-relaxed mb-5" style={{ color: "rgba(0,0,0,0.55)" }}>
+                Anne simplifies personal finance by guiding individuals through practical steps that help them understand money, build better habits, and grow long-term financial security.
+              </p>
               <ul className="space-y-0">
                 {[
-                  { title: "Practical & Relatable", desc: "Real-world money advice that fits your life — no jargon, no judgement." },
-                  { title: "Community-Driven", desc: "Join a growing network of people actively building wealth together." },
-                  { title: "Proven Results", desc: "Clients who have transformed their finances through coaching and community." },
+                  { title: "Understand Your Financial Situation", desc: "Review your income, expenses, debt, and financial goals to gain a clear picture of where you stand." },
+                  { title: "Create a Smart Money Plan", desc: "Develop a practical system for budgeting, saving, and managing your money effectively." },
+                  { title: "Build Strong Financial Habits", desc: "Learn the daily and monthly money habits that help you stay consistent and avoid financial stress." },
+                  { title: "Grow and Invest Your Wealth", desc: "Start building long-term wealth through smart saving strategies and beginner-friendly investment guidance." },
                 ].map((item) => (
-                  <li key={item.title} className="flex flex-col gap-0.5 py-4 border-b border-black/10 last:border-0">
+                  <li key={item.title} className="flex flex-col gap-0.5 py-3 border-l-2 border-black/20 pl-4 mb-3 last:mb-0">
                     <span className="text-sm font-semibold" style={{ color: "#111" }}>{item.title}</span>
-                    <span className="text-sm leading-relaxed" style={{ color: "rgba(0,0,0,0.55)" }}>{item.desc}</span>
+                    <span className="text-xs leading-relaxed" style={{ color: "rgba(0,0,0,0.55)" }}>{item.desc}</span>
                   </li>
                 ))}
               </ul>
