@@ -185,7 +185,7 @@ export default function HomeHeroBelowSection() {
         </div>
 
         {/* Why Choose Anne */}
-        <div className="mt-6 relative rounded-2xl overflow-hidden min-h-[480px] lg:min-h-[520px]">
+        <div className="mt-6 relative rounded-2xl overflow-hidden min-h-[600px] lg:min-h-[640px]">
           {/* Full-bleed coach image */}
           <Image
             src="/anne-hero.png"
