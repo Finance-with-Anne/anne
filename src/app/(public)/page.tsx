@@ -112,33 +112,6 @@ export default async function HomePage() {
       ══════════════════════════════════════ */}
       <CoreFeatures />
 
-      {/* ══════════════════════════════════════
-          ABOUT / EMPOWERING
-      ══════════════════════════════════════ */}
-      <section className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-20">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-gray-400 dark:text-white/30 mb-4">
-          About
-        </p>
-        <div className="grid lg:grid-cols-2 gap-12 items-start">
-          <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white leading-[1.1]">
-            Empowering you to build lasting wealth
-          </h2>
-          <div>
-            <p className="text-gray-500 dark:text-white/45 text-base leading-relaxed">
-              Finance with Anne provides expert coaching, resources, and community support to help you manage, grow, and protect your financial future — wherever you are in the world.
-            </p>
-            <Link
-              href="/about"
-              className="mt-8 inline-flex items-center gap-2 rounded-full bg-gray-900 dark:bg-white px-6 py-2.5 text-sm font-semibold text-white dark:text-gray-900 hover:opacity-80 transition-opacity"
-            >
-              Learn about Anne
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-              </svg>
-            </Link>
-          </div>
-        </div>
-      </section>
 
     </div>
   );
