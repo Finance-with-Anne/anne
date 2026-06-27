@@ -4,7 +4,7 @@ import CheckoutForm from "./CheckoutForm";
 export const dynamic = "force-dynamic";
 
 const PRICES: Record<string, number> = {
-  NGN: 100,
+  NGN: 150000,
   GBP: 150,
   USD: 150,
 };
