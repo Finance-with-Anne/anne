@@ -5,7 +5,7 @@ import { useAdminTheme } from "@/lib/admin-theme";
 import ProductForm from "./ProductForm";
 import type { Course, BookingSession } from "@/types";
 
-type Source = "manual" | "course" | "booking" | "template" | null;
+type Source = "manual" | "course" | "booking" | "template" | "community" | null;
 
 interface Props {
   courses: Course[];
@@ -39,6 +39,10 @@ export default function ProductSourcePicker({ courses, sessions }: Props) {
 
   if (source === "template") {
     return <ProductForm initialData={{ source_type: "template" }} />;
+  }
+
+  if (source === "community") {
+    return <ProductForm initialData={{ source_type: "community" }} />;
   }
 
   if (selected) {
@@ -79,7 +83,7 @@ export default function ProductSourcePicker({ courses, sessions }: Props) {
       </div>
 
       {source === null && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 max-w-5xl">
           {/* Manual */}
           <button
             onClick={() => setSource("manual")}
@@ -136,6 +140,20 @@ export default function ProductSourcePicker({ courses, sessions }: Props) {
             </span>
             <p className={`font-semibold text-sm ${heading}`}>Template</p>
             <p className={`text-xs mt-1 leading-relaxed ${sub}`}>Sell a downloadable spreadsheet, tracker, or digital template.</p>
+          </button>
+
+          {/* Community */}
+          <button
+            onClick={() => setSource("community")}
+            className={`rounded-xl border p-6 text-left group transition-all hover:shadow-md ${card} ${dark ? "hover:border-white/15" : "hover:border-green-400/40"}`}
+          >
+            <span className={`inline-flex h-10 w-10 items-center justify-center rounded-xl mb-4 ${dark ? "bg-green-400/10" : "bg-green-50"} transition-colors`}>
+              <svg className="h-5 w-5 text-green-500" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </span>
+            <p className={`font-semibold text-sm ${heading}`}>Community</p>
+            <p className={`text-xs mt-1 leading-relaxed ${sub}`}>Sell access to a WhatsApp or Telegram community group.</p>
           </button>
         </div>
       )}
