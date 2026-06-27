@@ -111,15 +111,15 @@ const cards = [
 /* ── Component ──────────────────────────────────────────── */
 export default function HomeHeroBelowSection() {
   return (
-    <section className="bg-white px-4 py-6 lg:py-8">
+    <section className="bg-white px-4 py-6 lg:py-8 overflow-hidden">
       <div className="w-full rounded-3xl px-4 sm:px-8 lg:px-16 py-10 sm:py-14 lg:py-20" style={{ backgroundColor: "#070F1E", color: "#ffffff" }}>
 
         {/* Heading + CTA */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-8 mb-8 sm:mb-14">
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-snug text-white max-w-lg">
-            Financial freedom is a skill and we'll teach you
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between sm:gap-8 mb-8 sm:mb-14">
+          <h2 className="text-xl sm:text-3xl lg:text-4xl font-bold leading-snug text-white max-w-lg">
+            Financial freedom is a skill and we&apos;ll teach you
           </h2>
-          <Link href="/legacy-builders-network" className="btn-animated shrink-0 focus:outline-none self-start sm:self-auto">
+          <Link href="/legacy-builders-network" className="btn-animated shrink-0 focus:outline-none self-start">
             <span>Join Paid Community</span>
           </Link>
         </div>

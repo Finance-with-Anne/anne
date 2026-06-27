@@ -16,7 +16,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
             __html: `(function(){try{var t=localStorage.getItem('fwa-theme');if(t==='dark')document.documentElement.classList.add('dark')}catch(e){}})()`,
           }}
         />
-        <div className="flex min-h-screen flex-col bg-white dark:bg-[#05090f] transition-colors duration-200">
+        <div className="flex min-h-screen flex-col bg-white dark:bg-[#05090f] transition-colors duration-200 overflow-x-hidden">
           <div className="sticky top-0 z-50">
             <StockTicker />
             <Navbar />
