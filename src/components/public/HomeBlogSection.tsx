@@ -22,19 +22,22 @@ export default function HomeBlogSection({ posts, videos = [] }: { posts: BlogPos
         style={{ backgroundColor: "#eef1ff" }}
       >
         {/* Header */}
-        <div className="flex items-center justify-between gap-8 mb-14">
-          <div>
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-14">
+          <div className="max-w-lg">
             <span
               className="inline-block text-xs font-semibold tracking-widest uppercase px-3 py-1 rounded-full mb-4"
               style={{ backgroundColor: "#0822C0", color: "#fff" }}
             >
               Money Talks
             </span>
-            <h2 className="text-3xl sm:text-4xl font-bold leading-snug max-w-lg" style={{ color: "#111" }}>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight" style={{ color: "#111" }}>
               Fresh insights on finance, wealth and mindset
             </h2>
+            <p className="mt-3 text-sm sm:text-base leading-relaxed" style={{ color: "#555" }}>
+              Practical articles to help you budget better, invest smarter, and build lasting wealth.
+            </p>
           </div>
-          <Link href="/blog" className="btn-animated shrink-0 focus:outline-none">
+          <Link href="/blog" className="btn-animated shrink-0 self-start sm:self-auto focus:outline-none">
             <span>View all posts</span>
           </Link>
         </div>
