@@ -1,8 +1,18 @@
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/server";
 import type { Testimonial } from "@/types";
 
-export default function HomeTestimonialsSection({ testimonials }: { testimonials: Testimonial[] }) {
-  if (!testimonials || testimonials.length === 0) return null;
+export default async function HomeTestimonialsSection() {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("testimonials")
+    .select("*")
+    .eq("published", true)
+    .order("created_at", { ascending: false })
+    .limit(6);
+
+  const testimonials = (data ?? []) as Testimonial[];
+  if (testimonials.length === 0) return null;
 
   return (
     <section className="bg-white px-4 py-6 lg:py-8">

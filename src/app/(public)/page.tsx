@@ -121,7 +121,7 @@ export default async function HomePage() {
 
       <HomeHeroBelowSection />
       <HomeBlogSection posts={blogPosts} videos={youtubeVideos} />
-      <HomeTestimonialsSection testimonials={testimonials} />
+      <HomeTestimonialsSection />
 
     </div>
   );
