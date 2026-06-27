@@ -135,11 +135,11 @@ export default function HeroSlider() {
 
   return (
     <div ref={containerRef}>
-      <h1 className="text-5xl sm:text-5xl lg:text-[4rem] font-bold text-gray-900 dark:text-white leading-[1.1] tracking-tight">
+      <h1 className="text-3xl sm:text-4xl lg:text-[4rem] font-bold text-gray-900 dark:text-white leading-[1.1] tracking-tight">
         <span className="block">{splitWords(slide.line1)}</span>
         <span className="block">{splitWords(slide.line2)}</span>
       </h1>
-      <p ref={subRef} className="mt-8 text-gray-500 dark:text-white/45 text-xl leading-relaxed max-w-[620px]">
+      <p ref={subRef} className="mt-5 text-gray-500 dark:text-white/45 text-base sm:text-lg leading-relaxed max-w-[620px]">
         {slide.sub}
       </p>
     </div>
