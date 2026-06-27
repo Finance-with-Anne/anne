@@ -175,16 +175,13 @@ export default function ProductsShopClient({ products, categories, currency }: P
                   const isBooking = product.source_type === "booking";
                   const salesPage = product.sales_page_url
                     ?? (isBooking ? "/booking" : null);
-                  const cardHref = isCourse
-                    ? `/courses/${product.source_id}`
-                    : salesPage ?? null;
-                  const Wrapper = cardHref
-                    ? ({ children }: { children: React.ReactNode }) => (
-                        <Link href={cardHref} className="group relative rounded-2xl overflow-hidden block" style={{ aspectRatio: "4/3" }}>{children}</Link>
-                      )
-                    : ({ children }: { children: React.ReactNode }) => (
-                        <div className="group relative rounded-2xl overflow-hidden cursor-pointer" style={{ aspectRatio: "4/3" }}>{children}</div>
-                      );
+                  const cardHref = product.sales_page_url
+                    ?? (isCourse ? `/courses/${product.source_id}` : null)
+                    ?? (isBooking ? "/booking" : null)
+                    ?? `/products-services/${product.id}`;
+                  const Wrapper = ({ children }: { children: React.ReactNode }) => (
+                    <Link href={cardHref} className="group relative rounded-2xl overflow-hidden block" style={{ aspectRatio: "4/3" }}>{children}</Link>
+                  );
                   return (
                     <Wrapper key={product.id}>
                       {/* Background image / fallback */}
