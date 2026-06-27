@@ -69,7 +69,20 @@ export async function GET(req: NextRequest) {
       if (ogTitle) title = ogTitle[1];
     }
 
-    return NextResponse.json({ duration, title, videoId: ytId });
+    // Thumbnail + fallback title via oEmbed (no API key needed)
+    let thumbnail: string | null = `https://img.youtube.com/vi/${ytId}/mqdefault.jpg`;
+    try {
+      const oembed = await fetch(
+        `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${ytId}&format=json`
+      );
+      if (oembed.ok) {
+        const od = await oembed.json();
+        if (!title && od.title) title = od.title;
+        if (od.thumbnail_url) thumbnail = od.thumbnail_url;
+      }
+    } catch {}
+
+    return NextResponse.json({ duration, title, videoId: ytId, thumbnail });
   } catch (e) {
     return NextResponse.json({ error: "Failed to fetch video info" }, { status: 500 });
   }
