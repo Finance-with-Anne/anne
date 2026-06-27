@@ -4,11 +4,11 @@ import { supabaseAdmin } from "@/lib/supabase/admin";
 const FLW_SECRET   = process.env.FLW_SECRET_KEY ?? "";
 const SITE_URL     = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
-const PRODUCT_ID   = "legacy-builders-network";
-const PRODUCT_NAME = "Legacy Builders Network — Annual Membership";
+const PRODUCT_DB_ID = "2591b7ff-866b-4ab4-ad4c-e421e04cb577"; // products table UUID
+const PRODUCT_NAME  = "Legacy Builders Network — Annual Membership";
 
 const PRICES: Record<string, number> = {
-  NGN: 150000,
+  NGN: 100,   // test price — change to 150000 before go-live
   GBP: 150,
   USD: 150,
 };
@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
       user_id: null,
       email,
       name,
-      items: [{ id: PRODUCT_ID, name: PRODUCT_NAME, price: finalPrice, qty: 1 }],
+      items: [{ id: PRODUCT_DB_ID, name: PRODUCT_NAME, price: finalPrice, qty: 1 }],
       total: finalPrice,
       currency,
       status: "pending",
@@ -81,7 +81,7 @@ export async function POST(req: NextRequest) {
       currency,
       redirect_url: `${SITE_URL}/legacy-builders-network/verify?order_id=${order.id}`,
       customer: { email, name, phone_number: phone },
-      meta: { order_id: order.id, product: PRODUCT_ID },
+      meta: { order_id: order.id, product: PRODUCT_DB_ID },
       customizations: {
         title: "Finance with Anne",
         description: PRODUCT_NAME,

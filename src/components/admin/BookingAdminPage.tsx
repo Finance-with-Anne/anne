@@ -27,6 +27,7 @@ export default function BookingAdminPage({ bookings, sessions }: { bookings: Boo
   const [search, setSearch] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [cancellingId, setCancellingId] = useState<string | null>(null);
+  const [confirmCancelId, setConfirmCancelId] = useState<string | null>(null);
 
   const card = dark ? "bg-[#111318] border-white/5" : "bg-white border-gray-200";
   const heading = dark ? "text-white" : "text-gray-900";
@@ -78,8 +79,8 @@ export default function BookingAdminPage({ bookings, sessions }: { bookings: Boo
     setDeletingId(null);
   }
 
-  async function cancelBooking(id: string) {
-    if (!confirm("Cancel this booking?")) return;
+  async function executeCancelBooking(id: string) {
+    setConfirmCancelId(null);
     setCancellingId(id);
     await fetch(`/api/bookings/${id}`, {
       method: "PATCH",
@@ -209,7 +210,7 @@ export default function BookingAdminPage({ bookings, sessions }: { bookings: Boo
                     <td className="px-5 py-4 text-right">
                       <div className="flex items-center justify-end gap-3">
                         {booking.status !== "cancelled" && (
-                          <button onClick={() => cancelBooking(booking.id)} disabled={cancellingId === booking.id}
+                          <button onClick={() => setConfirmCancelId(booking.id)} disabled={cancellingId === booking.id}
                             className="text-xs text-red-400 hover:opacity-70 disabled:opacity-40 transition-opacity">
                             {cancellingId === booking.id ? "…" : "Cancel"}
                           </button>
@@ -271,6 +272,40 @@ export default function BookingAdminPage({ bookings, sessions }: { bookings: Boo
               </div>
             ))
           )}
+        </div>
+      )}
+      {/* Cancel confirmation modal */}
+      {confirmCancelId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={() => setConfirmCancelId(null)}>
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+          <div
+            className={`relative w-full max-w-sm rounded-2xl border p-6 shadow-2xl ${dark ? "bg-[#111318] border-white/10" : "bg-white border-gray-200"}`}
+            onClick={e => e.stopPropagation()}
+          >
+            <div className={`mb-1 h-10 w-10 rounded-full flex items-center justify-center ${dark ? "bg-red-400/10" : "bg-red-50"}`}>
+              <svg className="h-5 w-5 text-red-400" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+              </svg>
+            </div>
+            <h3 className={`mt-3 text-base font-bold ${dark ? "text-white" : "text-gray-900"}`}>Cancel this booking?</h3>
+            <p className={`mt-1.5 text-sm ${dark ? "text-white/45" : "text-gray-500"}`}>
+              This will mark the booking as cancelled. This action cannot be undone.
+            </p>
+            <div className="mt-5 flex gap-3">
+              <button
+                onClick={() => setConfirmCancelId(null)}
+                className={`flex-1 rounded-xl border py-2.5 text-sm font-medium transition-colors ${dark ? "border-white/10 text-white/60 hover:bg-white/5" : "border-gray-200 text-gray-600 hover:bg-gray-50"}`}
+              >
+                Keep booking
+              </button>
+              <button
+                onClick={() => executeCancelBooking(confirmCancelId)}
+                className="flex-1 rounded-xl bg-red-500 text-white py-2.5 text-sm font-semibold hover:bg-red-600 transition-colors"
+              >
+                Yes, cancel
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

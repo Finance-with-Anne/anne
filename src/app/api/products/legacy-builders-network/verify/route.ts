@@ -46,16 +46,32 @@ export async function POST(req: NextRequest) {
   const email = order.email as string;
   const name  = (order.name as string | null) ?? email.split("@")[0];
 
-  // Create or retrieve their account, then generate a sign-in link
+  // Create or retrieve their account, link order to user, then generate a sign-in link
   let accountUrl: string | undefined;
+  let userId: string | undefined;
+
   try {
-    await supabaseAdmin.auth.admin.createUser({
+    const { data: createData } = await supabaseAdmin.auth.admin.createUser({
       email,
       email_confirm: true,
       user_metadata: { full_name: name },
     });
+    userId = createData?.user?.id;
   } catch {
-    // User may already exist — that's fine
+    // User may already exist
+  }
+
+  // If user already existed, find their ID by scanning the user list
+  if (!userId) {
+    try {
+      const { data: listData } = await supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 1000 });
+      userId = listData?.users?.find((u: { email?: string; id: string }) => u.email === email)?.id;
+    } catch { /* non-fatal */ }
+  }
+
+  // Bind the order to this user so it appears in their Communities page
+  if (userId) {
+    await supabaseAdmin.from("orders").update({ user_id: userId }).eq("id", order_id);
   }
 
   try {
