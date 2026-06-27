@@ -30,7 +30,7 @@ const features = [
   {
     num: 3,
     title: "Expert Sessions",
-    desc: "Host monthly webinars with me + guest experts.",
+    desc: "Host monthly webinars with me + guest experts",
     wide: false,
   },
   {
@@ -71,7 +71,7 @@ const testimonials = [
     name: "O. Okulaja",
   },
   {
-    quote: "Thank you very much for today's class. I feel so strong that my journey to financial freedom just began. I feel so excited right now. Thank you very much, God bless you.",
+    quote: "Thank you very much for today's class i feel so strong that my journey to financial freedom just began i feel so excited right now i dont think i can thank you enough, Thank you very much God bless you.",
     name: "C. Miracle",
   },
   {
@@ -145,10 +145,10 @@ function StarIcon({ className }: { className?: string }) {
 }
 
 const benefitItems = [
-  { Icon: VideoIcon, title: "Monthly Webinars with Anne", desc: "Live sessions where you can ask questions and learn directly from me.", wide: false },
+  { Icon: VideoIcon, title: "Monthly Webinars with Anne", desc: "Live sessions where you can ask questions and learn directly from me", wide: false },
   { Icon: TrendingUpIcon, title: "Market Analysis Breakdown", desc: "Stocks, bonds, T-bills, real estate all analyzed and explained.", wide: false },
-  { Icon: UsersIcon, title: "Guest Experts", desc: "Learn from industry professionals across various investment sectors.", wide: false },
-  { Icon: BookOpenIcon, title: "Beginners Investment Course", desc: "Start with a solid foundation — perfect for those just getting started.", wide: false },
+  { Icon: UsersIcon, title: "Guest Experts", desc: "Learn from industry professionals across various investment sectors", wide: false },
+  { Icon: BookOpenIcon, title: "Beginners Investment Course", desc: "Start with a solid foundation perfect for those just getting started", wide: false },
   { Icon: CircleCheckIcon, title: "Vetted Strategies", desc: "Access insider-level opportunities and proven strategies.", wide: true },
 ];
 
