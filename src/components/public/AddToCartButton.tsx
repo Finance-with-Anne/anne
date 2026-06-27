@@ -22,7 +22,7 @@ export default function AddToCartButton({ product }: Props) {
         name: product.name,
         price: product.price,
         currency: product.currency,
-        image_url: product.image_url,
+        image_url: product.image_url ?? null,
       })}
       className="flex-1 rounded-xl bg-[#0822C0] text-white font-bold py-3.5 px-6 text-sm hover:bg-[#0618a0] transition-colors"
     >
