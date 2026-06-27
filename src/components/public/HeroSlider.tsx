@@ -135,7 +135,7 @@ export default function HeroSlider() {
 
   return (
     <div ref={containerRef}>
-      <h1 className="text-3xl sm:text-4xl lg:text-[4rem] font-bold text-gray-900 dark:text-white leading-[1.1] tracking-tight">
+      <h1 className="text-[2.1rem] sm:text-4xl lg:text-[4rem] font-bold text-gray-900 dark:text-white leading-[1.1] tracking-tight">
         <span className="block">{splitWords(slide.line1)}</span>
         <span className="block">{splitWords(slide.line2)}</span>
       </h1>

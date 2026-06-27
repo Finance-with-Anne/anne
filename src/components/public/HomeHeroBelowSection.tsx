@@ -119,8 +119,8 @@ export default function HomeHeroBelowSection() {
           <h2 className="text-xl sm:text-3xl lg:text-4xl font-bold leading-snug text-white max-w-lg">
             Financial freedom is a skill and we&apos;ll teach you
           </h2>
-          <Link href="/legacy-builders-network" className="btn-animated shrink-0 focus:outline-none self-start">
-            <span>Join Paid Community</span>
+          <Link href="/legacy-builders-network" className="inline-flex items-center gap-2 rounded-full bg-white text-gray-900 font-bold text-sm px-6 py-3 hover:bg-gray-100 transition-colors self-start shrink-0">
+            Join Paid Community
           </Link>
         </div>
 
