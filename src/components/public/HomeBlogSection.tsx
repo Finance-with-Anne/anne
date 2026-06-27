@@ -19,18 +19,18 @@ export default function HomeBlogSection({ posts }: { posts: BlogPost[] }) {
     <section className="bg-white px-4 py-6 lg:py-8">
       <div
         className="w-full rounded-3xl px-6 sm:px-10 lg:px-16 py-16 lg:py-20"
-        style={{ backgroundColor: "#070F1E", color: "#ffffff" }}
+        style={{ backgroundColor: "#eef1ff" }}
       >
         {/* Header */}
         <div className="flex items-center justify-between gap-8 mb-14">
           <div>
             <span
               className="inline-block text-xs font-semibold tracking-widest uppercase px-3 py-1 rounded-full mb-4"
-              style={{ backgroundColor: "#d8f04a", color: "#111" }}
+              style={{ backgroundColor: "#0822C0", color: "#fff" }}
             >
               Money Talks
             </span>
-            <h2 className="text-3xl sm:text-4xl font-bold leading-snug text-white max-w-lg">
+            <h2 className="text-3xl sm:text-4xl font-bold leading-snug max-w-lg" style={{ color: "#111" }}>
               Fresh insights on finance, wealth and mindset
             </h2>
           </div>
@@ -47,7 +47,7 @@ export default function HomeBlogSection({ posts }: { posts: BlogPost[] }) {
             <Link
               href={`/blog/${featured.slug}`}
               className="group lg:col-span-2 rounded-2xl overflow-hidden flex flex-col relative min-h-[420px]"
-              style={{ backgroundColor: "#0f1d38" }}
+              style={{ backgroundColor: "#c7d0f8" }}
             >
               {featured.cover_image ? (
                 <div className="absolute inset-0">
@@ -60,7 +60,7 @@ export default function HomeBlogSection({ posts }: { posts: BlogPost[] }) {
                   <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(7,15,30,0.92) 40%, rgba(7,15,30,0.3) 100%)" }} />
                 </div>
               ) : (
-                <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, #0822C0 0%, #070F1E 100%)" }} />
+                <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, #0822C0 0%, #3b55e6 100%)" }} />
               )}
 
               <div className="relative z-10 mt-auto p-8">
@@ -88,7 +88,7 @@ export default function HomeBlogSection({ posts }: { posts: BlogPost[] }) {
                 key={post.id}
                 href={`/blog/${post.slug}`}
                 className="group rounded-2xl overflow-hidden flex flex-col relative min-h-[196px]"
-                style={{ backgroundColor: "#0f1d38" }}
+                style={{ backgroundColor: "#c7d0f8" }}
               >
                 {post.cover_image ? (
                   <div className="absolute inset-0">
@@ -101,7 +101,7 @@ export default function HomeBlogSection({ posts }: { posts: BlogPost[] }) {
                     <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(7,15,30,0.9) 40%, rgba(7,15,30,0.25) 100%)" }} />
                   </div>
                 ) : (
-                  <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, #0822C0 0%, #070F1E 100%)" }} />
+                  <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, #0822C0 0%, #3b55e6 100%)" }} />
                 )}
 
                 <div className="relative z-10 mt-auto p-6">
@@ -117,9 +117,9 @@ export default function HomeBlogSection({ posts }: { posts: BlogPost[] }) {
             {secondary.length < 2 && (
               <Link
                 href="/blog"
-                className="group rounded-2xl flex flex-col items-center justify-center min-h-[196px] border border-white/10 hover:border-white/20 transition-colors"
+                className="group rounded-2xl flex flex-col items-center justify-center min-h-[196px] border border-[#0822C0]/20 hover:border-[#0822C0]/40 transition-colors"
               >
-                <span className="text-white/50 text-sm font-semibold group-hover:text-white transition-colors">
+                <span className="text-[#0822C0]/50 text-sm font-semibold group-hover:text-[#0822C0] transition-colors">
                   View all posts →
                 </span>
               </Link>
