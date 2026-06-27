@@ -247,16 +247,15 @@ export default function LegacyBuildersNetworkPage() {
             {features.map((f) => (
               <div
                 key={f.num}
-                className={`rounded-lg border shadow-sm hover:shadow-md transition-shadow duration-300${f.wide ? " sm:col-span-2" : ""}`}
-                style={{backgroundColor:"#0f172a", borderColor:"rgba(255,255,255,0.10)"}}
+                className={`rounded-lg border border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow duration-300${f.wide ? " sm:col-span-2" : ""}`}
               >
                 <div className="p-6 pb-2 sm:pb-4">
-                  <div className="w-8 h-8 sm:w-9 sm:h-9 bg-yellow-400 flex items-center justify-center rounded mb-3 font-semibold text-sm sm:text-base" style={{color:"#111827"}}>
+                  <div className="w-8 h-8 sm:w-9 sm:h-9 bg-yellow-400 flex items-center justify-center rounded mb-3 font-semibold text-sm sm:text-base text-gray-900">
                     {f.num}
                   </div>
-                  <div className="font-bold text-lg sm:text-xl md:text-2xl">{f.title}</div>
+                  <div className="font-bold text-lg sm:text-xl md:text-2xl text-gray-900">{f.title}</div>
                 </div>
-                <div className="p-6 pt-0 font-semibold text-sm sm:text-base md:text-lg leading-relaxed" style={{color:"rgba(255,255,255,0.65)"}}>
+                <div className="p-6 pt-0 font-semibold text-sm sm:text-base md:text-lg leading-relaxed text-gray-700">
                   {f.desc}
                 </div>
               </div>
@@ -275,16 +274,15 @@ export default function LegacyBuildersNetworkPage() {
             {benefitItems.map((b) => (
               <div
                 key={b.title}
-                className={`rounded-lg border border-yellow-400 shadow-sm hover:shadow-md transition-shadow duration-300${b.wide ? " sm:col-span-2" : ""}`}
-                style={{backgroundColor:"#0f172a"}}
+                className={`rounded-lg border border-yellow-400 bg-white shadow-sm hover:shadow-md transition-shadow duration-300${b.wide ? " sm:col-span-2" : ""}`}
               >
                 <div className="p-6 pb-2 sm:pb-4">
-                  <div className="w-8 h-8 sm:w-9 sm:h-9 bg-yellow-400 flex items-center justify-center rounded mb-3" style={{color:"#111827"}}>
+                  <div className="w-8 h-8 sm:w-9 sm:h-9 bg-yellow-400 flex items-center justify-center rounded mb-3 text-gray-900">
                     <b.Icon className="w-5 h-5" />
                   </div>
-                  <div className="font-bold text-lg sm:text-xl md:text-2xl">{b.title}</div>
+                  <div className="font-bold text-lg sm:text-xl md:text-2xl text-gray-900">{b.title}</div>
                 </div>
-                <div className="p-6 pt-0 font-semibold text-sm sm:text-base md:text-lg leading-relaxed" style={{color:"rgba(255,255,255,0.65)"}}>
+                <div className="p-6 pt-0 font-semibold text-sm sm:text-base md:text-lg leading-relaxed text-gray-700">
                   {b.desc}
                 </div>
               </div>
@@ -300,17 +298,17 @@ export default function LegacyBuildersNetworkPage() {
             Join the Community
           </h2>
           <div className="max-w-xl mx-auto">
-            <div className="rounded-lg border-2 border-yellow-400 shadow-lg hover:shadow-xl transition-shadow duration-300 p-4" style={{backgroundColor:"#0f172a"}}>
+            <div className="rounded-lg border-2 border-yellow-400 bg-white shadow-lg hover:shadow-xl transition-shadow duration-300 p-4">
               <div className="p-6 pb-4">
-                <div className="mb-3 font-semibold text-xl sm:text-3xl" style={{color:"#ffffff"}}>Annual Membership</div>
-                <div className="font-bold text-4xl sm:text-6xl">₦150,000</div>
+                <div className="mb-3 font-semibold text-xl sm:text-3xl text-gray-900">Annual Membership</div>
+                <div className="font-bold text-4xl sm:text-6xl text-gray-900">₦150,000</div>
               </div>
               <div className="p-6 pt-0 font-semibold pb-6 sm:pb-8">
                 <ul className="space-y-3 sm:space-y-4">
                   {membershipPerks.map((perk, i) => (
                     <li key={i} className="flex items-start">
-                      <span className="flex-shrink-0 w-2 h-2 rounded-full mt-2 mr-4" style={{backgroundColor:"rgba(255,255,255,0.50)"}} />
-                      <p className="text-sm sm:text-base md:text-lg leading-relaxed flex-1" style={{color:"rgba(255,255,255,0.75)"}}>{perk}</p>
+                      <span className="flex-shrink-0 w-2 h-2 rounded-full mt-2 mr-4 bg-gray-700" />
+                      <p className="text-sm sm:text-base md:text-lg leading-relaxed flex-1 text-gray-700">{perk}</p>
                     </li>
                   ))}
                 </ul>
