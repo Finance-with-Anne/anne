@@ -50,9 +50,13 @@ export async function POST(req: NextRequest) {
   let accountUrl: string | undefined;
   let userId: string | undefined;
 
+  // Generate a temporary password they can use to log in
+  const tempPassword = "LBN-" + Math.random().toString(36).slice(2, 8).toUpperCase();
+
   try {
     const { data: createData } = await supabaseAdmin.auth.admin.createUser({
       email,
+      password: tempPassword,
       email_confirm: true,
       user_metadata: { full_name: name },
     });
@@ -61,12 +65,16 @@ export async function POST(req: NextRequest) {
     // User may already exist
   }
 
-  // If user already existed, find their ID by scanning the user list
+  // If user already existed, find their ID and update their password
   if (!userId) {
     try {
       const { data: listData } = await supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 1000 });
       userId = listData?.users?.find((u: { email?: string; id: string }) => u.email === email)?.id;
     } catch { /* non-fatal */ }
+
+    if (userId) {
+      await supabaseAdmin.auth.admin.updateUserById(userId, { password: tempPassword });
+    }
   }
 
   // Bind the order to this user so it appears in their Communities page
@@ -85,7 +93,7 @@ export async function POST(req: NextRequest) {
     // Non-fatal
   }
 
-  sendConfirmationEmail({ email, name, accountUrl }).catch(console.error);
+  sendConfirmationEmail({ email, name, accountUrl, tempPassword }).catch(console.error);
 
   return NextResponse.json({ success: true, whatsapp_url: LBN_WHATSAPP });
 }
@@ -94,24 +102,36 @@ async function sendConfirmationEmail({
   email,
   name,
   accountUrl,
+  tempPassword,
 }: {
   email: string;
   name: string;
   accountUrl?: string;
+  tempPassword: string;
 }) {
   const whatsappSection = LBN_WHATSAPP
     ? `<p style="margin:24px 0 8px;font-weight:600;color:#111;">Join the community:</p>
        <a href="${LBN_WHATSAPP}" style="display:inline-block;background:#25D366;color:#fff;text-decoration:none;border-radius:10px;padding:14px 28px;font-weight:700;font-size:15px;">Join the WhatsApp Community →</a>`
     : `<p style="color:#888;font-size:13px;">Your access details will be sent shortly. Contact us at <a href="mailto:contact@financewithanne.com">contact@financewithanne.com</a> if you have any questions.</p>`;
 
-  const accountSection = accountUrl
-    ? `<div style="margin-top:28px;background:#f0f4ff;border-radius:12px;padding:20px 24px;">
-         <p style="margin:0 0 6px;font-weight:700;color:#111;font-size:14px;">Your Finance with Anne account</p>
-         <p style="margin:0 0 16px;font-size:13px;color:#555;">An account has been created for you. Click below to set up your password and access your dashboard.</p>
-         <a href="${accountUrl}" style="display:inline-block;background:#0822C0;color:#fff;text-decoration:none;border-radius:8px;padding:12px 24px;font-weight:700;font-size:13px;">Set up my account →</a>
-         <p style="margin:10px 0 0;font-size:11px;color:#999;">This link expires in 24 hours.</p>
-       </div>`
-    : "";
+  const loginUrl = `${SITE_URL}/auth`;
+  const accountSection = `<div style="margin-top:28px;background:#f0f4ff;border-radius:12px;padding:20px 24px;">
+       <p style="margin:0 0 6px;font-weight:700;color:#111;font-size:14px;">Your Finance with Anne login details</p>
+       <p style="margin:0 0 16px;font-size:13px;color:#555;">Use these credentials to sign in to your account and access your community links.</p>
+       <table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:16px;">
+         <tr>
+           <td style="padding:8px 12px;background:#e8edff;border-radius:6px 6px 0 0;color:#555;font-weight:600;width:30%;">Email</td>
+           <td style="padding:8px 12px;background:#e8edff;border-radius:6px 6px 0 0;color:#111;font-weight:700;">${email}</td>
+         </tr>
+         <tr>
+           <td style="padding:8px 12px;background:#dce4ff;border-radius:0 0 6px 6px;color:#555;font-weight:600;">Password</td>
+           <td style="padding:8px 12px;background:#dce4ff;border-radius:0 0 6px 6px;color:#0822C0;font-weight:800;letter-spacing:.05em;font-size:15px;">${tempPassword}</td>
+         </tr>
+       </table>
+       <a href="${loginUrl}" style="display:inline-block;background:#0822C0;color:#fff;text-decoration:none;border-radius:8px;padding:12px 24px;font-weight:700;font-size:13px;">Sign in to my account →</a>
+       ${accountUrl ? `<p style="margin:10px 0 0;font-size:11px;color:#999;">Or use your <a href="${accountUrl}" style="color:#0822C0;">one-click login link</a> (expires in 24 hours).</p>` : ""}
+       <p style="margin:12px 0 0;font-size:11px;color:#999;">You can change your password after signing in under Account Settings.</p>
+     </div>`;
 
   const html = `
 <!DOCTYPE html>
