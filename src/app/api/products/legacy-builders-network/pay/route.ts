@@ -6,10 +6,16 @@ const SITE_URL     = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
 
 const PRODUCT_ID   = "legacy-builders-network";
 const PRODUCT_NAME = "Legacy Builders Network — Annual Membership";
-const PRICE        = 150000;
-const CURRENCY     = "NGN";
+
+const PRICES: Record<string, number> = {
+  NGN: 150000,
+  GBP: 150,
+  USD: 150,
+};
+const ALLOWED_CURRENCIES = new Set(Object.keys(PRICES));
 
 function parseCoupons(): Record<string, number> {
+  // Format: CODE:NGN_DISCOUNT,CODE2:NGN_DISCOUNT2  (discount in the base NGN amount)
   const raw = process.env.LBN_COUPONS ?? "";
   const map: Record<string, number> = {};
   for (const entry of raw.split(",")) {
@@ -24,15 +30,22 @@ function parseCoupons(): Record<string, number> {
 export async function POST(req: NextRequest) {
   if (!FLW_SECRET) return NextResponse.json({ error: "Payment not configured." }, { status: 503 });
 
-  const { name, email, phone, coupon } = await req.json();
+  const { name, email, phone, currency: rawCurrency, coupon } = await req.json();
   if (!name || !email || !phone) {
     return NextResponse.json({ error: "Name, email, and phone are required." }, { status: 400 });
   }
 
-  let finalPrice = PRICE;
+  const currency = ALLOWED_CURRENCIES.has(rawCurrency) ? rawCurrency : "NGN";
+  let finalPrice = PRICES[currency];
+
   if (coupon) {
-    const discount = parseCoupons()[String(coupon).toUpperCase()];
-    if (discount) finalPrice = Math.max(0, PRICE - discount);
+    const discountNgn = parseCoupons()[String(coupon).toUpperCase()];
+    if (discountNgn) {
+      // Scale discount proportionally to the currency
+      const ratio = PRICES[currency] / PRICES.NGN;
+      const discount = Math.round(discountNgn * ratio);
+      finalPrice = Math.max(0, finalPrice - discount);
+    }
   }
 
   const { data: order, error: orderErr } = await supabaseAdmin
@@ -43,7 +56,7 @@ export async function POST(req: NextRequest) {
       name,
       items: [{ id: PRODUCT_ID, name: PRODUCT_NAME, price: finalPrice, qty: 1 }],
       total: finalPrice,
-      currency: CURRENCY,
+      currency,
       status: "pending",
     })
     .select("id")
@@ -65,7 +78,7 @@ export async function POST(req: NextRequest) {
     body: JSON.stringify({
       tx_ref,
       amount: finalPrice,
-      currency: CURRENCY,
+      currency,
       redirect_url: `${SITE_URL}/legacy-builders-network/verify?order_id=${order.id}`,
       customer: { email, name, phone_number: phone },
       meta: { order_id: order.id, product: PRODUCT_ID },
