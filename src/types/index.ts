@@ -207,3 +207,14 @@ export type Testimonial = {
   published: boolean;
   created_at: string;
 };
+
+export type YouTubeVideo = {
+  id: string;
+  youtube_id: string;
+  title: string;
+  description: string | null;
+  thumbnail: string | null;
+  published: boolean;
+  order: number;
+  created_at: string;
+};

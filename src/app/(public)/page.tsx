@@ -4,12 +4,12 @@ import HeroSlider from "@/components/public/HeroSlider";
 import HomeHeroBelowSection from "@/components/public/HomeHeroBelowSection";
 import HomeBlogSection from "@/components/public/HomeBlogSection";
 import { supabaseAdmin } from "@/lib/supabase/admin";
-import type { Testimonial, BlogPost } from "@/types";
+import type { Testimonial, BlogPost, YouTubeVideo } from "@/types";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const [{ data: testimonialsData }, { data: blogData }] = await Promise.all([
+  const [{ data: testimonialsData }, { data: blogData }, { data: youtubeData }] = await Promise.all([
     supabaseAdmin
       .from("testimonials")
       .select("*")
@@ -21,11 +21,18 @@ export default async function HomePage() {
       .eq("published", true)
       .order("published_at", { ascending: false })
       .limit(3),
+    supabaseAdmin
+      .from("youtube_videos")
+      .select("*")
+      .eq("published", true)
+      .order("order", { ascending: true })
+      .limit(4),
   ]);
 
   const testimonials = (testimonialsData ?? []) as Testimonial[];
   const avatars = testimonials.filter((t) => t.image_url).slice(0, 4);
   const blogPosts = (blogData ?? []) as BlogPost[];
+  const youtubeVideos = (youtubeData ?? []) as YouTubeVideo[];
 
   return (
     <div className="bg-white dark:bg-[#05090f]">
@@ -112,7 +119,7 @@ export default async function HomePage() {
       </section>
 
       <HomeHeroBelowSection />
-      <HomeBlogSection posts={blogPosts} />
+      <HomeBlogSection posts={blogPosts} videos={youtubeVideos} />
 
     </div>
   );

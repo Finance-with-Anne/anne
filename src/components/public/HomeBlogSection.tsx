@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import type { BlogPost } from "@/types";
+import type { BlogPost, YouTubeVideo } from "@/types";
 
 function formatDate(dateStr: string | null) {
   if (!dateStr) return "";
@@ -11,7 +11,7 @@ function formatDate(dateStr: string | null) {
   });
 }
 
-export default function HomeBlogSection({ posts }: { posts: BlogPost[] }) {
+export default function HomeBlogSection({ posts, videos = [] }: { posts: BlogPost[]; videos?: YouTubeVideo[] }) {
   const [featured, ...rest] = posts;
   const secondary = rest.slice(0, 2);
 
@@ -127,6 +127,70 @@ export default function HomeBlogSection({ posts }: { posts: BlogPost[] }) {
           </div>
 
         </div>
+
+        {/* YouTube section */}
+        {videos.length > 0 && (
+          <div className="mt-10">
+            <div className="flex items-center justify-between gap-8 mb-8">
+              <div className="flex items-center gap-4">
+                <span
+                  className="inline-flex items-center gap-2 text-xs font-semibold tracking-widest uppercase px-3 py-1 rounded-full"
+                  style={{ backgroundColor: "#ff4444", color: "#fff" }}
+                >
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+                    <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8z" />
+                    <path d="M9.75 15.5l6.25-3.5-6.25-3.5v7z" fill="white" />
+                  </svg>
+                  Watch on YouTube
+                </span>
+                <h3 className="text-xl font-bold" style={{ color: "#111" }}>Latest Videos</h3>
+              </div>
+              <a
+                href="https://youtube.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm font-semibold underline underline-offset-4 decoration-[#0822C0]/30 hover:decoration-[#0822C0] transition-all"
+                style={{ color: "#0822C0" }}
+              >
+                View channel →
+              </a>
+            </div>
+
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              {videos.map((video) => (
+                <a
+                  key={video.id}
+                  href={`https://www.youtube.com/watch?v=${video.youtube_id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group rounded-2xl overflow-hidden flex flex-col"
+                  style={{ backgroundColor: "#dde3ff" }}
+                >
+                  <div className="relative aspect-video overflow-hidden">
+                    <img
+                      src={video.thumbnail ?? `https://img.youtube.com/vi/${video.youtube_id}/mqdefault.jpg`}
+                      alt={video.title}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <div className="w-12 h-12 rounded-full bg-red-600 flex items-center justify-center shadow-lg">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="white" aria-hidden>
+                          <path d="M8 5v14l11-7z" />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="p-4">
+                    <p className="text-sm font-semibold leading-snug line-clamp-2" style={{ color: "#111" }}>
+                      {video.title}
+                    </p>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+
       </div>
     </section>
   );
