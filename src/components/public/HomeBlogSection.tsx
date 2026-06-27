@@ -18,11 +18,11 @@ export default function HomeBlogSection({ posts, videos = [] }: { posts: BlogPos
   return (
     <section className="bg-white px-4 py-6 lg:py-8">
       <div
-        className="w-full rounded-3xl px-6 sm:px-10 lg:px-16 py-16 lg:py-20"
+        className="w-full rounded-3xl px-4 sm:px-8 lg:px-16 py-10 sm:py-14 lg:py-20"
         style={{ backgroundColor: "#eef1ff" }}
       >
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-14">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-6 mb-8 sm:mb-14">
           <div className="max-w-lg">
             <span
               className="inline-block text-xs font-semibold tracking-widest uppercase px-3 py-1 rounded-full mb-4"
@@ -133,26 +133,26 @@ export default function HomeBlogSection({ posts, videos = [] }: { posts: BlogPos
 
         {/* YouTube section */}
         {videos.length > 0 && (
-          <div className="mt-10">
-            <div className="flex items-center justify-between gap-8 mb-8">
-              <div className="flex items-center gap-4">
+          <div className="mt-8 sm:mt-10">
+            <div className="flex items-center justify-between gap-4 mb-5 sm:mb-8">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-4 min-w-0">
                 <span
-                  className="inline-flex items-center gap-2 text-xs font-semibold tracking-widest uppercase px-3 py-1 rounded-full"
+                  className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs font-semibold tracking-widest uppercase px-2.5 py-1 rounded-full shrink-0"
                   style={{ backgroundColor: "#ff4444", color: "#fff" }}
                 >
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
                     <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8z" />
                     <path d="M9.75 15.5l6.25-3.5-6.25-3.5v7z" fill="white" />
                   </svg>
-                  Watch on YouTube
+                  YouTube
                 </span>
-                <h3 className="text-xl font-bold" style={{ color: "#111" }}>Latest Videos</h3>
+                <h3 className="text-base sm:text-xl font-bold" style={{ color: "#111" }}>Latest Videos</h3>
               </div>
               <a
-                href="https://youtube.com"
+                href="https://youtube.com/@financewithanne"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm font-semibold underline underline-offset-4 decoration-[#0822C0]/30 hover:decoration-[#0822C0] transition-all"
+                className="text-xs sm:text-sm font-semibold underline underline-offset-4 decoration-[#0822C0]/30 hover:decoration-[#0822C0] transition-all shrink-0"
                 style={{ color: "#0822C0" }}
               >
                 View channel →
@@ -183,8 +183,8 @@ export default function HomeBlogSection({ posts, videos = [] }: { posts: BlogPos
                       </div>
                     </div>
                   </div>
-                  <div className="p-4">
-                    <p className="text-sm font-semibold leading-snug line-clamp-2" style={{ color: "#111" }}>
+                  <div className="p-3 sm:p-4">
+                    <p className="text-xs sm:text-sm font-semibold leading-snug line-clamp-2" style={{ color: "#111" }}>
                       {video.title}
                     </p>
                   </div>
