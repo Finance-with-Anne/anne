@@ -9,12 +9,30 @@ const PRODUCT_NAME = "Legacy Builders Network — Annual Membership";
 const PRICE        = 150000;
 const CURRENCY     = "NGN";
 
+function parseCoupons(): Record<string, number> {
+  const raw = process.env.LBN_COUPONS ?? "";
+  const map: Record<string, number> = {};
+  for (const entry of raw.split(",")) {
+    const [code, amount] = entry.trim().split(":");
+    if (code && amount && !isNaN(Number(amount))) {
+      map[code.toUpperCase()] = Number(amount);
+    }
+  }
+  return map;
+}
+
 export async function POST(req: NextRequest) {
   if (!FLW_SECRET) return NextResponse.json({ error: "Payment not configured." }, { status: 503 });
 
-  const { name, email, phone } = await req.json();
+  const { name, email, phone, coupon } = await req.json();
   if (!name || !email || !phone) {
     return NextResponse.json({ error: "Name, email, and phone are required." }, { status: 400 });
+  }
+
+  let finalPrice = PRICE;
+  if (coupon) {
+    const discount = parseCoupons()[String(coupon).toUpperCase()];
+    if (discount) finalPrice = Math.max(0, PRICE - discount);
   }
 
   const { data: order, error: orderErr } = await supabaseAdmin
@@ -23,8 +41,8 @@ export async function POST(req: NextRequest) {
       user_id: null,
       email,
       name,
-      items: [{ id: PRODUCT_ID, name: PRODUCT_NAME, price: PRICE, qty: 1 }],
-      total: PRICE,
+      items: [{ id: PRODUCT_ID, name: PRODUCT_NAME, price: finalPrice, qty: 1 }],
+      total: finalPrice,
       currency: CURRENCY,
       status: "pending",
     })
@@ -46,7 +64,7 @@ export async function POST(req: NextRequest) {
     },
     body: JSON.stringify({
       tx_ref,
-      amount: PRICE,
+      amount: finalPrice,
       currency: CURRENCY,
       redirect_url: `${SITE_URL}/legacy-builders-network/verify?order_id=${order.id}`,
       customer: { email, name, phone_number: phone },

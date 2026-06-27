@@ -2,9 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { resend, EMAIL_FROM } from "@/lib/resend";
 
-const FLW_SECRET    = process.env.FLW_SECRET_KEY ?? "";
-const SITE_URL      = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
-const LBN_WHATSAPP  = process.env.LBN_WHATSAPP_URL ?? "";
+const FLW_SECRET   = process.env.FLW_SECRET_KEY ?? "";
+const SITE_URL     = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+const LBN_WHATSAPP = process.env.LBN_WHATSAPP_URL ?? "";
 
 export async function POST(req: NextRequest) {
   if (!FLW_SECRET) return NextResponse.json({ error: "Payment not configured." }, { status: 503 });
@@ -46,16 +46,56 @@ export async function POST(req: NextRequest) {
   const email = order.email as string;
   const name  = (order.name as string | null) ?? email.split("@")[0];
 
-  sendConfirmationEmail({ email, name }).catch(console.error);
+  // Create or retrieve their account, then generate a sign-in link
+  let accountUrl: string | undefined;
+  try {
+    await supabaseAdmin.auth.admin.createUser({
+      email,
+      email_confirm: true,
+      user_metadata: { full_name: name },
+    });
+  } catch {
+    // User may already exist — that's fine
+  }
+
+  try {
+    const { data: linkData } = await supabaseAdmin.auth.admin.generateLink({
+      type: "magiclink",
+      email,
+      options: { redirectTo: `${SITE_URL}/account` },
+    });
+    accountUrl = linkData?.properties?.action_link;
+  } catch {
+    // Non-fatal
+  }
+
+  sendConfirmationEmail({ email, name, accountUrl }).catch(console.error);
 
   return NextResponse.json({ success: true, whatsapp_url: LBN_WHATSAPP });
 }
 
-async function sendConfirmationEmail({ email, name }: { email: string; name: string }) {
+async function sendConfirmationEmail({
+  email,
+  name,
+  accountUrl,
+}: {
+  email: string;
+  name: string;
+  accountUrl?: string;
+}) {
   const whatsappSection = LBN_WHATSAPP
     ? `<p style="margin:24px 0 8px;font-weight:600;color:#111;">Join the community:</p>
        <a href="${LBN_WHATSAPP}" style="display:inline-block;background:#25D366;color:#fff;text-decoration:none;border-radius:10px;padding:14px 28px;font-weight:700;font-size:15px;">Join the WhatsApp Community →</a>`
     : `<p style="color:#888;font-size:13px;">Your access details will be sent shortly. Contact us at <a href="mailto:contact@financewithanne.com">contact@financewithanne.com</a> if you have any questions.</p>`;
+
+  const accountSection = accountUrl
+    ? `<div style="margin-top:28px;background:#f0f4ff;border-radius:12px;padding:20px 24px;">
+         <p style="margin:0 0 6px;font-weight:700;color:#111;font-size:14px;">Your Finance with Anne account</p>
+         <p style="margin:0 0 16px;font-size:13px;color:#555;">An account has been created for you. Click below to set up your password and access your dashboard.</p>
+         <a href="${accountUrl}" style="display:inline-block;background:#0822C0;color:#fff;text-decoration:none;border-radius:8px;padding:12px 24px;font-weight:700;font-size:13px;">Set up my account →</a>
+         <p style="margin:10px 0 0;font-size:11px;color:#999;">This link expires in 24 hours.</p>
+       </div>`
+    : "";
 
   const html = `
 <!DOCTYPE html>
@@ -72,6 +112,7 @@ async function sendConfirmationEmail({ email, name }: { email: string; name: str
         Thank you for joining the <strong>Legacy Builders Network</strong>. Your annual membership has been confirmed.
       </p>
       ${whatsappSection}
+      ${accountSection}
       <hr style="border:none;border-top:1px solid #f0f0f0;margin:28px 0;">
       <p style="font-size:13px;color:#888;margin:0;">
         Questions? Reply to this email or contact us at
