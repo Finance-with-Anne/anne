@@ -7,13 +7,6 @@ export const metadata: Metadata = {
   description: "Meet Anne — personal finance educator, money coach, and the voice behind Finance with Anne. Helping Nigerians take control of their money and build real wealth.",
 };
 
-const stats = [
-  { value: "10,000+", label: "Community members" },
-  { value: "500+",    label: "Students trained" },
-  { value: "5+",      label: "Years of experience" },
-  { value: "₦0",      label: "Excuses accepted" },
-];
-
 const values = [
   {
     title: "Simplicity",
@@ -92,52 +85,81 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ── Stats ── */}
-      <section className="border-b border-gray-100 dark:border-white/6">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 py-10 sm:py-14 grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-8">
-          {stats.map(s => (
-            <div key={s.label} className="text-center">
-              <p className="text-3xl sm:text-4xl font-extrabold text-[#0822C0] dark:text-blue-400">{s.value}</p>
-              <p className="text-sm text-gray-500 dark:text-white/45 mt-1">{s.label}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+      {/* ── Story + Credentials ── */}
+      <section className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-14 sm:py-20">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
 
-      {/* ── Story ── */}
-      <section className="mx-auto max-w-4xl px-4 sm:px-6 py-12 sm:py-20">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 items-start">
-          <div>
-            <h2 className="text-3xl font-bold tracking-tight mb-6">My story</h2>
-            <div className="space-y-4 text-gray-600 dark:text-white/60 text-base leading-relaxed">
-              <p>
-                I didn&apos;t grow up talking about money. Like many Nigerians, I was taught to work hard and pray — but nobody taught me how to manage, save, or invest what I earned.
-              </p>
-              <p>
-                In my mid-twenties, I found myself earning a decent income but constantly broke at month-end. I had no savings, no investments, and no plan. That was my turning point.
-              </p>
-              <p>
-                I spent years studying personal finance — reading books, taking courses, and applying every strategy to my own life. The results were life-changing. I paid off debt, built an emergency fund, started investing, and finally felt in control of my financial future.
-              </p>
-              <p>
-                I started Finance with Anne because I knew I wasn&apos;t alone. Millions of Nigerians are working hard but not getting ahead — not because they don&apos;t earn enough, but because nobody showed them how. That&apos;s what I&apos;m here to change.
-              </p>
+          {/* Left — portrait with overlay card */}
+          <div className="relative">
+            <div className="rounded-3xl overflow-hidden bg-gray-100 dark:bg-white/5">
+              <Image
+                src="/anne-profile.png"
+                alt="Anne — Finance with Anne"
+                width={600}
+                height={700}
+                className="w-full object-cover object-top"
+              />
+            </div>
+            {/* Overlay card */}
+            <div className="absolute bottom-6 right-0 sm:-right-6 w-[220px] sm:w-[260px] rounded-2xl shadow-2xl overflow-hidden"
+              style={{ background: "linear-gradient(135deg, #0822C0 0%, #05148a 100%)" }}>
+              <div className="p-5 sm:p-6">
+                <p className="text-white font-bold text-base mb-4">Why Hire Anne?</p>
+                <ul className="space-y-3 mb-5">
+                  {["10+ Years of Experience", "Top-Rated Consultancy", "Certified Professional"].map(item => (
+                    <li key={item} className="flex items-center gap-2.5 text-white text-sm">
+                      <svg className="h-4 w-4 shrink-0 text-white/80" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+                <a
+                  href="https://t.me/+SNSQzX94_Gk1M2M0"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-between w-full bg-white rounded-xl px-4 py-2.5 text-[#0822C0] font-semibold text-sm hover:bg-blue-50 transition-colors"
+                >
+                  Telegram Channel
+                  <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14m-7-7 7 7-7 7" />
+                  </svg>
+                </a>
+              </div>
             </div>
           </div>
 
-          <div className="space-y-4">
-            <div className="rounded-2xl bg-[#0822C0] text-white p-5 sm:p-8">
-              <p className="text-xl sm:text-2xl font-bold leading-snug mb-4">
-                &ldquo;Financial freedom isn&apos;t a destination for the rich. It&apos;s a skill anyone can learn.&rdquo;
+          {/* Right — story text */}
+          <div className="lg:pt-6">
+            <span className="inline-block text-xs font-semibold uppercase tracking-widest text-gray-400 border border-gray-200 dark:border-white/10 px-3 py-1 rounded-full mb-5">
+              Who AM I
+            </span>
+            <h2 className="text-4xl sm:text-5xl font-bold tracking-tight leading-tight mb-6 text-gray-900 dark:text-white">
+              My Story
+            </h2>
+            <div className="space-y-4 text-gray-600 dark:text-white/60 text-base leading-relaxed mb-8">
+              <p>
+                Growing up, I watched many of my dad&apos;s colleagues — men who were once top government officials with drivers, beautiful homes and a good life — struggle financially after retirement. They had spent their prime earning years in comfort, yet when the paychecks stopped, so did the lifestyle. Many had to go back to work just to get by. That reality left a lasting impression on me.
               </p>
-              <p className="text-white/60 text-sm font-semibold">— Anne</p>
-            </div>
-            <div className="rounded-2xl border border-gray-100 dark:border-white/8 bg-gray-50 dark:bg-white/3 p-6">
-              <p className="text-sm text-gray-600 dark:text-white/55 leading-relaxed">
-                Anne holds a background in finance and has trained hundreds of students through her online courses, coaching programmes, and community events across Nigeria.
+              <p>
+                It made me realise something important: it&apos;s not just about how much money you make, it&apos;s about how well you manage it. Money should serve you not only in your active years but also in retirement.
               </p>
             </div>
+            <ul className="space-y-3.5">
+              {["Smart Budgeting", "Strategic Saving", "Smart Investing"].map(item => (
+                <li key={item} className="flex items-center gap-3 text-gray-800 dark:text-white/80 font-medium text-sm sm:text-base">
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 border-[#0822C0]/30 dark:border-blue-400/30">
+                    <svg className="h-3.5 w-3.5 text-[#0822C0] dark:text-blue-400" fill="none" stroke="currentColor" strokeWidth={2.8} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                  </span>
+                  {item}
+                </li>
+              ))}
+            </ul>
           </div>
+
         </div>
       </section>
 
