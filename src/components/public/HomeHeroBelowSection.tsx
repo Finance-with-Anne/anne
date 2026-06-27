@@ -112,20 +112,20 @@ const cards = [
 export default function HomeHeroBelowSection() {
   return (
     <section className="bg-white px-4 py-6 lg:py-8">
-      <div className="w-full rounded-3xl px-6 sm:px-10 lg:px-16 py-16 lg:py-20" style={{ backgroundColor: "#070F1E", color: "#ffffff" }}>
+      <div className="w-full rounded-3xl px-4 sm:px-8 lg:px-16 py-10 sm:py-14 lg:py-20" style={{ backgroundColor: "#070F1E", color: "#ffffff" }}>
 
         {/* Heading + CTA */}
-        <div className="flex items-center justify-between gap-8 mb-14">
-          <h2 className="text-3xl sm:text-4xl font-bold leading-snug text-white max-w-lg">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-8 mb-8 sm:mb-14">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-snug text-white max-w-lg">
             Financial freedom is a skill and we'll teach you
           </h2>
-          <Link href="/legacy-builders-network" className="btn-animated shrink-0 focus:outline-none">
+          <Link href="/legacy-builders-network" className="btn-animated shrink-0 focus:outline-none self-start sm:self-auto">
             <span>Join Paid Community</span>
           </Link>
         </div>
 
         {/* Stats row */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 mb-14">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 mb-8 sm:mb-14">
           {stats.map((s) => (
             <div key={s.metric} className="flex flex-col gap-3 pt-6 border-t border-white/20">
               <p className="text-sm text-white/50 leading-relaxed">{s.text}</p>
@@ -148,7 +148,7 @@ export default function HomeHeroBelowSection() {
             <Link
               key={card.n}
               href={card.href}
-              className="group rounded-2xl p-6 flex flex-col justify-between min-h-[300px] lg:min-h-[340px]"
+              className="group rounded-2xl p-4 sm:p-6 flex flex-col justify-between min-h-[200px] sm:min-h-[260px] lg:min-h-[340px]"
               style={{ backgroundColor: card.bg, color: "#111111" }}
             >
               {/* Icon — lifts on hover */}
@@ -159,7 +159,7 @@ export default function HomeHeroBelowSection() {
               {/* Bottom content */}
               <div>
                 <p className="text-xs font-semibold mb-1" style={{ color: "rgba(0,0,0,0.5)" }}>{card.n}.</p>
-                <h3 className="text-xl font-bold" style={{ color: "#111" }}>{card.title}</h3>
+                <h3 className="text-base sm:text-xl font-bold" style={{ color: "#111" }}>{card.title}</h3>
 
                 {/* Expandable content: always open for featured, opens on hover for others */}
                 <div className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-all duration-500 ease-in-out">
@@ -192,14 +192,14 @@ export default function HomeHeroBelowSection() {
           <div className="absolute inset-0" style={{ backgroundColor: "rgba(7,15,30,0.78)" }} />
 
           {/* Content */}
-          <div className="relative z-10 p-8 lg:p-12 pb-10">
+          <div className="relative z-10 p-5 sm:p-8 lg:p-12">
             {/* Header */}
             <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10">
               <div>
                 <span className="inline-block text-xs font-semibold tracking-widest uppercase px-3 py-1 rounded-full mb-4" style={{ backgroundColor: "#d8f04a", color: "#111" }}>
                   My Process
                 </span>
-                <h3 className="text-2xl lg:text-4xl font-bold leading-snug text-white max-w-lg">
+                <h3 className="text-xl sm:text-2xl lg:text-4xl font-bold leading-snug text-white max-w-lg">
                   How FWA Helps You Take Control of Your Money
                 </h3>
               </div>
@@ -213,7 +213,7 @@ export default function HomeHeroBelowSection() {
             </div>
 
             {/* Cards — different heights for organic feel */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 items-start">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 items-start">
               {[
                 { n: "01", title: "Understand Your Financial Situation", desc: "Review your income, expenses, debt, and financial goals to gain a clear picture of where you stand.", minH: "min-h-[200px]", bg: "#eef2ff", numColor: "#0822C0", titleColor: "#111", descColor: "rgba(0,0,0,0.55)", delay: "0.1s" },
                 { n: "02", title: "Create a Smart Money Plan", desc: "Develop a practical system for budgeting, saving, and managing your money effectively.", minH: "min-h-[260px]", bg: "#dce6ff", numColor: "#0822C0", titleColor: "#111", descColor: "rgba(0,0,0,0.55)", delay: "0.22s" },

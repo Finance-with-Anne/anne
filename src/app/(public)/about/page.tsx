@@ -51,17 +51,17 @@ export default function AboutPage() {
       {/* ── Hero ── */}
       <section className="relative overflow-hidden border-b border-gray-100 dark:border-white/6">
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#0822C0]/6 via-transparent to-transparent dark:from-[#0822C0]/12" />
-        <div className="relative mx-auto max-w-6xl px-6 py-20 sm:py-28 lg:flex lg:items-center lg:gap-16">
+        <div className="relative mx-auto max-w-6xl px-4 sm:px-6 py-12 sm:py-20 lg:py-28 lg:flex lg:items-center lg:gap-16">
 
           {/* Text */}
           <div className="flex-1 max-w-xl">
             <span className="inline-block rounded-full bg-[#0822C0]/8 dark:bg-[#0822C0]/20 border border-[#0822C0]/15 dark:border-[#0822C0]/30 px-4 py-1.5 text-xs font-semibold text-[#0822C0] dark:text-blue-400 tracking-widest uppercase mb-6">
               About Anne
             </span>
-            <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight leading-tight mb-6">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight mb-5 sm:mb-6">
               Your money deserves<br className="hidden sm:block" /> a better story.
             </h1>
-            <p className="text-lg text-gray-600 dark:text-white/60 leading-relaxed mb-8">
+            <p className="text-base sm:text-lg text-gray-600 dark:text-white/60 leading-relaxed mb-6 sm:mb-8">
               I&apos;m Anne — a personal finance educator and money coach helping Nigerians break free from financial stress, build healthy money habits, and create real, lasting wealth.
             </p>
             <div className="flex flex-wrap gap-3">
@@ -75,7 +75,7 @@ export default function AboutPage() {
           </div>
 
           {/* Portrait */}
-          <div className="mt-14 lg:mt-0 flex-shrink-0 flex justify-center lg:justify-end">
+          <div className="mt-10 lg:mt-0 flex-shrink-0 flex justify-center lg:justify-end">
             <div className="relative">
               <div className="absolute inset-0 rounded-3xl bg-[#0822C0]/10 dark:bg-[#0822C0]/20 blur-3xl scale-110" />
               <Image
@@ -83,7 +83,7 @@ export default function AboutPage() {
                 alt="Anne — Finance with Anne"
                 width={400}
                 height={480}
-                className="relative rounded-3xl object-cover shadow-2xl"
+                className="relative rounded-3xl object-cover shadow-2xl w-[240px] sm:w-[300px] lg:w-[400px]"
                 priority
               />
             </div>
@@ -94,7 +94,7 @@ export default function AboutPage() {
 
       {/* ── Stats ── */}
       <section className="border-b border-gray-100 dark:border-white/6">
-        <div className="mx-auto max-w-5xl px-6 py-14 grid grid-cols-2 sm:grid-cols-4 gap-8">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6 py-10 sm:py-14 grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-8">
           {stats.map(s => (
             <div key={s.label} className="text-center">
               <p className="text-3xl sm:text-4xl font-extrabold text-[#0822C0] dark:text-blue-400">{s.value}</p>
@@ -105,8 +105,8 @@ export default function AboutPage() {
       </section>
 
       {/* ── Story ── */}
-      <section className="mx-auto max-w-4xl px-6 py-20">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+      <section className="mx-auto max-w-4xl px-4 sm:px-6 py-12 sm:py-20">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 items-start">
           <div>
             <h2 className="text-3xl font-bold tracking-tight mb-6">My story</h2>
             <div className="space-y-4 text-gray-600 dark:text-white/60 text-base leading-relaxed">
@@ -126,8 +126,8 @@ export default function AboutPage() {
           </div>
 
           <div className="space-y-4">
-            <div className="rounded-2xl bg-[#0822C0] text-white p-8">
-              <p className="text-2xl font-bold leading-snug mb-4">
+            <div className="rounded-2xl bg-[#0822C0] text-white p-5 sm:p-8">
+              <p className="text-xl sm:text-2xl font-bold leading-snug mb-4">
                 &ldquo;Financial freedom isn&apos;t a destination for the rich. It&apos;s a skill anyone can learn.&rdquo;
               </p>
               <p className="text-white/60 text-sm font-semibold">— Anne</p>
@@ -143,9 +143,9 @@ export default function AboutPage() {
 
       {/* ── Values ── */}
       <section className="bg-gray-50 dark:bg-white/3 border-y border-gray-100 dark:border-white/6">
-        <div className="mx-auto max-w-5xl px-6 py-20">
-          <div className="text-center mb-14">
-            <h2 className="text-3xl font-bold tracking-tight">What we stand for</h2>
+        <div className="mx-auto max-w-5xl px-4 sm:px-6 py-12 sm:py-20">
+          <div className="text-center mb-10 sm:mb-14">
+            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">What we stand for</h2>
             <p className="mt-3 text-gray-500 dark:text-white/40 text-sm max-w-lg mx-auto">
               Every resource, course, and coaching session is built around these principles.
             </p>
@@ -169,9 +169,9 @@ export default function AboutPage() {
       </section>
 
       {/* ── What I offer ── */}
-      <section className="mx-auto max-w-5xl px-6 py-20">
-        <div className="text-center mb-14">
-          <h2 className="text-3xl font-bold tracking-tight">How I can help you</h2>
+      <section className="mx-auto max-w-5xl px-4 sm:px-6 py-12 sm:py-20">
+        <div className="text-center mb-10 sm:mb-14">
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">How I can help you</h2>
           <p className="mt-3 text-gray-500 dark:text-white/40 text-sm max-w-lg mx-auto">
             Pick the format that works best for where you are right now.
           </p>
@@ -200,8 +200,8 @@ export default function AboutPage() {
 
       {/* ── CTA ── */}
       <section className="bg-[#0822C0] text-white">
-        <div className="mx-auto max-w-3xl px-6 py-20 text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+        <div className="mx-auto max-w-3xl px-4 sm:px-6 py-12 sm:py-20 text-center">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4">
             Ready to change your relationship with money?
           </h2>
           <p className="text-white/65 mb-8 text-sm max-w-lg mx-auto leading-relaxed">
