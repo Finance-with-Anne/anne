@@ -21,69 +21,48 @@ export async function GET(req: NextRequest) {
   const ytId = extractYouTubeId(url);
   if (!ytId) return NextResponse.json({ error: "Not a recognised YouTube URL" }, { status: 400 });
 
+  let title: string | null = null;
+  let thumbnail: string = `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`;
+  let duration: number | null = null;
+
+  // oEmbed first — fast, reliable, no API key
+  try {
+    const oembed = await fetch(
+      `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${ytId}&format=json`
+    );
+    if (oembed.ok) {
+      const od = await oembed.json();
+      if (od.title) title = od.title;
+      if (od.thumbnail_url) thumbnail = od.thumbnail_url;
+    }
+  } catch {}
+
+  // HTML scrape for duration (best-effort, skip on failure)
   try {
     const res = await fetch(`https://www.youtube.com/watch?v=${ytId}`, {
       headers: {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
         "Accept-Language": "en-US,en;q=0.9",
       },
+      signal: AbortSignal.timeout(5000),
     });
     const html = await res.text();
 
-    let duration: number | null = null;
-    let title: string | null = null;
-
-    // Most reliable: lengthSeconds from ytInitialPlayerResponse / ytInitialData
     const lenSecMatch = html.match(/"lengthSeconds"\s*:\s*"(\d+)"/);
-    if (lenSecMatch) {
-      duration = Math.ceil(parseInt(lenSecMatch[1]) / 60);
-    }
+    if (lenSecMatch) duration = Math.ceil(parseInt(lenSecMatch[1]) / 60);
 
-    // Fallback: ISO 8601 duration from JSON-LD
-    if (!duration) {
-      const isoMatch = html.match(/"duration"\s*:\s*"(PT[^"]+)"/);
-      if (isoMatch) {
-        const m = isoMatch[1].match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
-        if (m) {
-          const h = parseInt(m[1] || "0");
-          const min = parseInt(m[2] || "0");
-          const sec = parseInt(m[3] || "0");
-          duration = Math.ceil(h * 60 + min + sec / 60);
-        }
-      }
-    }
-
-    // Fallback: approxDurationMs
     if (!duration) {
       const msMatch = html.match(/"approxDurationMs"\s*:\s*"(\d+)"/);
-      if (msMatch) {
-        duration = Math.ceil(parseInt(msMatch[1]) / 60000);
-      }
+      if (msMatch) duration = Math.ceil(parseInt(msMatch[1]) / 60000);
     }
 
-    // Title
-    const titleMatch = html.match(/"title"\s*:\s*\{"runs":\[{"text":"([^"]+)"/);
-    if (!title && titleMatch) title = titleMatch[1];
     if (!title) {
       const ogTitle = html.match(/<meta property="og:title" content="([^"]+)"/);
       if (ogTitle) title = ogTitle[1];
     }
+  } catch {}
 
-    // Thumbnail + fallback title via oEmbed (no API key needed)
-    let thumbnail: string | null = `https://img.youtube.com/vi/${ytId}/mqdefault.jpg`;
-    try {
-      const oembed = await fetch(
-        `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${ytId}&format=json`
-      );
-      if (oembed.ok) {
-        const od = await oembed.json();
-        if (!title && od.title) title = od.title;
-        if (od.thumbnail_url) thumbnail = od.thumbnail_url;
-      }
-    } catch {}
+  if (!title) return NextResponse.json({ error: "Could not fetch video info." }, { status: 502 });
 
-    return NextResponse.json({ duration, title, videoId: ytId, thumbnail });
-  } catch (e) {
-    return NextResponse.json({ error: "Failed to fetch video info" }, { status: 500 });
-  }
+  return NextResponse.json({ videoId: ytId, title, thumbnail, duration });
 }
