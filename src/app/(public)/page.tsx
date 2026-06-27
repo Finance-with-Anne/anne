@@ -55,7 +55,7 @@ export default async function HomePage() {
             <HeroSlider />
 
             {/* Social proof */}
-            <div className="mt-8 sm:mt-10 flex items-center gap-3 sm:gap-4">
+            <div className="mt-8 sm:mt-10 hidden sm:flex items-center gap-3 sm:gap-4">
               <div className="flex -space-x-3">
                 {avatars.length > 0 ? (
                   avatars.map((t) => (
