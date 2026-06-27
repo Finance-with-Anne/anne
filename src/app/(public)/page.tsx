@@ -2,20 +2,30 @@ import Link from "next/link";
 import Image from "next/image";
 import HeroSlider from "@/components/public/HeroSlider";
 import HomeHeroBelowSection from "@/components/public/HomeHeroBelowSection";
+import HomeBlogSection from "@/components/public/HomeBlogSection";
 import { supabaseAdmin } from "@/lib/supabase/admin";
-import type { Testimonial } from "@/types";
+import type { Testimonial, BlogPost } from "@/types";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const { data: testimonialsData } = await supabaseAdmin
-    .from("testimonials")
-    .select("*")
-    .eq("published", true)
-    .limit(4);
+  const [{ data: testimonialsData }, { data: blogData }] = await Promise.all([
+    supabaseAdmin
+      .from("testimonials")
+      .select("*")
+      .eq("published", true)
+      .limit(4),
+    supabaseAdmin
+      .from("blog_posts")
+      .select("id, title, slug, excerpt, cover_image, published_at, featured")
+      .eq("published", true)
+      .order("published_at", { ascending: false })
+      .limit(3),
+  ]);
 
   const testimonials = (testimonialsData ?? []) as Testimonial[];
   const avatars = testimonials.filter((t) => t.image_url).slice(0, 4);
+  const blogPosts = (blogData ?? []) as BlogPost[];
 
   return (
     <div className="bg-white dark:bg-[#05090f]">
@@ -102,6 +112,7 @@ export default async function HomePage() {
       </section>
 
       <HomeHeroBelowSection />
+      <HomeBlogSection posts={blogPosts} />
 
     </div>
   );
