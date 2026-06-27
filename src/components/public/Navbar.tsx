@@ -120,7 +120,7 @@ const col2Links = [
 
 const col3Links = [
   { label: "Contact", href: "/contact", desc: "Get in touch", icon: <IconContact />, bg: "bg-blue-100 text-blue-600" },
-  { label: "Telegram", href: "https://t.me/financewithanne", desc: "Join the Telegram group", icon: <IconTelegram />, bg: "bg-sky-100 text-sky-600" },
+  { label: "Telegram", href: "https://t.me/+SNSQzX94_Gk1M2M0", desc: "Join the Telegram group", icon: <IconTelegram />, bg: "bg-sky-100 text-sky-600" },
   { label: "Privacy Policy", href: "/policy", desc: "Legal policies and terms", icon: <IconPolicy />, bg: "bg-gray-100 text-gray-600" },
   { label: "Newsletter", href: "/newsletter", desc: "Get updates in your inbox", icon: <IconNewsletter />, bg: "bg-pink-100 text-pink-600" },
 ];
