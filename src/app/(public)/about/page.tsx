@@ -93,7 +93,7 @@ export default function AboutPage() {
           <div className="relative">
             <div className="rounded-3xl overflow-hidden bg-gray-100 dark:bg-white/5">
               <Image
-                src="/anne-profile.png"
+                src="/anne-about.jpg"
                 alt="Anne — Finance with Anne"
                 width={600}
                 height={700}
