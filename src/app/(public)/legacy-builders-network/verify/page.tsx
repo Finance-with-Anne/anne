@@ -78,7 +78,7 @@ function VerifyInner() {
               <p className="mt-2 text-gray-500 dark:text-white/50 text-sm leading-relaxed">
                 {state === "already"
                   ? "This payment was already processed. Check your email for your access details."
-                  : "Welcome to Legacy Builders Network! Click below to join the WhatsApp community and get your access details."}
+                  : "Welcome to Legacy Builders Network! We've sent your login details and community access link to your email. Please check your inbox (and spam folder)."}
               </p>
             </div>
             <div className="pt-2 space-y-3">
