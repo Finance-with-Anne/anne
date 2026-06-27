@@ -172,7 +172,7 @@ export default function LegacyBuildersNetworkPage() {
         </div>
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-6 text-black">
+            <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-6 text-white">
               The Support You Need.<br />
               The Investments Guidance{" "}
               <span className="text-yellow-400">You Deserve</span>
