@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import HomeNewsletterSection from "@/components/public/HomeNewsletterSection";
 
 export const metadata: Metadata = {
   title: "About Anne — Finance with Anne",
@@ -220,25 +221,8 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ── CTA ── */}
-      <section className="bg-[#0822C0] text-white">
-        <div className="mx-auto max-w-3xl px-4 sm:px-6 py-12 sm:py-20 text-center">
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4">
-            Ready to change your relationship with money?
-          </h2>
-          <p className="text-white/65 mb-8 text-sm max-w-lg mx-auto leading-relaxed">
-            Start with a free blog post, enroll in a course, or book a 1-on-1 session. Wherever you are in your journey, there&apos;s a next step.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link href="/booking" className="w-full sm:w-auto inline-flex items-center justify-center rounded-xl bg-white text-[#0822C0] font-bold text-sm px-8 py-3.5 hover:bg-blue-50 transition-colors">
-              Book a coaching session
-            </Link>
-            <Link href="/courses" className="w-full sm:w-auto inline-flex items-center justify-center rounded-xl border border-white/30 text-white font-semibold text-sm px-8 py-3.5 hover:bg-white/10 transition-colors">
-              Explore courses
-            </Link>
-          </div>
-        </div>
-      </section>
+      {/* ── Newsletter ── */}
+      <HomeNewsletterSection />
 
     </div>
   );
