@@ -168,7 +168,7 @@ export default function LegacyBuildersNetworkPage() {
             sizes="100vw"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#0B1D3A]/60 via-[#0B1D3A]/75 to-[#0B1D3A]/90" />
+          <div className="absolute inset-0 bg-blue-900/80" />
         </div>
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
