@@ -45,12 +45,6 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
   const cat = product.category as { id: string; name: string; color: string } | null;
   const priceStr = formatPrice(product, currency);
 
-  const allPrices = [
-    product.price_ngn != null && currency !== "NGN" ? `₦${product.price_ngn.toLocaleString()}` : null,
-    product.price_usd != null && currency !== "USD" ? `$${product.price_usd.toLocaleString()}` : null,
-    product.price_gbp != null && currency !== "GBP" ? `£${product.price_gbp.toLocaleString()}` : null,
-  ].filter(Boolean);
-
   return (
     <div className="min-h-screen bg-white dark:bg-[#05090f]">
 
@@ -114,11 +108,6 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             {/* Price */}
             <div>
               <p className="text-3xl font-extrabold text-[#0822C0] dark:text-blue-400">{priceStr}</p>
-              {allPrices.length > 0 && (
-                <p className="text-xs text-gray-400 dark:text-white/25 mt-1">
-                  Also available as {allPrices.join(" · ")}
-                </p>
-              )}
             </div>
 
             {/* CTA */}
