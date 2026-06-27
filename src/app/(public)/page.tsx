@@ -3,6 +3,7 @@ import Image from "next/image";
 import HeroSlider from "@/components/public/HeroSlider";
 import HomeHeroBelowSection from "@/components/public/HomeHeroBelowSection";
 import HomeBlogSection from "@/components/public/HomeBlogSection";
+import HomeTestimonialsSection from "@/components/public/HomeTestimonialsSection";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import type { Testimonial, BlogPost, YouTubeVideo } from "@/types";
 
@@ -14,7 +15,7 @@ export default async function HomePage() {
       .from("testimonials")
       .select("*")
       .eq("published", true)
-      .limit(4),
+      .limit(6),
     supabaseAdmin
       .from("blog_posts")
       .select("id, title, slug, excerpt, cover_image, published_at, featured")
@@ -120,6 +121,7 @@ export default async function HomePage() {
 
       <HomeHeroBelowSection />
       <HomeBlogSection posts={blogPosts} videos={youtubeVideos} />
+      <HomeTestimonialsSection testimonials={testimonials} />
 
     </div>
   );
