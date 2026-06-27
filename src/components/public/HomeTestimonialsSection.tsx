@@ -28,7 +28,7 @@ export default function HomeTestimonialsSection({ testimonials }: { testimonials
             className="shrink-0 text-sm font-semibold underline underline-offset-4"
             style={{ color: "#0822C0" }}
           >
-            Read all stories →
+            Read all testimonials →
           </Link>
         </div>
 
