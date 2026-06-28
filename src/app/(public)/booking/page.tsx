@@ -130,6 +130,9 @@ export default async function BookingPage() {
                           <p className="text-sm font-semibold text-[#0f1c4d] group-hover:text-brand transition-colors truncate">
                             {session.title}
                           </p>
+                          {session.description && (
+                            <p className="text-xs text-gray-400 mt-0.5 truncate">{session.description}</p>
+                          )}
                           <p className="text-xs text-gray-400 mt-0.5">{session.duration_minutes} min</p>
                         </div>
                         <div className="shrink-0 text-right">
