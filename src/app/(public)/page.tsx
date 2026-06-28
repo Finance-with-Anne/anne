@@ -68,10 +68,10 @@ export default async function HomePage() {
                   ))
                 ) : (
                   [
-                    "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=80&h=80&fit=crop&crop=face&auto=format",
-                    "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=80&h=80&fit=crop&crop=face&auto=format",
-                    "https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?w=80&h=80&fit=crop&crop=face&auto=format",
-                    "https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=80&h=80&fit=crop&crop=face&auto=format",
+                    "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=80&h=80&fit=crop&crop=face&auto=format",
+                    "https://images.unsplash.com/photo-1506863530036-1efeddceb993?w=80&h=80&fit=crop&crop=face&auto=format",
+                    "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=80&h=80&fit=crop&crop=face&auto=format",
+                    "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=80&h=80&fit=crop&crop=face&auto=format",
                   ].map((src, i) => (
                     <img key={i} src={src} alt="Client" className="w-11 h-11 rounded-full border-2 border-white dark:border-[#05090f] object-cover" />
                   ))
