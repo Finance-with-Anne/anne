@@ -17,25 +17,28 @@ export default async function HomeTestimonialsSection() {
   return (
     <section className="bg-white px-4 py-6 lg:py-8">
       <div
-        className="w-full rounded-3xl px-6 sm:px-10 lg:px-16 py-16 lg:py-20"
+        className="w-full rounded-3xl px-4 sm:px-10 lg:px-16 py-10 sm:py-14 lg:py-20"
         style={{ backgroundColor: "#eef1ff" }}
       >
         {/* Header */}
-        <div className="flex items-center justify-between gap-8 mb-12">
-          <div>
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-8 mb-10 sm:mb-12">
+          <div className="max-w-lg">
             <span
               className="inline-block text-xs font-semibold tracking-widest uppercase px-3 py-1 rounded-full mb-4"
               style={{ backgroundColor: "#0822C0", color: "#fff" }}
             >
               Client Stories
             </span>
-            <h2 className="text-3xl sm:text-4xl font-bold leading-snug max-w-lg" style={{ color: "#111" }}>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight" style={{ color: "#111" }}>
               Real people. Real financial breakthroughs.
             </h2>
+            <p className="mt-3 text-sm sm:text-base leading-relaxed" style={{ color: "#555" }}>
+              Hear from clients who took control of their money and transformed their financial lives.
+            </p>
           </div>
           <Link
             href="/testimonials"
-            className="shrink-0 text-sm font-semibold underline underline-offset-4"
+            className="self-start sm:self-auto shrink-0 text-sm font-semibold underline underline-offset-4 whitespace-nowrap"
             style={{ color: "#0822C0" }}
           >
             Read all testimonials →
