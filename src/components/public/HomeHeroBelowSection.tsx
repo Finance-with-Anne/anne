@@ -87,7 +87,7 @@ const cards = [
     title: "Money Talks",
     bg: "#d8f04a",
     Icon: IconMoneyTalks,
-    desc: "A live community where we talk money, mindset and long-term wealth strategies together.",
+    desc: "Expert articles, tips and insights on budgeting, investing and building long-term financial freedom.",
     href: "/blog",
   },
   {
