@@ -51,11 +51,11 @@ const stats = [
     href: "/blog",
   },
   {
-    text: "Live monthly sessions where we talk budgeting, investing and wealth mindset",
-    metric: "500+",
+    text: "Live monthly sessions where we analyze and profit from the stock market",
+    metric: "30+",
     unit: "members",
     link: "Join the talks",
-    href: "/community",
+    href: "/legacy-builders-network",
   },
   {
     text: "Real stories from clients who transformed their financial lives through Anne's coaching",
