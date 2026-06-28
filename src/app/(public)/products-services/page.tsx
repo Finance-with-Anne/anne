@@ -20,7 +20,7 @@ export default async function ProductsServicesPage() {
   const country = headersList.get("x-vercel-ip-country");
   const currency = detectCurrency(country);
 
-  const [{ data: products }, { data: categories }] = await Promise.all([
+  const [{ data: products }, { data: categories }, { data: bookingSessions }] = await Promise.all([
     supabaseAdmin
       .from("products")
       .select("*, category:product_categories(id, name, color)")
@@ -30,17 +30,26 @@ export default async function ProductsServicesPage() {
       .from("product_categories")
       .select("*")
       .order("name"),
+    supabaseAdmin
+      .from("booking_sessions")
+      .select("id, slug")
+      .eq("is_active", true),
   ]);
 
   // Only return categories that have at least one active product
   const usedCategoryIds = new Set((products ?? []).map((p: Record<string, unknown>) => p.category_id).filter(Boolean));
   const filteredCategories = (categories ?? []).filter((c: ProductCategory) => usedCategoryIds.has(c.id));
 
+  // Map booking session id -> slug for linking booking products to their detail page
+  const bookingSlugMap: Record<string, string> = {};
+  for (const s of bookingSessions ?? []) bookingSlugMap[s.id] = s.slug;
+
   return (
     <ProductsShopClient
       products={(products ?? []) as Product[]}
       categories={filteredCategories as ProductCategory[]}
       currency={currency}
+      bookingSlugMap={bookingSlugMap}
     />
   );
 }

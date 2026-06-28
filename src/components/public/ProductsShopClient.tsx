@@ -11,6 +11,7 @@ interface Props {
   products: Product[];
   categories: ProductCategory[];
   currency: Currency;
+  bookingSlugMap?: Record<string, string>;
 }
 
 function formatPrice(product: Product, currency: Currency): string {
@@ -28,7 +29,7 @@ function rawPrice(product: Product, currency: Currency): number {
   return product.price_ngn ?? product.price_usd ?? product.price_gbp ?? product.price ?? 0;
 }
 
-export default function ProductsShopClient({ products, categories, currency }: Props) {
+export default function ProductsShopClient({ products, categories, currency, bookingSlugMap = {} }: Props) {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const { addItem } = useCart();
@@ -173,11 +174,13 @@ export default function ProductsShopClient({ products, categories, currency }: P
                   const isCourse = product.source_type === "course" && product.source_id;
                   const isTemplate = product.source_type === "template";
                   const isBooking = product.source_type === "booking";
+                  const bookingSlug = isBooking && product.source_id ? bookingSlugMap[product.source_id] : null;
+                  const bookingHref = bookingSlug ? `/booking/${bookingSlug}` : "/booking";
                   const salesPage = product.sales_page_url
-                    ?? (isBooking ? "/booking" : null);
+                    ?? (isBooking ? bookingHref : null);
                   const cardHref = product.sales_page_url
                     ?? (isCourse ? `/courses/${product.source_id}` : null)
-                    ?? (isBooking ? "/booking" : null)
+                    ?? (isBooking ? bookingHref : null)
                     ?? `/products-services/${product.id}`;
                   const Wrapper = ({ children }: { children: React.ReactNode }) => (
                     <Link href={cardHref} className="group relative rounded-2xl overflow-hidden block" style={{ aspectRatio: "4/3" }}>{children}</Link>
@@ -225,7 +228,7 @@ export default function ProductsShopClient({ products, categories, currency }: P
                           </span>
                         ) : isBooking ? (
                           <Link
-                            href="/booking"
+                            href={bookingHref}
                             onClick={e => e.stopPropagation()}
                             className="flex-1 text-center rounded-xl bg-white text-gray-900 text-xs font-bold py-2.5 hover:bg-gray-50 transition-colors"
                           >
