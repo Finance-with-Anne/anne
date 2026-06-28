@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 const HIDDEN_PATHS = [
   "/shop/checkout",
@@ -12,8 +12,15 @@ const HIDDEN_PATHS = [
 ];
 
 export default function FloatingTelegramButton() {
-  const pathname = usePathname();
-  if (HIDDEN_PATHS.some((p) => pathname.startsWith(p))) return null;
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const path = window.location.pathname;
+    const hidden = HIDDEN_PATHS.some((p) => path.startsWith(p));
+    setVisible(!hidden);
+  }, []);
+
+  if (!visible) return null;
 
   return (
     <Link
