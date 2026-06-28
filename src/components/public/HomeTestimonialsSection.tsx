@@ -50,7 +50,7 @@ export default async function HomeTestimonialsSection() {
           {testimonials.map((t) => (
             <div
               key={t.id}
-              className="rounded-2xl p-6 flex flex-col gap-4"
+              className="rounded-2xl p-4 sm:p-6 flex flex-col gap-3 sm:gap-4"
               style={{ backgroundColor: "#fff", border: "1px solid rgba(8,34,192,0.1)" }}
             >
               {/* Stars */}

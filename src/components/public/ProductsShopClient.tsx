@@ -212,13 +212,13 @@ export default function ProductsShopClient({ products, categories, currency }: P
                       )}
 
                       {/* Bottom info */}
-                      <div className="absolute bottom-0 left-0 right-0 p-4 transition-transform duration-300 group-hover:-translate-y-12">
-                        <p className="text-white font-bold text-base leading-tight line-clamp-2">{product.name}</p>
+                      <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4 transition-transform duration-300 sm:group-hover:-translate-y-12">
+                        <p className="text-white font-bold text-sm sm:text-base leading-tight line-clamp-2">{product.name}</p>
                         <p className="text-white/70 text-xs mt-1 font-semibold">{priceStr}</p>
                       </div>
 
-                      {/* Hover CTA */}
-                      <div className="absolute bottom-0 left-0 right-0 px-4 pb-4 flex gap-2 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                      {/* CTA — always visible on mobile, hover-reveal on desktop */}
+                      <div className="absolute bottom-0 left-0 right-0 px-3 sm:px-4 pb-3 sm:pb-4 flex gap-2 translate-y-0 sm:translate-y-full sm:group-hover:translate-y-0 transition-transform duration-300">
                         {isCourse ? (
                           <span className="flex-1 text-center rounded-xl bg-white text-gray-900 text-xs font-bold py-2.5">
                             Enroll Now

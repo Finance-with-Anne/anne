@@ -172,14 +172,14 @@ export default function LegacyBuildersNetworkPage() {
         </div>
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-6 text-white">
-              The Support You Need.<br />
-              The Investments Guidance{" "}
+            <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-5 sm:mb-6 text-white leading-tight">
+              The Support You Need.<br className="hidden sm:block" />
+              {" "}The Investments Guidance{" "}
               <span className="text-yellow-400">You Deserve</span>
             </h1>
-            <p className="text-lg md:text-xl lg:text-2xl mb-8 opacity-90 max-w-4xl mx-auto">
-              Stocks, Bonds, Treasury Bills, Real Estate, Mutual Funds, Insurance.<br />
-              The opportunity you've been waiting for all in one premium community.
+            <p className="text-base sm:text-lg md:text-xl lg:text-2xl mb-7 sm:mb-8 opacity-90 max-w-4xl mx-auto">
+              Stocks, Bonds, Treasury Bills, Real Estate, Mutual Funds, Insurance.{" "}
+              The opportunity you&apos;ve been waiting for all in one premium community.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/legacy-builders-network/checkout">

@@ -87,12 +87,12 @@ export default function CheckoutForm({ currency, price }: Props) {
     <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center py-12 px-4">
       <div className="w-full max-w-md">
 
-        <div className="bg-blue-600 rounded-t-2xl px-8 py-8 text-center">
+        <div className="bg-blue-600 rounded-t-2xl px-5 sm:px-8 py-6 sm:py-8 text-center">
           <h1 className="text-2xl font-bold text-white">Complete Your Subscription</h1>
           <p className="text-blue-100 mt-1 text-sm">Get instant access to the Premium Community!</p>
         </div>
 
-        <form onSubmit={handlePay} className="bg-white rounded-b-2xl px-8 py-8 shadow-lg space-y-5">
+        <form onSubmit={handlePay} className="bg-white rounded-b-2xl px-5 sm:px-8 py-6 sm:py-8 shadow-lg space-y-5">
 
           <div className="text-center pb-2">
             <p className="text-4xl font-extrabold text-green-600">

@@ -92,8 +92,8 @@ export default function Footer() {
         style={{ background: "linear-gradient(140deg, #0822C0 0%, #1535d4 50%, #0f28b8 100%)" }}
       >
         {/* ── Main body ── */}
-        <div className="px-8 sm:px-10 lg:px-14 pt-12 pb-10">
-          <div className="grid grid-cols-1 lg:grid-cols-[1.6fr_2.8fr] gap-12 lg:gap-16">
+        <div className="px-5 sm:px-8 lg:px-14 pt-10 sm:pt-12 pb-8 sm:pb-10">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.6fr_2.8fr] gap-10 lg:gap-16">
 
             {/* Left — brand */}
             <div className="flex flex-col gap-6">
@@ -135,7 +135,7 @@ export default function Footer() {
             <div className="flex flex-col gap-10">
 
               {/* Nav columns */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-8">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-5 sm:gap-8">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-widest text-white/40 mb-4">Explore</p>
                   <ul className="space-y-2.5">
@@ -182,7 +182,7 @@ export default function Footer() {
                 {subStatus === "done" ? (
                   <p className="text-sm text-white/70">You&apos;re subscribed! Check your inbox.</p>
                 ) : (
-                  <form onSubmit={handleSubscribe} className="flex items-center gap-2 max-w-sm">
+                  <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row items-stretch gap-2 max-w-sm">
                     <input
                       type="email"
                       placeholder="Enter your email"
@@ -211,7 +211,7 @@ export default function Footer() {
 
         {/* ── Bottom bar ── */}
         <div style={{ backgroundColor: "rgba(0,0,0,0.2)" }}>
-          <div className="px-8 sm:px-10 lg:px-14 py-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+          <div className="px-5 sm:px-8 lg:px-14 py-4 flex flex-col sm:flex-row items-center justify-between gap-2">
             <p className="text-xs text-white/40">
               &copy; {new Date().getFullYear()} Finance with Anne. All rights reserved.
             </p>
