@@ -114,11 +114,7 @@ export default function BookingFlow({
       {session.cover_image && (
         <img src={session.cover_image} alt={session.title} className="w-full aspect-square object-cover rounded-2xl mb-5" />
       )}
-      <h1 className="text-xl font-bold text-gray-900 dark:text-white leading-snug mb-2">{session.title}</h1>
-
-      {session.description && (
-        <p className="text-sm text-gray-500 dark:text-white/50 leading-relaxed mb-4">{session.description}</p>
-      )}
+      <h1 className="text-xl font-bold text-gray-900 dark:text-white leading-snug mb-4">{session.title}</h1>
 
       <div className="space-y-2.5 mb-5">
         <div className="flex items-center gap-2.5 text-sm text-gray-500 dark:text-white/50">

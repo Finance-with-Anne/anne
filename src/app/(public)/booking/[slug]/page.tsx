@@ -62,6 +62,17 @@ export default async function BookingSessionPage({
         All sessions
       </Link>
       <BookingFlow session={session} defaultCurrency={currency} />
+
+      {session.description && (
+        <div className="mt-12 border-t border-gray-100 dark:border-white/8 pt-10">
+          <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">About this session</h2>
+          <div className="prose prose-sm prose-gray dark:prose-invert max-w-none">
+            {session.description.split("\n").map((line, i) => (
+              line.trim() ? <p key={i} className="text-gray-600 dark:text-white/60 leading-relaxed mb-3">{line.trim()}</p> : null
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
