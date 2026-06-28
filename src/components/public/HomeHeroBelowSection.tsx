@@ -65,11 +65,11 @@ const stats = [
     href: "/testimonials",
   },
   {
-    text: "Our Instagram where we share daily wins, tips and financial motivation every day",
-    metric: "7.2k",
+    text: "My Instagram where we share daily wins, tips and financial motivation every day",
+    metric: "11.6k",
     unit: "followers",
-    link: "Follow us",
-    href: "https://instagram.com",
+    link: "Follow Me",
+    href: "https://www.instagram.com/financewithanne/",
   },
 ];
 
