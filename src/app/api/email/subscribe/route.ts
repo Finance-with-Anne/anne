@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { resend, EMAIL_FROM } from "@/lib/resend";
-import { createClient } from "@/lib/supabase/server";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 import { WelcomeEmail } from "@/lib/emails/welcome";
 import * as React from "react";
 
@@ -11,10 +11,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Email is required." }, { status: 400 });
   }
 
-  const supabase = await createClient();
-
   // Upsert subscriber
-  const { error: dbError } = await supabase
+  const { error: dbError } = await supabaseAdmin
     .from("subscribers")
     .upsert({ email, name, status: "active" }, { onConflict: "email" });
 
