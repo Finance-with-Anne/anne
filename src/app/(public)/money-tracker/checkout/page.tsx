@@ -88,7 +88,7 @@ export default function MoneyTrackerCheckout() {
             </h2>
 
             {/* Tracker screenshot */}
-            <ImagePlaceholder src="/tracker-screenshot.png" alt="Complete Money Tracker spreadsheet" aspectRatio="16/9" />
+            <ImagePlaceholder src="/ch2.PNG" alt="Complete Money Tracker spreadsheet" aspectRatio="16/9" />
 
             {/* First 3 check items */}
             <div style={{ marginTop: "20px", display: "flex", flexDirection: "column", gap: "12px" }}>
@@ -106,7 +106,7 @@ export default function MoneyTrackerCheckout() {
 
             {/* YouTube thumbnail */}
             <div style={{ marginTop: "24px" }}>
-              <ImagePlaceholder src="/tracker-thumbnail.png" alt="YouTube tutorial — Complete Money Tracker walkthrough" aspectRatio="16/9" />
+              <ImagePlaceholder src="/ch1.PNG" alt="YouTube tutorial — Complete Money Tracker walkthrough" aspectRatio="16/9" />
             </div>
 
             {/* Last 2 check items */}
