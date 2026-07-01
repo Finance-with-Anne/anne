@@ -87,11 +87,11 @@ export default function AboutPage() {
       </section>
 
       {/* ── Mission ── */}
-      <section className="mx-auto max-w-3xl px-4 sm:px-6 py-14 sm:py-20">
+      <section className="mx-auto max-w-6xl px-4 sm:px-6 py-14 sm:py-20">
         <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#0822C0] dark:text-blue-400 mb-6">
           My Mission
         </h2>
-        <div className="space-y-5 text-gray-700 dark:text-white/60 text-base sm:text-lg leading-relaxed mb-8">
+        <div className="max-w-3xl space-y-5 text-gray-700 dark:text-white/60 text-base sm:text-lg leading-relaxed mb-8">
           <p>
             At <span className="italic text-[#0822C0] dark:text-blue-400">Finance With Anne</span>, my mission is to make personal finance simple, practical and empowering. Providing you with the right knowledge, tools, and confidence to take control of your financial future.
           </p>
