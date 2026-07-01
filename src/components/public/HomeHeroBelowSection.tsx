@@ -100,10 +100,10 @@ const cards = [
   },
   {
     n: "04",
-    title: "Financial Planning",
+    title: "Stock Market Investing",
     bg: "#ffffff",
     Icon: IconPlanning,
-    desc: "Structured plans that map your income, expenses and goals into a clear financial roadmap.",
+    desc: "Stay ahead of the market with monthly and timely stock recommendations.",
     href: "/legacy-builders-network",
   },
 ];

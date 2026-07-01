@@ -10,7 +10,7 @@ const features = [
   { n: "01", title: "1:1 Coaching", desc: "Personalised sessions tailored to your financial situation and goals." },
   { n: "02", title: "Money Talks", desc: "A live community where we talk money, mindset, and wealth." },
   { n: "03", title: "Courses & Resources", desc: "Self-paced learning to sharpen your financial knowledge." },
-  { n: "04", title: "Financial Planning", desc: "Custom roadmaps to help you reach your money milestones faster." },
+  { n: "04", title: "Stock Market Investing", desc: "Stay ahead of the market with monthly and timely stock recommendations." },
 ];
 
 export default function CoreFeatures() {
