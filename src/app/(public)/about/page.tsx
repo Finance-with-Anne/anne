@@ -86,6 +86,27 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* ── Mission ── */}
+      <section className="mx-auto max-w-3xl px-4 sm:px-6 py-14 sm:py-20">
+        <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-[#0822C0] dark:text-blue-400 mb-6">
+          My Mission
+        </h2>
+        <div className="space-y-5 text-gray-700 dark:text-white/60 text-base sm:text-lg leading-relaxed mb-8">
+          <p>
+            At <span className="italic text-[#0822C0] dark:text-blue-400">Finance With Anne</span>, my mission is to make personal finance simple, practical and empowering. Providing you with the right knowledge, tools, and confidence to take control of your financial future.
+          </p>
+          <p>
+            I believe financial literacy should be relatable, and within everyone&apos;s reach. Whether it&apos;s earning extra income, budgeting, saving, investing, or shifting your money mindsets, I break down complex knowledge into clear, actionable steps.
+          </p>
+          <p>
+            With years of experience living and teaching smart money habits, I&apos;m here to guide you toward building purposeful wealth — starting from where you are, one smart decision at a time.
+          </p>
+        </div>
+        <Link href="/contact" className="inline-flex items-center gap-2 rounded-xl bg-[#0822C0] text-white font-semibold text-sm px-6 py-3 hover:bg-[#0618a0] transition-colors">
+          Get in Touch
+        </Link>
+      </section>
+
       {/* ── Story + Credentials ── */}
       <section className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-14 sm:py-20">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
