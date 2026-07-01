@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "The Complete Budget & Money Tracker — Finance with Anne",
+  title: "The Complete Budget & Money Tracker | Finance with Anne",
   description: "The Complete Money Tracker That Finds Your 'Lost Money' in Just 10 Minutes a Day!",
 };
 

@@ -108,7 +108,7 @@ export default async function HomePage() {
               <div className="absolute inset-0 rounded-3xl bg-[#0822C0]/10 dark:bg-[#0822C0]/20 blur-3xl scale-110" />
               <Image
                 src="/anne-profile.png"
-                alt="Anne — Financial Coach"
+                alt="Anne, Financial Coach"
                 width={520}
                 height={620}
                 className="relative rounded-3xl object-cover shadow-2xl w-[280px] sm:w-[380px] lg:w-[520px]"

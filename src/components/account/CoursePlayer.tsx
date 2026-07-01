@@ -397,7 +397,7 @@ function SupportTab({ courseId }: { courseId: string }) {
         </div>
         <div>
           <p className="text-sm font-semibold text-gray-900">Q&amp;A / Support</p>
-          <p className="text-xs text-gray-400 mt-0.5">Ask the instructor — replies usually within 24h</p>
+          <p className="text-xs text-gray-400 mt-0.5">Ask the instructor. Replies usually within 24h</p>
         </div>
       </div>
 
@@ -654,10 +654,10 @@ function QuizTab({ courseId, lessonId }: { courseId: string; lessonId: string })
           {result.score} / {result.total}
         </p>
         <p className={`text-sm font-semibold mb-2 ${result.passed ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}>
-          {result.passed ? "You passed! 🎉" : "Not quite — keep studying!"}
+          {result.passed ? "You passed! 🎉" : "Not quite. Keep studying!"}
         </p>
         <p className="text-xs text-gray-400 dark:text-white/30 mb-6">
-          {Math.round((result.score / result.total) * 100)}% score — 70% required to pass
+          {Math.round((result.score / result.total) * 100)}% score. 70% required to pass
         </p>
         <button
           onClick={() => { setResult(null); setAnswers({}); }}

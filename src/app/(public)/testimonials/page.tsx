@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { Testimonial } from "@/types";
 
 export const metadata: Metadata = {
-  title: "Testimonials — Finance with Anne",
+  title: "Testimonials | Finance with Anne",
   description: "Read real stories from clients who transformed their financial lives with Finance with Anne.",
 };
 

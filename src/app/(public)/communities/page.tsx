@@ -3,7 +3,7 @@ import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Communities — Finance with Anne" };
+export const metadata = { title: "Communities | Finance with Anne" };
 
 type Currency = "NGN" | "USD" | "GBP";
 

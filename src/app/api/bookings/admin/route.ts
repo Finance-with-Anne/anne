@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
     await resend.emails.send({
       from: EMAIL_FROM,
       to: client_email,
-      subject: `Booking Confirmed — ${session.title}`,
+      subject: `Booking Confirmed: ${session.title}`,
       react: React.createElement(BookingConfirmationEmail, {
         clientName: client_name,
         service: session.title,

@@ -4,7 +4,7 @@ import CoursesShopClient from "@/components/public/CoursesShopClient";
 import type { Course, CourseCategory } from "@/types";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Courses — Finance with Anne" };
+export const metadata = { title: "Courses | Finance with Anne" };
 
 type Currency = "NGN" | "USD" | "GBP";
 

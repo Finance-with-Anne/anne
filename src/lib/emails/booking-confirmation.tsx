@@ -22,7 +22,7 @@ export function BookingConfirmationEmail({ clientName, service, date, time, goog
             <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 4 }}>Finance with Anne</h1>
             <hr style={{ borderColor: "#e5e7eb", margin: "16px 0" }} />
             <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 8 }}>
-              {isPaid ? "Booking Confirmed — Payment Received" : "Booking Confirmed"}
+              {isPaid ? "Booking Confirmed: Payment Received" : "Booking Confirmed"}
             </h2>
             <p style={{ fontSize: 14, color: "#4b5563", lineHeight: 1.6 }}>
               Hi {clientName}, your session has been confirmed. Here&apos;s a summary:
@@ -81,7 +81,7 @@ export function BookingConfirmationEmail({ clientName, service, date, time, goog
               Warm regards,<br /><strong>Anne</strong>
             </p>
             <hr style={{ borderColor: "#e5e7eb", margin: "32px 0 16px" }} />
-            <p style={{ fontSize: 11, color: "#9ca3af", textAlign: "center" as const }}>Finance with Anne — Building Wealth, One Step at a Time</p>
+            <p style={{ fontSize: 11, color: "#9ca3af", textAlign: "center" as const }}>Finance with Anne: Building Wealth, One Step at a Time</p>
           </td></tr>
         </table>
       </body>

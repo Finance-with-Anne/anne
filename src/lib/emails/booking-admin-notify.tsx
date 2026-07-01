@@ -23,10 +23,10 @@ export function AdminBookingNotifyEmail({ clientName, clientEmail, phone, servic
       <body style={{ fontFamily: "Arial, sans-serif", color: "#111", backgroundColor: "#fff", margin: 0, padding: 0 }}>
         <table width="100%" cellPadding={0} cellSpacing={0} style={{ maxWidth: 560, margin: "40px auto", padding: "0 20px" }}>
           <tr><td>
-            <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 4 }}>Finance with Anne — Admin</h1>
+            <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 4 }}>Finance with Anne | Admin</h1>
             <hr style={{ borderColor: "#e5e7eb", margin: "16px 0" }} />
             <h2 style={{ fontSize: 16, fontWeight: 600, color: "#111" }}>
-              {isPaid ? "New Booking — Payment Received" : "New Booking Request"}
+              {isPaid ? "New Booking: Payment Received" : "New Booking Request"}
             </h2>
             <p style={{ fontSize: 13, color: "#6b7280" }}>
               {isPaid

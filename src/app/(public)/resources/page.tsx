@@ -1,4 +1,4 @@
-export const metadata = { title: "Resources — ANNE" };
+export const metadata = { title: "Resources | ANNE" };
 
 export default function ResourcesPage() {
   return (

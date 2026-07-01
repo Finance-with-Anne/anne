@@ -2,7 +2,7 @@ import { supabaseAdmin } from "@/lib/supabase/admin";
 import ReportsPage from "@/components/admin/ReportsPage";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Reports — Admin" };
+export const metadata = { title: "Reports | Admin" };
 
 function monthKey(date: Date) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;

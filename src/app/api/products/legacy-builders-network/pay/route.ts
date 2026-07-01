@@ -5,7 +5,7 @@ const FLW_SECRET   = process.env.FLW_SECRET_KEY ?? "";
 const SITE_URL     = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
 const PRODUCT_DB_ID = "2591b7ff-866b-4ab4-ad4c-e421e04cb577"; // products table UUID
-const PRODUCT_NAME  = "Legacy Builders Network — Annual Membership";
+const PRODUCT_NAME  = "Legacy Builders Network: Annual Membership";
 
 const PRICES: Record<string, number> = {
   NGN: 150000,

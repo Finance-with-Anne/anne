@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Files & Templates — Finance with Anne" };
+export const metadata = { title: "Files & Templates | Finance with Anne" };
 
 interface Purchase {
   id: string;

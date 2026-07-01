@@ -18,7 +18,7 @@ const slides = [
     likes: "6.1K",
   },
   {
-    quote: "Budgeting isn't about restriction — it's about giving every pound a purpose so you can live the life you actually want.",
+    quote: "Budgeting isn't about restriction. It's about giving every pound a purpose so you can live the life you actually want.",
     time: "2:15 PM · Mar 7, 2025",
     replies: "1.5K",
     likes: "9.2K",

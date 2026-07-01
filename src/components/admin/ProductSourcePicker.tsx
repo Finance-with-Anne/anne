@@ -95,7 +95,7 @@ export default function ProductSourcePicker({ courses, sessions }: Props) {
               </svg>
             </span>
             <p className={`font-semibold text-sm ${heading}`}>Create Manually</p>
-            <p className={`text-xs mt-1 leading-relaxed ${sub}`}>Fill in all details from scratch — templates, ebooks, or anything else.</p>
+            <p className={`text-xs mt-1 leading-relaxed ${sub}`}>Fill in all details from scratch: templates, ebooks, or anything else.</p>
           </button>
 
           {/* From Course */}

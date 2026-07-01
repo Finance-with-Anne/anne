@@ -105,7 +105,7 @@ export default function Footer() {
               </Link>
 
               <p className="text-sm text-white/60 leading-relaxed max-w-[220px]">
-                Building financial confidence across Africa and beyond — one conversation at a time.
+                Building financial confidence across Africa and beyond, one conversation at a time.
               </p>
 
               <Link

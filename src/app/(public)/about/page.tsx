@@ -4,8 +4,8 @@ import Link from "next/link";
 import HomeNewsletterSection from "@/components/public/HomeNewsletterSection";
 
 export const metadata: Metadata = {
-  title: "About Anne — Finance with Anne",
-  description: "Meet Anne — personal finance educator, money coach, and the voice behind Finance with Anne. Helping Nigerians take control of their money and build real wealth.",
+  title: "About Anne | Finance with Anne",
+  description: "Meet Anne, personal finance educator, money coach, and the voice behind Finance with Anne. Helping Nigerians take control of their money and build real wealth.",
 };
 
 const values = [
@@ -16,7 +16,7 @@ const values = [
   },
   {
     title: "Accountability",
-    desc: "We show up consistently — in your inbox, on your feed, and in your corner — so you stay on track with your financial goals.",
+    desc: "We show up consistently: in your inbox, on your feed, and in your corner, so you stay on track with your financial goals.",
     icon: "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z",
   },
   {
@@ -56,7 +56,7 @@ export default function AboutPage() {
               Your money deserves<br className="hidden sm:block" /> a better story.
             </h1>
             <p className="text-base sm:text-lg text-gray-600 dark:text-white/60 leading-relaxed mb-6 sm:mb-8">
-              I&apos;m Anne — a personal finance educator and money coach helping Nigerians break free from financial stress, build healthy money habits, and create real, lasting wealth.
+              I&apos;m Anne, a personal finance educator and money coach helping Nigerians break free from financial stress, build healthy money habits, and create real, lasting wealth.
             </p>
             <div className="flex flex-wrap gap-3">
               <Link href="/booking" className="inline-flex items-center gap-2 rounded-xl bg-[#0822C0] text-white font-semibold text-sm px-6 py-3 hover:bg-[#0618a0] transition-colors">
@@ -74,7 +74,7 @@ export default function AboutPage() {
               <div className="absolute inset-0 rounded-3xl bg-[#0822C0]/10 dark:bg-[#0822C0]/20 blur-3xl scale-110" />
               <Image
                 src="/anne-profile.png"
-                alt="Anne — Finance with Anne"
+                alt="Anne, Finance with Anne"
                 width={400}
                 height={480}
                 className="relative rounded-3xl object-cover shadow-2xl w-[240px] sm:w-[300px] lg:w-[400px]"
@@ -99,7 +99,7 @@ export default function AboutPage() {
             I believe financial literacy should be relatable, and within everyone&apos;s reach. Whether it&apos;s earning extra income, budgeting, saving, investing, or shifting your money mindsets, I break down complex knowledge into clear, actionable steps.
           </p>
           <p>
-            With years of experience living and teaching smart money habits, I&apos;m here to guide you toward building purposeful wealth — starting from where you are, one smart decision at a time.
+            With years of experience living and teaching smart money habits, I&apos;m here to guide you toward building purposeful wealth, starting from where you are, one smart decision at a time.
           </p>
         </div>
         <Link href="/contact" className="inline-flex items-center gap-2 rounded-xl bg-[#0822C0] text-white font-semibold text-sm px-6 py-3 hover:bg-[#0618a0] transition-colors">
@@ -116,7 +116,7 @@ export default function AboutPage() {
             <div className="rounded-3xl overflow-hidden bg-gray-100 dark:bg-white/5">
               <Image
                 src="/anne-about.jpg"
-                alt="Anne — Finance with Anne"
+                alt="Anne, Finance with Anne"
                 width={600}
                 height={700}
                 className="w-full object-cover object-top"
@@ -162,7 +162,7 @@ export default function AboutPage() {
             </h2>
             <div className="space-y-4 text-gray-600 dark:text-white/60 text-base leading-relaxed mb-8">
               <p>
-                Growing up, I watched many of my dad&apos;s colleagues — men who were once top government officials with drivers, beautiful homes and a good life — struggle financially after retirement. They had spent their prime earning years in comfort, yet when the paychecks stopped, so did the lifestyle. Many had to go back to work just to get by. That reality left a lasting impression on me.
+                Growing up, I watched many of my dad&apos;s colleagues, men who were once top government officials with drivers, beautiful homes and a good life, struggle financially after retirement. They had spent their prime earning years in comfort, yet when the paychecks stopped, so did the lifestyle. Many had to go back to work just to get by. That reality left a lasting impression on me.
               </p>
               <p>
                 It made me realise something important: it&apos;s not just about how much money you make, it&apos;s about how well you manage it. Money should serve you not only in your active years but also in retirement.

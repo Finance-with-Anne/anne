@@ -13,7 +13,7 @@ export async function generateMetadata({ params }: Props) {
   const { courseId } = await params;
   const supabase = await createClient();
   const { data } = await supabase.from("courses").select("title").eq("id", courseId).single();
-  return { title: data?.title ? `${data.title} — Finance with Anne` : "Course Player" };
+  return { title: data?.title ? `${data.title} | Finance with Anne` : "Course Player" };
 }
 
 export default async function LearnPage({ params, searchParams }: Props) {

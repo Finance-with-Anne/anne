@@ -22,9 +22,9 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     .select("title, description")
     .eq("id", id)
     .single();
-  if (!data) return { title: "Course — Finance with Anne" };
+  if (!data) return { title: "Course | Finance with Anne" };
   return {
-    title: `${data.title} — Finance with Anne`,
+    title: `${data.title} | Finance with Anne`,
     description: data.description ?? undefined,
   };
 }

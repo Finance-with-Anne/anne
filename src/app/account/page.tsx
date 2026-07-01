@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Dashboard — Finance with Anne" };
+export const metadata = { title: "Dashboard | Finance with Anne" };
 
 export default async function AccountDashboardPage() {
   const supabase = await createClient();

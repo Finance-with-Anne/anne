@@ -166,7 +166,7 @@ export default function CheckoutForm({ currency, price }: Props) {
               </button>
             </div>
             {couponApplied && (
-              <p className="text-xs text-green-600 mt-1.5">✓ Coupon applied — {symbol}{discount.toLocaleString()} off</p>
+              <p className="text-xs text-green-600 mt-1.5">✓ Coupon applied: {symbol}{discount.toLocaleString()} off</p>
             )}
             {couponError && (
               <p className="text-xs text-red-500 mt-1.5">{couponError}</p>

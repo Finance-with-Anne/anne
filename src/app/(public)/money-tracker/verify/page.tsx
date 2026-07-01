@@ -78,7 +78,7 @@ function VerifyInner() {
               <p className="mt-2 text-gray-500 dark:text-white/50 text-sm leading-relaxed">
                 {state === "already"
                   ? "This payment was already processed. Check your email for the download link."
-                  : "Check your inbox — we've sent you the download link for your Budget & Money Tracker."}
+                  : "Check your inbox. We've sent you the download link for your Budget & Money Tracker."}
               </p>
               {isNew && (
                 <div className="mt-4 rounded-xl bg-[#0822C0]/5 dark:bg-[#0822C0]/10 border border-[#0822C0]/15 p-4 text-left">

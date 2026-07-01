@@ -146,7 +146,7 @@ async function sendDeliveryEmail({
   await resend.emails.send({
     from: EMAIL_FROM,
     to: email,
-    subject: "Your Budget & Money Tracker is ready 🎉 — Finance with Anne",
+    subject: "Your Budget & Money Tracker is ready 🎉 | Finance with Anne",
     html,
   });
 }

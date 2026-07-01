@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import type { BlogPost, Category } from "@/types";
 
-export const metadata = { title: "Money Talks — Finance with Anne" };
+export const metadata = { title: "Money Talks | Finance with Anne" };
 
 export default async function MoneyTalksPage() {
   const supabase = await createClient();
@@ -63,7 +63,7 @@ export default async function MoneyTalksPage() {
       </div>
 
       {allPosts.length === 0 && (
-        <div className="text-center py-20 text-gray-400">No posts yet — check back soon.</div>
+        <div className="text-center py-20 text-gray-400">No posts yet. Check back soon.</div>
       )}
 
       {/* Posts with no subcategory */}

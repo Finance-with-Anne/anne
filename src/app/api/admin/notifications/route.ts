@@ -44,7 +44,7 @@ export async function GET() {
       id: `subscriber_${s.id}`,
       type: "subscriber" as const,
       title: `New subscriber`,
-      description: s.name ? `${s.name} — ${s.email}` : s.email,
+      description: s.name ? `${s.name} (${s.email})` : s.email,
       time: s.created_at,
     })),
   ]

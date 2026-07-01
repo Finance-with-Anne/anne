@@ -68,7 +68,7 @@ export default function YouTubePage({ videos }: { videos: any[] }) {
 
   async function handleAdd() {
     const id = videoId || extractId(url);
-    if (!id || !title) return setError("Paste a YouTube link — title is required.");
+    if (!id || !title) return setError("Paste a YouTube link. Title is required.");
     setSaving(true); setError("");
     const body = {
       youtube_id: id,

@@ -188,7 +188,7 @@ async function sendOrderEmail({
   await resend.emails.send({
     from: EMAIL_FROM,
     to: order.email,
-    subject: "Your order is confirmed — Finance with Anne",
+    subject: "Your order is confirmed | Finance with Anne",
     html,
   });
 }

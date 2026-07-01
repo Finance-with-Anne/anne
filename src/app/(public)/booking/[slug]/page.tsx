@@ -21,7 +21,7 @@ function detectCurrency(country: string | null, param: string | null): Currency 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const { data } = await supabaseAdmin.from("booking_sessions").select("title").eq("slug", slug).single();
-  return { title: data ? `${data.title} — Finance with Anne` : "Book a Session" };
+  return { title: data ? `${data.title} | Finance with Anne` : "Book a Session" };
 }
 
 export default async function BookingSessionPage({

@@ -46,7 +46,7 @@ export default function HomeNewsletterSection() {
           </span>
 
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight mb-4">
-            Take control of your money — starting today.
+            Take control of your money, starting today.
           </h2>
 
           <p className="text-white/70 text-base sm:text-lg leading-relaxed mb-10">

@@ -330,7 +330,7 @@ export default function BookingSessionForm({ session }: { session?: BookingSessi
           <p className={sectionTitle}>Questions</p>
           <button type="button" onClick={addQuestion} className={`text-xs font-medium ${dark ? "text-white/60 hover:text-white" : "text-gray-500 hover:text-gray-800"} transition-colors`}>+ Add Question</button>
         </div>
-        {questions.length === 0 && <p className={`text-xs ${sub}`}>No questions yet — clients will only fill in name, email, and phone.</p>}
+        {questions.length === 0 && <p className={`text-xs ${sub}`}>No questions yet. Clients will only fill in name, email, and phone.</p>}
         {questions.map((q, i) => (
           <div key={i} className={`rounded-lg p-3 space-y-2 ${dark ? "bg-white/3" : "bg-gray-50"}`}>
             <div className="flex items-start gap-2">

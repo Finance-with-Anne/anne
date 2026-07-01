@@ -4,7 +4,7 @@ import { supabaseAdmin } from "@/lib/supabase/admin";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "My Communities — Finance with Anne" };
+export const metadata = { title: "My Communities | Finance with Anne" };
 
 type CommunityLink = { type: "whatsapp" | "telegram"; label: string; url: string };
 

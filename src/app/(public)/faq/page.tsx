@@ -1,8 +1,8 @@
-export const metadata = { title: "FAQ — ANNE" };
+export const metadata = { title: "FAQ | ANNE" };
 
 const faqs = [
   { q: "How do I book a session?", a: "Visit our Booking page and select a service and available time slot." },
-  { q: "What does a coaching session cover?", a: "Sessions are tailored to your goals — budgeting, debt, investing, savings, or a full financial review." },
+  { q: "What does a coaching session cover?", a: "Sessions are tailored to your goals: budgeting, debt, investing, savings, or a full financial review." },
   { q: "Do you offer refunds?", a: "Please refer to our Terms of Service for our refund policy." },
 ];
 

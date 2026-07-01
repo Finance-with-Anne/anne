@@ -233,7 +233,7 @@ export default function BookingDetailAdmin({ booking }: { booking: BookingWithRe
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
           <div className={`w-full max-w-md rounded-2xl border p-6 shadow-2xl ${dark ? "bg-[#111318] border-white/10" : "bg-white border-gray-200"}`}>
             <h2 className={`text-base font-bold mb-1 ${heading}`}>Reschedule Booking</h2>
-            <p className={`text-xs mb-5 ${sub}`}>{booking.client_name} — {booking.service}</p>
+            <p className={`text-xs mb-5 ${sub}`}>{booking.client_name}, {booking.service}</p>
             <div className="space-y-4">
               <div>
                 <label className={`block text-xs font-medium mb-1.5 ${label}`}>New Date</label>

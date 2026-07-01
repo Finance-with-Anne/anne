@@ -53,7 +53,7 @@ function ConnectContent({ isConnected, connectedAt }: { isConnected: boolean; co
       )}
 
       {error && (
-        <p className="text-xs text-red-400 mt-3">Connection failed — please try again.</p>
+        <p className="text-xs text-red-400 mt-3">Connection failed. Please try again.</p>
       )}
 
       {justConnected && (

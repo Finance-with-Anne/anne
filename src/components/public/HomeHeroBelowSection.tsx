@@ -187,7 +187,7 @@ export default function HomeHeroBelowSection() {
         {/* My Process */}
         <div className="mt-6 relative rounded-2xl overflow-hidden">
           {/* Background image */}
-          <Image src="/anne-hero.png" alt="Anne — Financial Coach" fill className="object-cover object-center" />
+          <Image src="/anne-hero.png" alt="Anne, Financial Coach" fill className="object-cover object-center" />
           {/* Dark overlay */}
           <div className="absolute inset-0" style={{ backgroundColor: "rgba(7,15,30,0.78)" }} />
 

@@ -6,7 +6,7 @@ import { headers } from "next/headers";
 import type { BookingSession } from "@/types";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Book a Session — Finance with Anne" };
+export const metadata = { title: "Book a Session | Finance with Anne" };
 
 type Currency = "NGN" | "USD" | "GBP";
 

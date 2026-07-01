@@ -66,7 +66,7 @@ async function sendCancellationEmail(booking: { client_name: string; client_emai
   await resend.emails.send({
     from: EMAIL_FROM,
     to: booking.client_email,
-    subject: `Booking Cancelled — ${booking.service}`,
+    subject: `Booking Cancelled: ${booking.service}`,
     html: `<html><body style="font-family:Arial,sans-serif;color:#111;background:#fff;margin:0;padding:0">
       <table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;margin:40px auto;padding:0 20px">
         <tr><td>
@@ -82,7 +82,7 @@ async function sendCancellationEmail(booking: { client_name: string; client_emai
           <p style="color:#4b5563;margin-top:20px">If you have any questions or would like to rebook, please reply to this email.</p>
           <p style="color:#4b5563;margin-top:20px">Warm regards,<br/><strong>Anne</strong></p>
           <hr style="border-color:#e5e7eb;margin:32px 0 16px"/>
-          <p style="font-size:11px;color:#9ca3af;text-align:center">Finance with Anne — Building Wealth, One Step at a Time</p>
+          <p style="font-size:11px;color:#9ca3af;text-align:center">Finance with Anne: Building Wealth, One Step at a Time</p>
         </td></tr>
       </table>
     </body></html>`,
@@ -102,7 +102,7 @@ async function sendRescheduleEmail(
   await resend.emails.send({
     from: EMAIL_FROM,
     to: booking.client_email,
-    subject: `Booking Rescheduled — ${booking.service}`,
+    subject: `Booking Rescheduled: ${booking.service}`,
     html: `<html><body style="font-family:Arial,sans-serif;color:#111;background:#fff;margin:0;padding:0">
       <table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;margin:40px auto;padding:0 20px">
         <tr><td>
@@ -120,7 +120,7 @@ async function sendRescheduleEmail(
           <p style="color:#4b5563;margin-top:20px">If you have any questions, please reply to this email.</p>
           <p style="color:#4b5563;margin-top:20px">Warm regards,<br/><strong>Anne</strong></p>
           <hr style="border-color:#e5e7eb;margin:32px 0 16px"/>
-          <p style="font-size:11px;color:#9ca3af;text-align:center">Finance with Anne — Building Wealth, One Step at a Time</p>
+          <p style="font-size:11px;color:#9ca3af;text-align:center">Finance with Anne: Building Wealth, One Step at a Time</p>
         </td></tr>
       </table>
     </body></html>`,

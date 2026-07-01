@@ -199,7 +199,7 @@ export default function StudentDetailPanel({
               {/* Activity heatmap (last 30 days) */}
               <div className={`rounded-2xl border p-4 ${card}`}>
                 <div className="flex items-center justify-between mb-3">
-                  <p className={`text-xs font-semibold ${tText}`}>Activity — last 30 days</p>
+                  <p className={`text-xs font-semibold ${tText}`}>Activity: last 30 days</p>
                   <p className={`text-xs ${tSub}`}>{data.activeDays} active day{data.activeDays !== 1 ? "s" : ""}</p>
                 </div>
                 <ActivityGrid activityByDay={data.activityByDay} dark={dark} />

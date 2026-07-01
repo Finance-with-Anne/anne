@@ -61,7 +61,7 @@ export default function ProductsShopClient({ products, categories, currency, boo
             Products &amp; Services
           </h1>
           <p className="mt-2.5 text-gray-500 dark:text-white/40 text-sm max-w-lg leading-relaxed">
-            Templates, ebooks, courses and coaching — everything you need to take control of your finances.
+            Templates, ebooks, courses and coaching: everything you need to take control of your finances.
           </p>
         </div>
       </div>
@@ -158,7 +158,7 @@ export default function ProductsShopClient({ products, categories, currency, boo
             {/* Section label */}
             <div className="flex items-center justify-between mb-5">
               <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-white/30">
-                {activeLabel} <span className="normal-case font-normal">— {filtered.length} item{filtered.length !== 1 ? "s" : ""}</span>
+                {activeLabel} <span className="normal-case font-normal">({filtered.length} item{filtered.length !== 1 ? "s" : ""})</span>
               </p>
             </div>
 

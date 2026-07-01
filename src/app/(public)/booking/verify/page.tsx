@@ -48,7 +48,7 @@ function VerifyContent() {
         </div>
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Payment Confirmed!</h1>
         <p className="text-sm text-gray-500 dark:text-white/40 max-w-xs mx-auto">
-          Check your email — we&apos;ve sent your booking confirmation with the Google Meet link.
+          Check your email. We&apos;ve sent your booking confirmation with the Google Meet link.
         </p>
       </div>
     );

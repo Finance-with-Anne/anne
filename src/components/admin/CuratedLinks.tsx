@@ -113,7 +113,7 @@ export default function CuratedLinksClient({ initialLinks }: { initialLinks: Cur
     <div className="space-y-6 max-w-5xl">
       <div>
         <h1 className={`text-xl font-bold ${heading}`}>Curated Links</h1>
-        <p className={`text-sm mt-0.5 ${sub}`}>Paste any article URL — we'll pull the metadata automatically.</p>
+        <p className={`text-sm mt-0.5 ${sub}`}>Paste any article URL and we'll pull the metadata automatically.</p>
       </div>
 
       {/* ── URL input ── */}
@@ -158,7 +158,7 @@ export default function CuratedLinksClient({ initialLinks }: { initialLinks: Cur
                 <svg className="h-3.5 w-3.5 mt-0.5 shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
                 </svg>
-                <span><strong>{sourceName || "This site"}</strong> blocks automatic scraping (paywall or bot protection). Fill in the details manually — open the article, copy the title and image URL, and paste them below.</span>
+                <span><strong>{sourceName || "This site"}</strong> blocks automatic scraping (paywall or bot protection). Fill in the details manually: open the article, copy the title and image URL, and paste them below.</span>
               </div>
             )}
             <p className={`text-xs font-semibold uppercase tracking-widest ${sub}`}>Preview & Edit</p>

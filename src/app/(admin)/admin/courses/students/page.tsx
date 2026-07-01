@@ -1,7 +1,7 @@
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import StudentsClient from "@/components/admin/StudentsClient";
 
-export const metadata = { title: "Students — Admin" };
+export const metadata = { title: "Students | Admin" };
 
 export default async function StudentsPage() {
   const [enrollmentsResult, progressResult, usersResult] = await Promise.all([

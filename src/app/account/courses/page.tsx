@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import CoursesClient from "./CoursesClient";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "My Courses — Finance with Anne" };
+export const metadata = { title: "My Courses | Finance with Anne" };
 
 export default async function AccountCoursesPage() {
   const supabase = await createClient();

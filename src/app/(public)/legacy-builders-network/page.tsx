@@ -2,9 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 
 export const metadata = {
-  title: "Legacy Builders Network — Finance with Anne",
+  title: "Legacy Builders Network | Finance with Anne",
   description:
-    "A high-level investment community. Stock signals, market analysis, expert sessions, and vetted strategies — all in one premium circle.",
+    "A high-level investment community. Stock signals, market analysis, expert sessions, and vetted strategies, all in one premium circle.",
 };
 
 const painPoints = [
@@ -317,7 +317,7 @@ export default function LegacyBuildersNetworkPage() {
                 <Link href="/legacy-builders-network/checkout" className="w-full">
                   <button className="inline-flex items-center justify-center gap-2 w-full bg-yellow-400 hover:bg-yellow-300 px-6 py-5 sm:py-6 rounded-lg font-bold text-base sm:text-xl transition-colors duration-300 shadow-md hover:shadow-lg group" style={{color:"#111827"}}>
                     <span>Join now</span>
-                    <span className="hidden sm:inline"> — ₦150,000</span>
+                    <span className="hidden sm:inline"> (₦150,000)</span>
                     <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1.5" />
                   </button>
                 </Link>

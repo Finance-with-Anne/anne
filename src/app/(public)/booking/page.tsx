@@ -4,7 +4,7 @@ import { headers } from "next/headers";
 import type { BookingSession, Testimonial } from "@/types";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Book a Session — Finance with Anne" };
+export const metadata = { title: "Book a Session | Finance with Anne" };
 
 type Currency = "NGN" | "USD" | "GBP";
 
@@ -97,7 +97,7 @@ export default async function BookingPage() {
                     </p>
                     <p className="mt-2 text-white/45 text-xs font-medium">
                       {testimonial.name}
-                      {testimonial.role && <span> — {testimonial.role}</span>}
+                      {testimonial.role && <span>, {testimonial.role}</span>}
                     </p>
                   </div>
                 </div>

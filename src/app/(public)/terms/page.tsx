@@ -1,4 +1,4 @@
-export const metadata = { title: "Terms of Service — Finance with Anne" };
+export const metadata = { title: "Terms of Service | Finance with Anne" };
 
 export default function TermsPage() {
   return (
@@ -42,7 +42,7 @@ export default function TermsPage() {
 
         <section>
           <h2 className="text-base font-semibold text-gray-900 dark:text-white mb-2">5. Intellectual Property</h2>
-          <p>All content on this platform — including courses, blog posts, videos, templates, and ebooks — is the intellectual property of Finance with Anne. You may not reproduce, distribute, or resell any content without prior written permission.</p>
+          <p>All content on this platform, including courses, blog posts, videos, templates, and ebooks, is the intellectual property of Finance with Anne. You may not reproduce, distribute, or resell any content without prior written permission.</p>
           <p className="mt-2">Access to purchased content is for personal, non-commercial use only.</p>
         </section>
 

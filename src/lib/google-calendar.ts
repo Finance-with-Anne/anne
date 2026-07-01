@@ -82,7 +82,7 @@ export async function createMeetEvent({
     calendarId: "primary",
     conferenceDataVersion: 1,
     requestBody: {
-      summary: `${title} — ${attendeeName}`,
+      summary: `${title} (${attendeeName})`,
       start: { dateTime: toISO(start), timeZone: "Africa/Lagos" },
       end:   { dateTime: toISO(end),   timeZone: "Africa/Lagos" },
       attendees: [{ email: attendeeEmail, displayName: attendeeName }],

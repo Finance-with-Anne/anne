@@ -2,7 +2,7 @@ import { supabaseAdmin } from "@/lib/supabase/admin";
 import CourseReportsPage from "@/components/admin/CourseReportsPage";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Course Reports — Admin" };
+export const metadata = { title: "Course Reports | Admin" };
 
 export default async function CourseReportsServerPage() {
   const [progressRes, enrollmentsRes, coursesRes, profilesRes, reviewsRes] = await Promise.all([

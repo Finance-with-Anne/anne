@@ -1,4 +1,4 @@
-export const metadata = { title: "Privacy Policy — Finance with Anne" };
+export const metadata = { title: "Privacy Policy | Finance with Anne" };
 
 export default function PolicyPage() {
   return (
@@ -19,7 +19,7 @@ export default function PolicyPage() {
           <ul className="mt-2 list-disc pl-5 space-y-1">
             <li><strong>Account information:</strong> your name and email address when you sign up</li>
             <li><strong>Booking information:</strong> your name, email, phone number, and any answers you provide when booking a session</li>
-            <li><strong>Payment information:</strong> transaction references and amounts processed through Flutterwave. We do not store your card details — these are handled directly by Flutterwave</li>
+            <li><strong>Payment information:</strong> transaction references and amounts processed through Flutterwave. We do not store your card details. These are handled directly by Flutterwave</li>
             <li><strong>Usage data:</strong> pages visited, course progress, and interaction with our content</li>
             <li><strong>Communications:</strong> messages you send us via email or the contact form</li>
           </ul>
@@ -41,12 +41,12 @@ export default function PolicyPage() {
           <h2 className="text-base font-semibold text-gray-900 dark:text-white mb-2">4. Third-Party Services</h2>
           <p>We use the following trusted third parties to operate our platform:</p>
           <ul className="mt-2 list-disc pl-5 space-y-1">
-            <li><strong>Supabase</strong> — database and authentication</li>
-            <li><strong>Flutterwave</strong> — payment processing</li>
-            <li><strong>Resend</strong> — transactional email delivery</li>
-            <li><strong>Google Calendar</strong> — Google Meet link generation for sessions</li>
-            <li><strong>Cloudflare R2</strong> — file storage for digital products and course materials</li>
-            <li><strong>Vercel</strong> — website hosting</li>
+            <li><strong>Supabase</strong>: database and authentication</li>
+            <li><strong>Flutterwave</strong>: payment processing</li>
+            <li><strong>Resend</strong>: transactional email delivery</li>
+            <li><strong>Google Calendar</strong>: Google Meet link generation for sessions</li>
+            <li><strong>Cloudflare R2</strong>: file storage for digital products and course materials</li>
+            <li><strong>Vercel</strong>: website hosting</li>
           </ul>
           <p className="mt-2">Each of these services has its own privacy policy governing how they handle your data.</p>
         </section>

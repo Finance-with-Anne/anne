@@ -4,7 +4,7 @@ import ProductsShopClient from "@/components/public/ProductsShopClient";
 import type { Product, ProductCategory } from "@/types";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Shop — Finance with Anne" };
+export const metadata = { title: "Shop | Finance with Anne" };
 
 type Currency = "NGN" | "USD" | "GBP";
 

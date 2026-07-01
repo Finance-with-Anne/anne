@@ -171,7 +171,7 @@ export default function ProductForm({ initialData }: ProductFormProps) {
             {initialData.source_type === "template"
               ? "Template product."
               : initialData.source_type === "community"
-              ? "Community product. Add WhatsApp or Telegram links below — a sales page is optional."
+              ? "Community product. Add WhatsApp or Telegram links below. A sales page is optional."
               : `Imported from ${initialData.source_type === "course" ? "a Course" : "a Booking Session"}.`}
             {initialData.source_type !== "community" && " You can edit all fields freely."}
           </div>
@@ -292,7 +292,7 @@ export default function ProductForm({ initialData }: ProductFormProps) {
                 type="text"
                 value={downloadUrl}
                 onChange={e => setDownloadUrl(e.target.value)}
-                placeholder="Or paste a URL — https://…"
+                placeholder="Or paste a URL: https://…"
                 className={`w-full rounded-lg border px-3 py-2.5 text-sm focus:outline-none transition-colors ${inputClass}`}
               />
 
@@ -450,7 +450,7 @@ export default function ProductForm({ initialData }: ProductFormProps) {
                   onChange={e => setCategoryId(e.target.value)}
                   className={`w-full rounded-lg border px-3 py-2.5 text-sm focus:outline-none transition-colors ${inputClass}`}
                 >
-                  <option value="">— No category —</option>
+                  <option value="">No category</option>
                   {categories.map(c => (
                     <option key={c.id} value={c.id}>{c.name}</option>
                   ))}

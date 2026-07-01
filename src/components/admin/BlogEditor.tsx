@@ -210,7 +210,7 @@ export default function BlogEditor({ initialData }: BlogEditorProps) {
       const toastMap = {
         published: { title: "Post Published! 🎉", sub: "Your post is now live on the site.", color: "green" },
         scheduled: { title: "Post Scheduled 📅", sub: scheduledAt ? `Goes live ${new Date(scheduledAt).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}` : "Scheduled.", color: "yellow" },
-        draft:     { title: "Draft Saved",        sub: "Saved privately — not visible on site.", color: "blue"  },
+        draft:     { title: "Draft Saved",        sub: "Saved privately. Not visible on site.", color: "blue"  },
       };
       setToast(toastMap[effectiveStatus]);
       setTimeout(() => router.push("/admin/blog"), 2800);
@@ -367,7 +367,7 @@ export default function BlogEditor({ initialData }: BlogEditorProps) {
               <div className={`border-t pt-3 ${divider}`}>
                 <input
                   type="text"
-                  placeholder="Excerpt — a short description of the post"
+                  placeholder="Excerpt: a short description of the post"
                   value={excerpt}
                   onChange={(e) => setExcerpt(e.target.value)}
                   className={`w-full text-sm bg-transparent border-none focus:outline-none ${dark ? "text-white/50 placeholder-white/20" : "text-gray-500 placeholder-gray-300"}`}

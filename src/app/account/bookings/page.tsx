@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "My Bookings — Finance with Anne" };
+export const metadata = { title: "My Bookings | Finance with Anne" };
 
 const STATUS_COLOR: Record<string, { dot: string; badge: string; label: string }> = {
   confirmed: { dot: "bg-green-400",  badge: "bg-green-50 text-green-700 ring-green-200",   label: "Confirmed" },

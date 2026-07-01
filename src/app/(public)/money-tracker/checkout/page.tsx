@@ -106,7 +106,7 @@ export default function MoneyTrackerCheckout() {
 
             {/* YouTube thumbnail */}
             <div style={{ marginTop: "24px" }}>
-              <ImagePlaceholder src="/ch1.PNG" alt="YouTube tutorial — Complete Money Tracker walkthrough" aspectRatio="16/9" />
+              <ImagePlaceholder src="/ch1.PNG" alt="YouTube tutorial: Complete Money Tracker walkthrough" aspectRatio="16/9" />
             </div>
 
             {/* Last 2 check items */}

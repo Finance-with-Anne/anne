@@ -261,7 +261,7 @@ export default function ProfilePage() {
               value={profile.bio}
               onChange={e => setProfile(p => ({ ...p, bio: e.target.value.slice(0, 500) }))}
               rows={7}
-              placeholder="Tell us a bit about yourself — your background, interests, and what brings you to Finance with Anne…"
+              placeholder="Tell us a bit about yourself: your background, interests, and what brings you to Finance with Anne…"
               className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 placeholder-gray-300 focus:outline-none focus:border-[#0822C0]/40 transition-colors resize-none"
             />
             <div className="flex items-center justify-between">

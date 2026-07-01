@@ -162,7 +162,7 @@ async function sendConfirmationEmail({
   await resend.emails.send({
     from: EMAIL_FROM,
     to: email,
-    subject: "Welcome to Legacy Builders Network 🎉 — Finance with Anne",
+    subject: "Welcome to Legacy Builders Network 🎉 | Finance with Anne",
     html,
   });
 }

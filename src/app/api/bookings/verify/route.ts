@@ -167,7 +167,7 @@ async function sendClientEmail({
       ${accountSection}
       <hr style="border:none;border-top:1px solid #f0f0f0;margin:28px 0;">
       <p style="color:#4b5563;font-size:14px;margin:0;">Warm regards,<br/><strong>Anne</strong></p>
-      <p style="font-size:12px;color:#9ca3af;margin-top:12px;">Finance with Anne — Building Wealth, One Step at a Time</p>
+      <p style="font-size:12px;color:#9ca3af;margin-top:12px;">Finance with Anne: Building Wealth, One Step at a Time</p>
     </div>
   </div>
 </body>
@@ -176,7 +176,7 @@ async function sendClientEmail({
   await resend.emails.send({
     from: EMAIL_FROM,
     to: email,
-    subject: `Booking Confirmed — ${session}`,
+    subject: `Booking Confirmed: ${session}`,
     html,
   });
 }
@@ -210,7 +210,7 @@ async function sendAdminEmail({
   await resend.emails.send({
     from: EMAIL_FROM,
     to: ADMIN_EMAILS,
-    subject: `Booking Paid: ${name} — ${session}`,
+    subject: `Booking Paid: ${name} (${session})`,
     html,
   });
 }

@@ -2,7 +2,7 @@ import { supabaseAdmin } from "@/lib/supabase/admin";
 import ChatsPage from "@/components/admin/ChatsPage";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Chats — Admin" };
+export const metadata = { title: "Chats | Admin" };
 
 export default async function AdminChatsPage() {
   const [{ data: bookings }, { data: sessions }] = await Promise.all([

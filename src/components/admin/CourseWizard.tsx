@@ -462,7 +462,7 @@ export default function CourseWizard({ categories, tags, initialData }: CourseWi
             <div className={`rounded-xl border p-5 ${card}`}>
               <p className={`text-xs font-semibold uppercase tracking-wide mb-3 ${labelClass}`}>Tags</p>
               {tags.length === 0 ? (
-                <p className={`text-xs ${sub}`}>No tags yet — add them in Courses → Tags.</p>
+                <p className={`text-xs ${sub}`}>No tags yet. Add them in Courses → Tags.</p>
               ) : (
                 <div className="flex flex-wrap gap-2">
                   {tags.map(t => (
@@ -706,7 +706,7 @@ export default function CourseWizard({ categories, tags, initialData }: CourseWi
                 <svg className="h-4 w-4 text-emerald-500 shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <p className="text-xs font-medium text-emerald-600">This course is free — students can enrol at no cost.</p>
+                <p className="text-xs font-medium text-emerald-600">This course is free. Students can enrol at no cost.</p>
               </div>
             ) : (
               <>
