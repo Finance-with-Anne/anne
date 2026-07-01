@@ -20,17 +20,20 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Could not save subscriber." }, { status: 500 });
   }
 
-  // Send welcome email
-  const { error: emailError } = await resend.emails.send({
-    from: EMAIL_FROM,
-    to: email,
-    subject: "Welcome to ANNE 🎉",
-    react: React.createElement(WelcomeEmail, { name }),
-  });
+  // Send welcome email — never let this fail the request, subscriber is already saved
+  try {
+    const { error: emailError } = await resend.emails.send({
+      from: EMAIL_FROM,
+      to: email,
+      subject: "Welcome to ANNE 🎉",
+      react: React.createElement(WelcomeEmail, { name }),
+    });
 
-  if (emailError) {
-    console.error("Resend error:", emailError);
-    // Subscriber saved — don't fail the whole request over the email
+    if (emailError) {
+      console.error("Resend error:", emailError);
+    }
+  } catch (err) {
+    console.error("Resend send threw:", err);
   }
 
   return NextResponse.json({ success: true });
