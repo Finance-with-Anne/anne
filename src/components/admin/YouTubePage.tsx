@@ -76,7 +76,6 @@ export default function YouTubePage({ videos }: { videos: any[] }) {
       description,
       thumbnail: thumbnail || `https://img.youtube.com/vi/${id}/mqdefault.jpg`,
       published: true,
-      order: videos.length,
     };
     const res = await fetch("/api/youtube", {
       method: "POST",

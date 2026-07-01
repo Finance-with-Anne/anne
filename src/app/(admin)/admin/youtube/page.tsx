@@ -3,6 +3,6 @@ import YouTubePage from "@/components/admin/YouTubePage";
 
 export default async function AdminYouTubePage() {
   const supabase = await createClient();
-  const { data: videos } = await supabase.from("youtube_videos").select("*").order("order", { ascending: true });
+  const { data: videos } = await supabase.from("youtube_videos").select("*").order("created_at", { ascending: false });
   return <YouTubePage videos={videos ?? []} />;
 }

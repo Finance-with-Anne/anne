@@ -27,7 +27,7 @@ export default async function HomePage() {
       .from("youtube_videos")
       .select("*")
       .eq("published", true)
-      .order("order", { ascending: true })
+      .order("created_at", { ascending: false })
       .limit(4),
   ]);
 
