@@ -14,7 +14,10 @@ type Props = {
   monthly: MonthlyData[];
   topCourses: CourseRow[];
   bookingsByStatus: BookingStatusRow[];
+  foreignRevenue?: Record<string, number>;
 };
+
+const CURRENCY_SYMBOLS: Record<string, string> = { USD: "$", GBP: "£", EUR: "€" };
 
 function fmt(n: number) {
   if (n >= 1_000_000) return `₦${(n / 1_000_000).toFixed(1)}M`;
@@ -50,7 +53,7 @@ function BarChart({ data, valueKey, color, label }: { data: MonthlyData[]; value
   );
 }
 
-export default function ReportsPage({ totalRevenue, totalEnrollments, totalClients, totalBookings, monthly, topCourses, bookingsByStatus }: Props) {
+export default function ReportsPage({ totalRevenue, totalEnrollments, totalClients, totalBookings, monthly, topCourses, bookingsByStatus, foreignRevenue }: Props) {
   const { dark } = useAdminTheme();
 
   const card = dark ? "bg-[#111318] border-white/5" : "bg-white border-gray-200";
@@ -91,6 +94,7 @@ export default function ReportsPage({ totalRevenue, totalEnrollments, totalClien
   };
 
   const totalForStatus = bookingsByStatus.reduce((s, b) => s + b.count, 0) || 1;
+  const foreignRevenueEntries = Object.entries(foreignRevenue ?? {}).filter(([, v]) => v > 0);
 
   return (
     <div className="space-y-6">
@@ -110,6 +114,11 @@ export default function ReportsPage({ totalRevenue, totalEnrollments, totalClien
             </div>
             <p className={`text-2xl font-extrabold ${heading}`}>{s.value}</p>
             <p className={`text-xs mt-0.5 ${sub}`}>{s.label}</p>
+            {s.label === "Total Revenue" && foreignRevenueEntries.length > 0 && (
+              <p className={`text-[11px] mt-1.5 ${sub}`}>
+                + {foreignRevenueEntries.map(([cur, amt]) => `${CURRENCY_SYMBOLS[cur] ?? cur}${amt.toLocaleString()}`).join(" · ")}
+              </p>
+            )}
           </div>
         ))}
       </div>
