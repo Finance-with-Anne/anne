@@ -110,8 +110,8 @@ export default async function HomePage() {
                 src="/anne-home-hero.jpg"
                 alt="Anne, Financial Coach"
                 width={520}
-                height={728}
-                className="relative rounded-3xl object-cover shadow-2xl w-[280px] sm:w-[380px] lg:w-[520px]"
+                height={520}
+                className="relative rounded-3xl object-cover shadow-2xl aspect-square w-[280px] sm:w-[380px] lg:w-[520px]"
                 priority
               />
             </div>
