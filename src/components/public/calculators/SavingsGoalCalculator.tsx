@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { parseMoney, formatMoneyInput } from "@/lib/calculators/money";
 
 type Frequency = "daily" | "weekly" | "monthly" | "annually";
 
@@ -31,17 +32,6 @@ function periodsPerYear(f: Frequency) {
   if (f === "weekly") return 52;
   if (f === "monthly") return 12;
   return 1;
-}
-
-function parseMoney(raw: string) {
-  const digits = raw.replace(/[^0-9.]/g, "");
-  return parseFloat(digits) || 0;
-}
-
-function formatMoneyInput(raw: string) {
-  const digits = raw.replace(/[^0-9]/g, "");
-  if (digits === "") return "";
-  return parseInt(digits, 10).toLocaleString("en-US");
 }
 
 function buildClimbPath(climb: ClimbData) {
