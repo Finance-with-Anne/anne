@@ -111,7 +111,7 @@ export default async function HomePage() {
                 alt="Anne, Financial Coach"
                 width={520}
                 height={520}
-                className="relative rounded-3xl object-cover shadow-2xl aspect-square w-[280px] sm:w-[380px] lg:w-[520px]"
+                className="relative rounded-3xl object-cover object-[center_20%] shadow-2xl aspect-square w-[280px] sm:w-[380px] lg:w-[520px]"
                 priority
               />
             </div>
