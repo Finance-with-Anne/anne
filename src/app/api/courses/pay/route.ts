@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
+import { rateLimit, rateLimitResponse, getClientIp } from "@/lib/rate-limit";
 
 const FLW_SECRET = process.env.FLW_SECRET_KEY ?? "";
 
 export async function POST(req: NextRequest) {
+  const { allowed, retryAfterSeconds } = rateLimit(`pay:course:${getClientIp(req)}`, 10, 10 * 60 * 1000);
+  if (!allowed) return rateLimitResponse(retryAfterSeconds!);
+
   if (!FLW_SECRET) return NextResponse.json({ error: "Payment not configured." }, { status: 503 });
 
   const supabase = await createClient();

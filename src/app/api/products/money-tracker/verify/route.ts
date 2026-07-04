@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { resend, EMAIL_FROM } from "@/lib/resend";
+import { verifyFlutterwaveTransaction, transactionSucceeded, chargeMatchesExpected } from "@/lib/flutterwave";
+import { rateLimit, rateLimitResponse, getClientIp } from "@/lib/rate-limit";
 
 const FLW_SECRET    = process.env.FLW_SECRET_KEY ?? "";
 const DOWNLOAD_URL  = process.env.MONEY_TRACKER_DOWNLOAD_URL ?? "";
@@ -12,22 +14,14 @@ function generatePassword(len = 12) {
 }
 
 export async function POST(req: NextRequest) {
+  const { allowed, retryAfterSeconds } = rateLimit(`verify:money-tracker:${getClientIp(req)}`, 20, 10 * 60 * 1000);
+  if (!allowed) return rateLimitResponse(retryAfterSeconds!);
+
   if (!FLW_SECRET) return NextResponse.json({ error: "Payment not configured." }, { status: 503 });
 
   const { order_id, transaction_id } = await req.json();
   if (!order_id || !transaction_id) {
     return NextResponse.json({ error: "Missing order_id or transaction_id." }, { status: 400 });
-  }
-
-  // Verify with Flutterwave
-  const flwRes = await fetch(
-    `https://api.flutterwave.com/v3/transactions/${encodeURIComponent(transaction_id)}/verify`,
-    { headers: { Authorization: `Bearer ${FLW_SECRET}` } }
-  );
-  const flwJson = await flwRes.json();
-
-  if (flwJson.status !== "success" || flwJson.data?.status !== "successful") {
-    return NextResponse.json({ error: "Payment not successful." }, { status: 400 });
   }
 
   // Fetch order
@@ -44,6 +38,17 @@ export async function POST(req: NextRequest) {
   // Already processed
   if (order.status === "paid") {
     return NextResponse.json({ success: true, already_paid: true });
+  }
+
+  // Verify with Flutterwave
+  const flwJson = await verifyFlutterwaveTransaction(transaction_id);
+
+  if (!transactionSucceeded(flwJson)) {
+    return NextResponse.json({ error: "Payment not successful." }, { status: 400 });
+  }
+
+  if (!chargeMatchesExpected(flwJson, { amount: order.total, currency: order.currency, txRef: order.tx_ref })) {
+    return NextResponse.json({ error: "This transaction does not match the order being paid for." }, { status: 400 });
   }
 
   // Mark order paid

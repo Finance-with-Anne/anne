@@ -1,27 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { resend, EMAIL_FROM } from "@/lib/resend";
+import { verifyFlutterwaveTransaction, transactionSucceeded, chargeMatchesExpected } from "@/lib/flutterwave";
+import { rateLimit, rateLimitResponse, getClientIp } from "@/lib/rate-limit";
 
 const FLW_SECRET   = process.env.FLW_SECRET_KEY ?? "";
 const SITE_URL     = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 const LBN_WHATSAPP = process.env.LBN_WHATSAPP_URL ?? "";
 
 export async function POST(req: NextRequest) {
+  const { allowed, retryAfterSeconds } = rateLimit(`verify:lbn:${getClientIp(req)}`, 20, 10 * 60 * 1000);
+  if (!allowed) return rateLimitResponse(retryAfterSeconds!);
+
   if (!FLW_SECRET) return NextResponse.json({ error: "Payment not configured." }, { status: 503 });
 
   const { order_id, transaction_id } = await req.json();
   if (!order_id || !transaction_id) {
     return NextResponse.json({ error: "Missing order_id or transaction_id." }, { status: 400 });
-  }
-
-  const flwRes = await fetch(
-    `https://api.flutterwave.com/v3/transactions/${encodeURIComponent(transaction_id)}/verify`,
-    { headers: { Authorization: `Bearer ${FLW_SECRET}` } }
-  );
-  const flwJson = await flwRes.json();
-
-  if (flwJson.status !== "success" || flwJson.data?.status !== "successful") {
-    return NextResponse.json({ error: "Payment not successful." }, { status: 400 });
   }
 
   const { data: order, error: orderErr } = await supabaseAdmin
@@ -36,6 +31,16 @@ export async function POST(req: NextRequest) {
 
   if (order.status === "paid") {
     return NextResponse.json({ success: true, already_paid: true, whatsapp_url: LBN_WHATSAPP });
+  }
+
+  const flwJson = await verifyFlutterwaveTransaction(transaction_id);
+
+  if (!transactionSucceeded(flwJson)) {
+    return NextResponse.json({ error: "Payment not successful." }, { status: 400 });
+  }
+
+  if (!chargeMatchesExpected(flwJson, { amount: order.total, currency: order.currency, txRef: order.tx_ref })) {
+    return NextResponse.json({ error: "This transaction does not match the order being paid for." }, { status: 400 });
   }
 
   await supabaseAdmin

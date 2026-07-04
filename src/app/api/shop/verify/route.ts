@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { resend, EMAIL_FROM } from "@/lib/resend";
+import { verifyFlutterwaveTransaction, transactionSucceeded, chargeMatchesExpected } from "@/lib/flutterwave";
+import { rateLimit, rateLimitResponse, getClientIp } from "@/lib/rate-limit";
 
 const FLW_SECRET = process.env.FLW_SECRET_KEY ?? "";
 const SITE_URL    = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
@@ -11,19 +13,12 @@ function generatePassword(len = 12) {
 }
 
 export async function POST(req: NextRequest) {
+  const { allowed, retryAfterSeconds } = rateLimit(`verify:shop:${getClientIp(req)}`, 20, 10 * 60 * 1000);
+  if (!allowed) return rateLimitResponse(retryAfterSeconds!);
+
   const { order_id, transaction_id } = await req.json();
 
   if (!FLW_SECRET) return NextResponse.json({ error: "Payment not configured." }, { status: 503 });
-
-  const res = await fetch(
-    `https://api.flutterwave.com/v3/transactions/${encodeURIComponent(transaction_id)}/verify`,
-    { headers: { Authorization: `Bearer ${FLW_SECRET}` } }
-  );
-  const json = await res.json();
-
-  if (json.status !== "success" || json.data?.status !== "successful") {
-    return NextResponse.json({ error: "Payment not successful." }, { status: 400 });
-  }
 
   const { data: order, error } = await supabaseAdmin
     .from("orders")
@@ -37,6 +32,16 @@ export async function POST(req: NextRequest) {
 
   if (order.status === "paid") {
     return NextResponse.json({ success: true, downloads });
+  }
+
+  const json = await verifyFlutterwaveTransaction(transaction_id);
+
+  if (!transactionSucceeded(json)) {
+    return NextResponse.json({ error: "Payment not successful." }, { status: 400 });
+  }
+
+  if (!chargeMatchesExpected(json, { amount: order.total, currency: order.currency, txRef: order.tx_ref })) {
+    return NextResponse.json({ error: "This transaction does not match the order being paid for." }, { status: 400 });
   }
 
   // ── Resolve or create user account ──────────────────────────────────────

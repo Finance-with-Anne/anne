@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { resend, EMAIL_FROM } from "@/lib/resend";
 import { createMeetEvent } from "@/lib/google-calendar";
+import { verifyFlutterwaveTransaction, transactionSucceeded, chargeMatchesExpected } from "@/lib/flutterwave";
+import { rateLimit, rateLimitResponse, getClientIp } from "@/lib/rate-limit";
 
 const FLW_SECRET   = process.env.FLW_SECRET_KEY ?? "";
 const SITE_URL     = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
@@ -14,19 +16,12 @@ function generatePassword(len = 10) {
 }
 
 export async function POST(req: NextRequest) {
+  const { allowed, retryAfterSeconds } = rateLimit(`verify:booking:${getClientIp(req)}`, 20, 10 * 60 * 1000);
+  if (!allowed) return rateLimitResponse(retryAfterSeconds!);
+
   const { transaction_id, booking_id } = await req.json();
 
   if (!FLW_SECRET) return NextResponse.json({ error: "Payment not configured." }, { status: 503 });
-
-  // Verify with Flutterwave
-  const res = await fetch(`https://api.flutterwave.com/v3/transactions/${encodeURIComponent(transaction_id)}/verify`, {
-    headers: { Authorization: `Bearer ${FLW_SECRET}` },
-  });
-  const json = await res.json();
-
-  if (json.status !== "success" || json.data?.status !== "successful") {
-    return NextResponse.json({ error: "Payment not successful." }, { status: 400 });
-  }
 
   // Fetch booking + session
   const { data: booking, error } = await supabaseAdmin
@@ -38,10 +33,21 @@ export async function POST(req: NextRequest) {
   if (error || !booking) return NextResponse.json({ error: "Booking not found." }, { status: 404 });
   if (booking.is_paid) return NextResponse.json({ success: true });
 
+  // Verify with Flutterwave
+  const json = await verifyFlutterwaveTransaction(transaction_id);
+
+  if (!transactionSucceeded(json)) {
+    return NextResponse.json({ error: "Payment not successful." }, { status: 400 });
+  }
+
+  if (!chargeMatchesExpected(json, { amount: booking.amount_paid, currency: booking.currency, txRef: booking.payment_ref })) {
+    return NextResponse.json({ error: "This transaction does not match the booking being paid for." }, { status: 400 });
+  }
+
   // Mark as paid + confirmed
   await supabaseAdmin
     .from("bookings")
-    .update({ is_paid: true, status: "confirmed", payment_ref: json.data.tx_ref ?? String(transaction_id) })
+    .update({ is_paid: true, status: "confirmed" })
     .eq("id", booking_id);
 
   const session = booking.session as {

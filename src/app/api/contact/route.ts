@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { resend, EMAIL_FROM } from "@/lib/resend";
+import { rateLimit, rateLimitResponse, getClientIp } from "@/lib/rate-limit";
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? "contact@financewithanne.com";
 
 export async function POST(req: NextRequest) {
+  const { allowed, retryAfterSeconds } = rateLimit(`contact:${getClientIp(req)}`, 5, 10 * 60 * 1000);
+  if (!allowed) return rateLimitResponse(retryAfterSeconds!);
+
   const { name, email, subject, message } = await req.json();
 
   if (!name || !email || !message) {

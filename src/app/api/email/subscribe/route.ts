@@ -2,9 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { resend, EMAIL_FROM } from "@/lib/resend";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { WelcomeEmail } from "@/lib/emails/welcome";
+import { rateLimit, rateLimitResponse, getClientIp } from "@/lib/rate-limit";
 import * as React from "react";
 
 export async function POST(req: NextRequest) {
+  const { allowed, retryAfterSeconds } = rateLimit(`subscribe:${getClientIp(req)}`, 5, 10 * 60 * 1000);
+  if (!allowed) return rateLimitResponse(retryAfterSeconds!);
+
   const { email, name } = await req.json();
 
   if (!email) {
