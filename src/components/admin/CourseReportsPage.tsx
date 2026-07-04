@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useAdminTheme } from "@/lib/admin-theme";
-import { supabaseAdmin } from "@/lib/supabase/admin";
 
 type LeaderboardRow = {
   rank: number; userId: string; name: string; avatarUrl: string | null;
