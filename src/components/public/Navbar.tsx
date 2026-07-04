@@ -235,31 +235,31 @@ export default function Navbar() {
             {/* Mega menu panel */}
             {megaOpen && (
               <div
-                className="absolute left-1/2 top-full mt-3 -translate-x-1/2 w-[1080px] rounded-2xl border border-gray-100 bg-white p-6 shadow-xl"
+                className="absolute left-1/2 top-full mt-3 -translate-x-1/2 w-[1080px] rounded-2xl border border-gray-100 dark:border-white/10 bg-white dark:bg-[#0d1220] p-6 shadow-xl"
                 onMouseEnter={openMega}
                 onMouseLeave={closeMega}
               >
                 {/* Triangle pointer */}
-                <div className="absolute -top-2 left-1/2 -translate-x-1/2 h-4 w-4 rotate-45 rounded-sm border-l border-t border-gray-100 bg-white" />
+                <div className="absolute -top-2 left-1/2 -translate-x-1/2 h-4 w-4 rotate-45 rounded-sm border-l border-t border-gray-100 dark:border-white/10 bg-white dark:bg-[#0d1220]" />
 
                 <div className="grid grid-cols-4 gap-6">
                   {/* Column 1 — Content */}
                   <div>
-                    <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-gray-400">Content</p>
+                    <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-white/40">Content</p>
                     <ul className="space-y-1">
                       {col1Links.map((item) => (
                         <li key={item.href}>
                           <Link
                             href={item.href}
-                            className="flex items-start gap-3 rounded-xl p-2.5 transition-colors hover:bg-gray-50"
+                            className="flex items-start gap-3 rounded-xl p-2.5 transition-colors hover:bg-gray-50 dark:hover:bg-white/5"
                             onClick={() => setMegaOpen(false)}
                           >
                             <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${item.bg}`}>
                               {item.icon}
                             </span>
                             <span>
-                              <span className="block text-sm font-semibold text-gray-900">{item.label}</span>
-                              <span className="block text-xs text-gray-500 leading-snug mt-0.5">{item.desc}</span>
+                              <span className="block text-sm font-semibold text-gray-900 dark:text-white">{item.label}</span>
+                              <span className="block text-xs text-gray-500 dark:text-white/50 leading-snug mt-0.5">{item.desc}</span>
                             </span>
                           </Link>
                         </li>
@@ -269,21 +269,21 @@ export default function Navbar() {
 
                   {/* Column 2 — Buy */}
                   <div>
-                    <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-gray-400">Buy</p>
+                    <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-white/40">Buy</p>
                     <ul className="space-y-1">
                       {col2Links.map((item) => (
                         <li key={item.href}>
                           <Link
                             href={item.href}
-                            className="flex items-start gap-3 rounded-xl p-2.5 transition-colors hover:bg-gray-50"
+                            className="flex items-start gap-3 rounded-xl p-2.5 transition-colors hover:bg-gray-50 dark:hover:bg-white/5"
                             onClick={() => setMegaOpen(false)}
                           >
                             <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${item.bg}`}>
                               {item.icon}
                             </span>
                             <span>
-                              <span className="block text-sm font-semibold text-gray-900">{item.label}</span>
-                              <span className="block text-xs text-gray-500 leading-snug mt-0.5">{item.desc}</span>
+                              <span className="block text-sm font-semibold text-gray-900 dark:text-white">{item.label}</span>
+                              <span className="block text-xs text-gray-500 dark:text-white/50 leading-snug mt-0.5">{item.desc}</span>
                             </span>
                           </Link>
                         </li>
@@ -293,21 +293,21 @@ export default function Navbar() {
 
                   {/* Column 3 — Quick Links */}
                   <div>
-                    <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-gray-400">Quick Links</p>
+                    <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-white/40">Quick Links</p>
                     <ul className="space-y-1">
                       {col3Links.map((item) => (
                         <li key={item.href}>
                           <Link
                             href={item.href}
-                            className="flex items-start gap-3 rounded-xl p-2.5 transition-colors hover:bg-gray-50"
+                            className="flex items-start gap-3 rounded-xl p-2.5 transition-colors hover:bg-gray-50 dark:hover:bg-white/5"
                             onClick={() => setMegaOpen(false)}
                           >
                             <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${item.bg}`}>
                               {item.icon}
                             </span>
                             <span>
-                              <span className="block text-sm font-semibold text-gray-900">{item.label}</span>
-                              <span className="block text-xs text-gray-500 leading-snug mt-0.5">{item.desc}</span>
+                              <span className="block text-sm font-semibold text-gray-900 dark:text-white">{item.label}</span>
+                              <span className="block text-xs text-gray-500 dark:text-white/50 leading-snug mt-0.5">{item.desc}</span>
                             </span>
                           </Link>
                         </li>
@@ -317,16 +317,16 @@ export default function Navbar() {
 
                   {/* Column 4 — Latest posts */}
                   <div>
-                    <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-gray-400">Latest Posts</p>
+                    <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-white/40">Latest Posts</p>
                     {latestPosts.length === 0 ? (
-                      <p className="text-xs text-gray-400">No posts yet.</p>
+                      <p className="text-xs text-gray-400 dark:text-white/40">No posts yet.</p>
                     ) : (
                       <ul className="space-y-4">
                         {latestPosts.map((post) => (
                           <li key={post.id}>
                             <Link
                               href={`/blog/${post.slug}`}
-                              className="group flex gap-3 rounded-xl p-2 transition-colors hover:bg-gray-50"
+                              className="group flex gap-3 rounded-xl p-2 transition-colors hover:bg-gray-50 dark:hover:bg-white/5"
                               onClick={() => setMegaOpen(false)}
                             >
                               {post.cover_image ? (
@@ -336,13 +336,13 @@ export default function Navbar() {
                                   className="h-16 w-20 shrink-0 rounded-lg object-cover"
                                 />
                               ) : (
-                                <div className="h-16 w-20 shrink-0 rounded-lg bg-gray-100" />
+                                <div className="h-16 w-20 shrink-0 rounded-lg bg-gray-100 dark:bg-white/5" />
                               )}
                               <div>
-                                <p className="text-sm font-semibold text-gray-900 leading-snug line-clamp-2 group-hover:text-black">
+                                <p className="text-sm font-semibold text-gray-900 dark:text-white leading-snug line-clamp-2 group-hover:text-black dark:group-hover:text-white/80">
                                   {post.title}
                                 </p>
-                                <p className="mt-1 text-xs text-blue-600 font-medium">Read More</p>
+                                <p className="mt-1 text-xs text-blue-600 dark:text-blue-400 font-medium">Read More</p>
                               </div>
                             </Link>
                           </li>
@@ -351,7 +351,7 @@ export default function Navbar() {
                     )}
                     <Link
                       href="/blog"
-                      className="mt-4 flex items-center gap-1 text-xs font-semibold text-gray-500 hover:text-black transition-colors"
+                      className="mt-4 flex items-center gap-1 text-xs font-semibold text-gray-500 dark:text-white/50 hover:text-black dark:hover:text-white transition-colors"
                       onClick={() => setMegaOpen(false)}
                     >
                       View all posts
