@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { parseMoney, formatMoneyInput } from "@/lib/calculators/money";
 
 type FieldGroup = { title: string; ids: string[] };
 type CustomField = { id: string; name: string; value: string };
@@ -81,17 +82,11 @@ function formatNumber(n: number) {
 }
 
 function sumValues(values: Record<string, string>) {
-  return Object.values(values).reduce((total, raw) => {
-    const val = parseFloat(raw);
-    return isNaN(val) ? total : total + val;
-  }, 0);
+  return Object.values(values).reduce((total, raw) => total + parseMoney(raw), 0);
 }
 
 function sumCustom(rows: CustomField[]) {
-  return rows.reduce((total, row) => {
-    const val = parseFloat(row.value);
-    return isNaN(val) ? total : total + val;
-  }, 0);
+  return rows.reduce((total, row) => total + parseMoney(row.value), 0);
 }
 
 export default function NetWorthCalculator() {
@@ -231,11 +226,11 @@ export default function NetWorthCalculator() {
                     <div className="field">
                       <span className="cur">{sym}</span>
                       <input
-                        type="number"
-                        min="0"
+                        type="text"
+                        inputMode="numeric"
                         placeholder="0"
                         value={assetValues[id] ?? ""}
-                        onChange={(e) => setAssetValues((prev) => ({ ...prev, [id]: e.target.value }))}
+                        onChange={(e) => setAssetValues((prev) => ({ ...prev, [id]: formatMoneyInput(e.target.value) }))}
                       />
                     </div>
                   </div>
@@ -251,12 +246,12 @@ export default function NetWorthCalculator() {
                   <div className="field">
                     <span className="cur">{sym}</span>
                     <input
-                      type="number"
-                      min="0"
+                      type="text"
+                      inputMode="numeric"
                       placeholder="0"
                       value={row.value}
                       onChange={(e) => {
-                        const val = e.target.value;
+                        const val = formatMoneyInput(e.target.value);
                         setCustomAssets((prev) => prev.map((r) => (r.id === row.id ? { ...r, value: val } : r)));
                       }}
                     />
@@ -302,11 +297,11 @@ export default function NetWorthCalculator() {
                     <div className="field">
                       <span className="cur">{sym}</span>
                       <input
-                        type="number"
-                        min="0"
+                        type="text"
+                        inputMode="numeric"
                         placeholder="0"
                         value={liabValues[id] ?? ""}
-                        onChange={(e) => setLiabValues((prev) => ({ ...prev, [id]: e.target.value }))}
+                        onChange={(e) => setLiabValues((prev) => ({ ...prev, [id]: formatMoneyInput(e.target.value) }))}
                       />
                     </div>
                   </div>
@@ -322,12 +317,12 @@ export default function NetWorthCalculator() {
                   <div className="field">
                     <span className="cur">{sym}</span>
                     <input
-                      type="number"
-                      min="0"
+                      type="text"
+                      inputMode="numeric"
                       placeholder="0"
                       value={row.value}
                       onChange={(e) => {
-                        const val = e.target.value;
+                        const val = formatMoneyInput(e.target.value);
                         setCustomLiabs((prev) => prev.map((r) => (r.id === row.id ? { ...r, value: val } : r)));
                       }}
                     />
@@ -354,6 +349,24 @@ export default function NetWorthCalculator() {
             <div className="panel-total">
               <span className="lbl">Total liabilities</span>
               <span className="amt">{sym}{formatNumber(totalLiab)}</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="result-band result-band-static">
+          <div>
+            <div className="result-label">Your net worth</div>
+            <div className={`result-figure${net < 0 ? " negative" : ""}`}>{sym}{formatNumber(net)}</div>
+            <div className="result-sub">{subMessage}</div>
+          </div>
+          <div className="result-breakdown">
+            <div>
+              <div className="k">Total assets</div>
+              <div className="v assets-v">{sym}{formatNumber(totalAssets)}</div>
+            </div>
+            <div>
+              <div className="k">Total liabilities</div>
+              <div className="v liab-v">{sym}{formatNumber(totalLiab)}</div>
             </div>
           </div>
         </div>
@@ -468,6 +481,7 @@ export default function NetWorthCalculator() {
           .result-band { padding: 20px 20px; top: 100px; border-radius: 16px; gap: 14px; }
           .result-breakdown { gap: 18px; }
         }
+        .result-band-static { position: static; margin-top: 32px; margin-bottom: 0; }
         .result-band::before {
           content: ""; position: absolute; top: -60%; right: -8%; width: 40%; height: 220%;
           background: radial-gradient(circle, rgba(248,211,0,0.14) 0%, rgba(248,211,0,0) 70%);
