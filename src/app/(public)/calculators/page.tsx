@@ -4,7 +4,7 @@ export const metadata = { title: "Calculators | Finance with Anne" };
 
 const CALCULATORS = [
   { title: "Net Worth Ledger", desc: "See everything you own minus everything you owe, in real time.", href: "/calculators/networth", live: true },
-  { title: "Savings Goal", desc: "Work out how long it takes to hit a savings target.", href: "/calculators/savings-goal", live: false },
+  { title: "Savings Goal", desc: "Work out how long it takes to hit a savings target.", href: "/calculators/savings-goal", live: true },
   { title: "Compound Interest", desc: "Project how your investments grow over time.", href: "/calculators/compound-interest", live: false },
   { title: "Emergency Fund Planner", desc: "Find the right emergency fund size for your expenses.", href: "/calculators/emergency-fund", live: false },
   { title: "Mortgage Calculator", desc: "Monthly repayments and affordability for a home loan.", href: "/calculators/mortgage", live: false },
