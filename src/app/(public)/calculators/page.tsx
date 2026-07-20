@@ -8,7 +8,7 @@ const CALCULATORS = [
   { title: "Compound Interest", desc: "Project how your investments grow over time.", href: "/calculators/compound-interest", live: true },
   { title: "Emergency Fund Planner", desc: "Find the right emergency fund size for your expenses.", href: "/calculators/emergency-fund", live: false },
   { title: "Mortgage Calculator", desc: "Monthly repayments and affordability for a home loan.", href: "/calculators/mortgage", live: false },
-  { title: "Treasury Bills Calculator", desc: "Work out returns on Nigerian Treasury Bills.", href: "/calculators/treasury-bills", live: false },
+  { title: "Treasury Bills Calculator", desc: "Work out returns on Nigerian Treasury Bills.", href: "/calculators/treasury-bills", live: true },
   { title: "Inflation Impact", desc: "See how inflation erodes the value of your money over time.", href: "/calculators/inflation-impact", live: false },
   { title: "Early Retirement (Retire Rich)", desc: "Estimate when you can retire on your own terms.", href: "/calculators/retire-rich", live: false },
 ];
