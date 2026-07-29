@@ -4,6 +4,8 @@ import Image from "next/image";
 import { Fraunces, IBM_Plex_Mono } from "next/font/google";
 import { createClient } from "@/lib/supabase/server";
 import type { Testimonial } from "@/types";
+import SocialProofToast from "@/components/public/SocialProofToast";
+import LiveViewerBadge from "@/components/public/LiveViewerBadge";
 
 const fraunces = Fraunces({ subsets: ["latin"], weight: ["500", "600"], style: ["normal", "italic"], variable: "--font-fraunces" });
 const plexMono = IBM_Plex_Mono({ subsets: ["latin"], weight: ["400", "500", "600"], variable: "--font-plex-mono" });
@@ -128,6 +130,10 @@ export default async function InvestmentBlueprintPage() {
             <div className="mt-8 flex items-center gap-4 flex-wrap">
               <span className="text-3xl font-semibold" style={{ fontFamily: "var(--font-plex-mono)", color: GOLD }}>₦5,000</span>
               <span className="text-base line-through" style={{ fontFamily: "var(--font-plex-mono)", color: "rgba(255,255,255,0.45)" }}>₦110,000 value</span>
+            </div>
+
+            <div className="mt-4">
+              <LiveViewerBadge />
             </div>
 
             <div className="mt-6">
@@ -391,6 +397,8 @@ export default async function InvestmentBlueprintPage() {
       <footer style={{ background: NAVY, color: "rgba(255,255,255,0.4)" }} className="text-center py-7 text-[13px]" >
         <span style={{ fontFamily: "var(--font-plex-mono)" }}>&copy; {new Date().getFullYear()} Finance with Anne. All rights reserved.</span>
       </footer>
+
+      <SocialProofToast />
     </div>
   );
 }
