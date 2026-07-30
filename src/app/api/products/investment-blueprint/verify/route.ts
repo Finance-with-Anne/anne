@@ -3,6 +3,7 @@ import { supabaseAdmin } from "@/lib/supabase/admin";
 import { resend, EMAIL_FROM } from "@/lib/resend";
 import { verifyFlutterwaveTransaction, transactionSucceeded, chargeMatchesExpected } from "@/lib/flutterwave";
 import { rateLimit, rateLimitResponse, getClientIp } from "@/lib/rate-limit";
+import { sendMetaPurchaseEvent } from "@/lib/meta-capi";
 
 const FLW_SECRET    = process.env.FLW_SECRET_KEY ?? "";
 const DOWNLOAD_URL  = process.env.INVESTMENT_BLUEPRINT_DOWNLOAD_URL ?? "";
@@ -59,6 +60,17 @@ export async function POST(req: NextRequest) {
 
   const email = order.email as string;
   const name  = (order.name as string | null) ?? email.split("@")[0];
+
+  // Server-side Meta Purchase event (Conversions API)
+  sendMetaPurchaseEvent({
+    eventId: `order-${order_id}`,
+    email,
+    value: order.total as number,
+    currency: order.currency as string,
+    eventSourceUrl: `${SITE_URL}/investment-blueprint/checkout`,
+    clientIp: getClientIp(req),
+    userAgent: req.headers.get("user-agent") ?? undefined,
+  }).catch(console.error);
 
   // Check if user already exists
   const { data: { users } } = await supabaseAdmin.auth.admin.listUsers({ perPage: 1000 });
