@@ -4,9 +4,19 @@ import { resend, EMAIL_FROM } from "@/lib/resend";
 import { verifyFlutterwaveTransaction, transactionSucceeded, chargeMatchesExpected } from "@/lib/flutterwave";
 import { rateLimit, rateLimitResponse, getClientIp } from "@/lib/rate-limit";
 
-const FLW_SECRET   = process.env.FLW_SECRET_KEY ?? "";
-const SITE_URL     = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
-const LBN_WHATSAPP = process.env.LBN_WHATSAPP_URL ?? "";
+const FLW_SECRET    = process.env.FLW_SECRET_KEY ?? "";
+const SITE_URL      = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+const PRODUCT_DB_ID = "2591b7ff-866b-4ab4-ad4c-e421e04cb577"; // products table UUID
+
+async function getWhatsappUrl(): Promise<string> {
+  const { data: product } = await supabaseAdmin
+    .from("products")
+    .select("community_links")
+    .eq("id", PRODUCT_DB_ID)
+    .maybeSingle();
+  const links = (product?.community_links ?? []) as { type: string; url: string }[];
+  return links.find(l => l.type === "whatsapp")?.url ?? "";
+}
 
 export async function POST(req: NextRequest) {
   const { allowed, retryAfterSeconds } = rateLimit(`verify:lbn:${getClientIp(req)}`, 20, 10 * 60 * 1000);
@@ -30,7 +40,7 @@ export async function POST(req: NextRequest) {
   }
 
   if (order.status === "paid") {
-    return NextResponse.json({ success: true, already_paid: true, whatsapp_url: LBN_WHATSAPP });
+    return NextResponse.json({ success: true, already_paid: true, whatsapp_url: await getWhatsappUrl() });
   }
 
   const flwJson = await verifyFlutterwaveTransaction(transaction_id);
@@ -98,9 +108,10 @@ export async function POST(req: NextRequest) {
     // Non-fatal
   }
 
-  sendConfirmationEmail({ email, name, accountUrl, tempPassword }).catch(console.error);
+  const whatsappUrl = await getWhatsappUrl();
+  sendConfirmationEmail({ email, name, accountUrl, tempPassword, whatsappUrl }).catch(console.error);
 
-  return NextResponse.json({ success: true, whatsapp_url: LBN_WHATSAPP });
+  return NextResponse.json({ success: true, whatsapp_url: whatsappUrl });
 }
 
 async function sendConfirmationEmail({
@@ -108,16 +119,18 @@ async function sendConfirmationEmail({
   name,
   accountUrl,
   tempPassword,
+  whatsappUrl,
 }: {
   email: string;
   name: string;
   accountUrl?: string;
   tempPassword: string;
+  whatsappUrl: string;
 }) {
-  const whatsappSection = LBN_WHATSAPP
+  const whatsappSection = whatsappUrl
     ? `<p style="margin:24px 0 8px;font-weight:600;color:#111;">Join the community:</p>
-       <a href="${LBN_WHATSAPP}" style="display:inline-block;background:#25D366;color:#fff;text-decoration:none;border-radius:10px;padding:14px 28px;font-weight:700;font-size:15px;">Join the WhatsApp Community →</a>`
-    : `<p style="color:#888;font-size:13px;">Your access details will be sent shortly. Contact us at <a href="mailto:contact@financewithanne.com">contact@financewithanne.com</a> if you have any questions.</p>`;
+       <a href="${whatsappUrl}" style="display:inline-block;background:#25D366;color:#fff;text-decoration:none;border-radius:10px;padding:14px 28px;font-weight:700;font-size:15px;">Join the WhatsApp Community →</a>`
+    : `<p style="color:#888;font-size:13px;">You can access your community link anytime from <a href="${SITE_URL}/account/communities">My Account → Communities</a>. Contact us at <a href="mailto:contact@financewithanne.com">contact@financewithanne.com</a> if you have any trouble.</p>`;
 
   const loginUrl = `${SITE_URL}/auth`;
   const accountSection = `<div style="margin-top:28px;background:#f0f4ff;border-radius:12px;padding:20px 24px;">

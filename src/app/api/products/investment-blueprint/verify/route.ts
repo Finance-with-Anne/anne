@@ -6,8 +6,8 @@ import { rateLimit, rateLimitResponse, getClientIp } from "@/lib/rate-limit";
 import { sendMetaPurchaseEvent } from "@/lib/meta-capi";
 
 const FLW_SECRET    = process.env.FLW_SECRET_KEY ?? "";
-const DOWNLOAD_URL  = process.env.INVESTMENT_BLUEPRINT_DOWNLOAD_URL ?? "";
 const SITE_URL      = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+const PRODUCT_ID    = "80a9913d-3177-47ca-8ac1-57665fffa1be"; // products table UUID
 
 function generatePassword(len = 12) {
   const chars = "ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#$";
@@ -102,24 +102,31 @@ export async function POST(req: NextRequest) {
   }
 
   // Send delivery email
-  sendDeliveryEmail({ email, name, password, isNewUser }).catch(console.error);
+  const { data: product } = await supabaseAdmin
+    .from("products")
+    .select("download_url")
+    .eq("id", PRODUCT_ID)
+    .maybeSingle();
+
+  sendDeliveryEmail({ email, name, password, isNewUser, downloadUrl: product?.download_url ?? null }).catch(console.error);
 
   return NextResponse.json({ success: true, is_new_user: isNewUser });
 }
 
 async function sendDeliveryEmail({
-  email, name, password, isNewUser,
+  email, name, password, isNewUser, downloadUrl,
 }: {
   email: string;
   name: string;
   password: string | null;
   isNewUser: boolean;
+  downloadUrl: string | null;
 }) {
-  const downloadSection = DOWNLOAD_URL
+  const downloadSection = downloadUrl
     ? `<p style="margin:24px 0 8px;font-weight:600;color:#111;">Your Investment Starter Kit:</p>
-       <a href="${DOWNLOAD_URL}" style="display:inline-block;background:#02133B;color:#fff;text-decoration:none;border-radius:10px;padding:14px 28px;font-weight:700;font-size:15px;">Open the Starter Kit →</a>
+       <a href="${downloadUrl}" style="display:inline-block;background:#02133B;color:#fff;text-decoration:none;border-radius:10px;padding:14px 28px;font-weight:700;font-size:15px;">Open the Starter Kit →</a>
        <p style="margin:8px 0 0;font-size:13px;color:#888;">Includes the Blueprint, Starter Checklist, Platforms Directory, Allocation Template, and Goal Planner.</p>`
-    : `<p style="color:#888;font-size:13px;">Your download link will be sent shortly. Contact us at <a href="mailto:contact@financewithanne.com">contact@financewithanne.com</a> if you don't receive it within 10 minutes.</p>`;
+    : `<p style="color:#888;font-size:13px;">You can access your download anytime from <a href="${SITE_URL}/account/files">My Account → Files &amp; Templates</a>. Contact us at <a href="mailto:contact@financewithanne.com">contact@financewithanne.com</a> if you have any trouble.</p>`;
 
   const accountSection = isNewUser && password
     ? `<div style="margin:28px 0;background:#f4f6ff;border:1px solid #d0d9ff;border-radius:12px;padding:20px;">

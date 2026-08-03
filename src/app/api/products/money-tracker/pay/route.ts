@@ -5,7 +5,7 @@ import { rateLimit, rateLimitResponse, getClientIp } from "@/lib/rate-limit";
 const FLW_SECRET = process.env.FLW_SECRET_KEY ?? "";
 const SITE_URL   = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
-const PRODUCT_ID   = "money-tracker";
+const PRODUCT_ID   = "588a6f5d-f7c9-4b02-9a33-935f9a2e00cb"; // products table UUID
 const PRODUCT_NAME = "The Complete Budget & Money Tracker";
 const PRICE        = 11999;
 const CURRENCY     = "NGN";

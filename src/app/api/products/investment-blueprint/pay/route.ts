@@ -5,7 +5,7 @@ import { rateLimit, rateLimitResponse, getClientIp } from "@/lib/rate-limit";
 const FLW_SECRET = process.env.FLW_SECRET_KEY ?? "";
 const SITE_URL   = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
-const PRODUCT_ID   = "investment-blueprint";
+const PRODUCT_ID   = "80a9913d-3177-47ca-8ac1-57665fffa1be"; // products table UUID
 const PRODUCT_NAME = "The ₦10,000 Investment Blueprint";
 const PRICE        = 5000;
 const CURRENCY     = "NGN";

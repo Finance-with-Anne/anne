@@ -7,6 +7,7 @@ export default function ContactForm() {
   const [email, setEmail]     = useState("");
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
+  const [company, setCompany] = useState(""); // honeypot — real users never see or fill this
   const [loading, setLoading] = useState(false);
   const [sent, setSent]       = useState(false);
   const [error, setError]     = useState<string | null>(null);
@@ -19,7 +20,7 @@ export default function ContactForm() {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, subject, message }),
+        body: JSON.stringify({ name, email, subject, message, company }),
       });
       const json = await res.json();
       if (!res.ok) { setError(json.error ?? "Something went wrong. Please try again."); }
@@ -55,6 +56,16 @@ export default function ContactForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      <input
+        type="text"
+        name="company"
+        value={company}
+        onChange={e => setCompany(e.target.value)}
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+        className="absolute left-[-9999px] w-px h-px opacity-0"
+      />
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label className={labelClass}>Full Name <span className="text-red-400">*</span></label>
