@@ -5,8 +5,13 @@ import { rateLimit, rateLimitResponse, getClientIp } from "@/lib/rate-limit";
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? "contact@financewithanne.com";
 
 export async function POST(req: NextRequest) {
-  const { allowed, retryAfterSeconds } = rateLimit(`contact:${getClientIp(req)}`, 5, 10 * 60 * 1000);
-  if (!allowed) return rateLimitResponse(retryAfterSeconds!);
+  const perIp = rateLimit(`contact:${getClientIp(req)}`, 3, 15 * 60 * 1000);
+  if (!perIp.allowed) return rateLimitResponse(perIp.retryAfterSeconds!);
+
+  // Global cap across all IPs — blunts bots that rotate/spread across many
+  // addresses to stay under the per-IP limit.
+  const global = rateLimit("contact:global", 15, 60 * 60 * 1000);
+  if (!global.allowed) return rateLimitResponse(global.retryAfterSeconds!);
 
   const { name, email, subject, message, company } = await req.json();
 
