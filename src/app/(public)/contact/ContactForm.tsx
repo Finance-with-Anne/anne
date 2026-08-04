@@ -1,6 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import Script from "next/script";
+
+const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+
+declare global {
+  interface Window {
+    turnstile?: {
+      render: (container: HTMLElement, options: { sitekey: string; callback: (token: string) => void; "expired-callback"?: () => void }) => string;
+      reset: (widgetId?: string) => void;
+    };
+  }
+}
 
 export default function ContactForm() {
   const [name, setName]       = useState("");
@@ -12,6 +24,23 @@ export default function ContactForm() {
   const [sent, setSent]       = useState(false);
   const [error, setError]     = useState<string | null>(null);
 
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const turnstileRef = useRef<HTMLDivElement>(null);
+  const widgetId = useRef<string | undefined>(undefined);
+
+  function renderTurnstile() {
+    if (!TURNSTILE_SITE_KEY || !turnstileRef.current || !window.turnstile) return;
+    widgetId.current = window.turnstile.render(turnstileRef.current, {
+      sitekey: TURNSTILE_SITE_KEY,
+      callback: (token) => setTurnstileToken(token),
+      "expired-callback": () => setTurnstileToken(""),
+    });
+  }
+
+  useEffect(() => {
+    if (window.turnstile) renderTurnstile();
+  }, []);
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
@@ -20,10 +49,14 @@ export default function ContactForm() {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, subject, message, company }),
+        body: JSON.stringify({ name, email, subject, message, company, turnstileToken }),
       });
       const json = await res.json();
-      if (!res.ok) { setError(json.error ?? "Something went wrong. Please try again."); }
+      if (!res.ok) {
+        setError(json.error ?? "Something went wrong. Please try again.");
+        if (window.turnstile && widgetId.current) window.turnstile.reset(widgetId.current);
+        setTurnstileToken("");
+      }
       else { setSent(true); }
     } catch {
       setError("Network error. Please try again.");
@@ -45,7 +78,11 @@ export default function ContactForm() {
         <h3 className="text-base font-bold text-gray-900 dark:text-white">Message sent!</h3>
         <p className="text-sm text-gray-500 dark:text-white/40 mt-1">We'll get back to you within 24 hours.</p>
         <button
-          onClick={() => { setSent(false); setName(""); setEmail(""); setSubject(""); setMessage(""); }}
+          onClick={() => {
+            setSent(false); setName(""); setEmail(""); setSubject(""); setMessage("");
+            setTurnstileToken("");
+            if (window.turnstile && widgetId.current) window.turnstile.reset(widgetId.current);
+          }}
           className="mt-5 text-sm text-[#0822C0] dark:text-blue-400 font-semibold hover:underline"
         >
           Send another message
@@ -56,6 +93,13 @@ export default function ContactForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {TURNSTILE_SITE_KEY && (
+        <Script
+          src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+          strategy="afterInteractive"
+          onLoad={renderTurnstile}
+        />
+      )}
       <input
         type="text"
         name="company"
@@ -94,6 +138,8 @@ export default function ContactForm() {
         />
       </div>
 
+      {TURNSTILE_SITE_KEY && <div ref={turnstileRef} />}
+
       {error && (
         <div className="rounded-xl bg-red-50 dark:bg-red-400/10 border border-red-200 dark:border-red-400/20 px-4 py-3 text-sm text-red-600 dark:text-red-400">
           {error}
@@ -102,7 +148,7 @@ export default function ContactForm() {
 
       <button
         type="submit"
-        disabled={loading}
+        disabled={loading || (!!TURNSTILE_SITE_KEY && !turnstileToken)}
         className="w-full rounded-xl bg-[#0822C0] text-white font-bold py-3.5 text-sm hover:bg-[#0618a0] disabled:opacity-50 transition-colors flex items-center justify-center gap-2"
       >
         {loading ? "Sending…" : "Send Message"}

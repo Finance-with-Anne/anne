@@ -3,6 +3,17 @@ import { resend, EMAIL_FROM } from "@/lib/resend";
 import { rateLimit, rateLimitResponse, getClientIp } from "@/lib/rate-limit";
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? "contact@financewithanne.com";
+const TURNSTILE_SECRET_KEY = process.env.TURNSTILE_SECRET_KEY ?? "";
+
+async function verifyTurnstile(token: string, ip: string) {
+  const res = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ secret: TURNSTILE_SECRET_KEY, response: token, remoteip: ip }),
+  });
+  const data = await res.json();
+  return data.success === true;
+}
 
 export async function POST(req: NextRequest) {
   const perIp = rateLimit(`contact:${getClientIp(req)}`, 3, 15 * 60 * 1000);
@@ -13,11 +24,20 @@ export async function POST(req: NextRequest) {
   const global = rateLimit("contact:global", 15, 60 * 60 * 1000);
   if (!global.allowed) return rateLimitResponse(global.retryAfterSeconds!);
 
-  const { name, email, subject, message, company } = await req.json();
+  const { name, email, subject, message, company, turnstileToken } = await req.json();
 
   // Honeypot: real visitors never see or fill this field, bots do.
   if (company) {
     return NextResponse.json({ success: true });
+  }
+
+  if (TURNSTILE_SECRET_KEY) {
+    const human = typeof turnstileToken === "string" && turnstileToken
+      ? await verifyTurnstile(turnstileToken, getClientIp(req))
+      : false;
+    if (!human) {
+      return NextResponse.json({ error: "Verification failed. Please try again." }, { status: 400 });
+    }
   }
 
   if (!name || !email || !message) {
