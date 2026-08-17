@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, after } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { resend, EMAIL_FROM } from "@/lib/resend";
 import { verifyFlutterwaveTransaction, transactionSucceeded, chargeMatchesExpected } from "@/lib/flutterwave";
@@ -63,15 +63,19 @@ export async function POST(req: NextRequest) {
   const name  = (order.name as string | null) ?? email.split("@")[0];
 
   // Server-side Meta Purchase event (Conversions API)
-  sendMetaPurchaseEvent({
-    eventId: `order-${order_id}`,
-    email,
-    value: order.total as number,
-    currency: order.currency as string,
-    eventSourceUrl: `${SITE_URL}/investment-blueprint/checkout`,
-    clientIp: getClientIp(req),
-    userAgent: req.headers.get("user-agent") ?? undefined,
-  }).catch(console.error);
+  const metaUserAgent = req.headers.get("user-agent") ?? undefined;
+  const metaClientIp = getClientIp(req);
+  after(() =>
+    sendMetaPurchaseEvent({
+      eventId: `order-${order_id}`,
+      email,
+      value: order.total as number,
+      currency: order.currency as string,
+      eventSourceUrl: `${SITE_URL}/investment-blueprint/checkout`,
+      clientIp: metaClientIp,
+      userAgent: metaUserAgent,
+    }).catch(console.error)
+  );
 
   // Check if user already exists
   const { data: { users } } = await supabaseAdmin.auth.admin.listUsers({ perPage: 1000 });
@@ -111,11 +115,12 @@ export async function POST(req: NextRequest) {
 
   const downloadUrl = product?.download_url ?? null;
 
-  sendDeliveryEmail({ email, name, password, isNewUser, downloadUrl }).catch(console.error);
-
-  if (!downloadUrl) {
-    sendMissingDownloadAlert({ email, name, orderId: order_id }).catch(console.error);
-  }
+  after(async () => {
+    await sendDeliveryEmail({ email, name, password, isNewUser, downloadUrl }).catch(console.error);
+    if (!downloadUrl) {
+      await sendMissingDownloadAlert({ email, name, orderId: order_id }).catch(console.error);
+    }
+  });
 
   return NextResponse.json({ success: true, is_new_user: isNewUser });
 }
