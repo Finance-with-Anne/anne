@@ -8,6 +8,7 @@ import { sendMetaPurchaseEvent } from "@/lib/meta-capi";
 const FLW_SECRET    = process.env.FLW_SECRET_KEY ?? "";
 const SITE_URL      = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 const PRODUCT_ID    = "80a9913d-3177-47ca-8ac1-57665fffa1be"; // products table UUID
+const ADMIN_EMAIL   = process.env.ADMIN_EMAIL ?? "contact@financewithanne.com";
 
 function generatePassword(len = 12) {
   const chars = "ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#$";
@@ -108,9 +109,32 @@ export async function POST(req: NextRequest) {
     .eq("id", PRODUCT_ID)
     .maybeSingle();
 
-  sendDeliveryEmail({ email, name, password, isNewUser, downloadUrl: product?.download_url ?? null }).catch(console.error);
+  const downloadUrl = product?.download_url ?? null;
+
+  sendDeliveryEmail({ email, name, password, isNewUser, downloadUrl }).catch(console.error);
+
+  if (!downloadUrl) {
+    sendMissingDownloadAlert({ email, name, orderId: order_id }).catch(console.error);
+  }
 
   return NextResponse.json({ success: true, is_new_user: isNewUser });
+}
+
+async function sendMissingDownloadAlert({ email, name, orderId }: { email: string; name: string; orderId: string }) {
+  await resend.emails.send({
+    from: EMAIL_FROM,
+    to: ADMIN_EMAIL,
+    subject: `Action needed: Investment Blueprint paid, no download set (${name})`,
+    html: `<p style="font-family:sans-serif;font-size:14px;color:#111;">
+      <strong>${name}</strong> (<a href="mailto:${email}">${email}</a>) just paid for The ₦10,000 Investment Blueprint,
+      but the product's download link isn't set yet, so they only received a generic "check your account" email.
+    </p>
+    <p style="font-family:sans-serif;font-size:14px;color:#111;">
+      Order ID: <code>${orderId}</code><br>
+      Please send them the Starter Kit directly, and set the download link on the product in
+      <a href="${SITE_URL}/admin/products">Admin → Products</a> so future buyers get it automatically.
+    </p>`,
+  });
 }
 
 async function sendDeliveryEmail({
