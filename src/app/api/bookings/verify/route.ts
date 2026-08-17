@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, after } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { resend, EMAIL_FROM } from "@/lib/resend";
 import { createMeetEvent } from "@/lib/google-calendar";
@@ -69,23 +69,16 @@ export async function POST(req: NextRequest) {
 
   let isNewUser = false;
   let tempPassword: string | null = null;
-  let userId: string | null = existingUser?.id ?? null;
 
   if (!existingUser) {
     isNewUser = true;
     tempPassword = generatePassword();
-    const { data: created } = await supabaseAdmin.auth.admin.createUser({
+    await supabaseAdmin.auth.admin.createUser({
       email,
       password: tempPassword,
       email_confirm: true,
       user_metadata: { full_name: name },
     });
-    userId = created?.user?.id ?? null;
-  }
-
-  // Link booking to user
-  if (userId) {
-    await supabaseAdmin.from("bookings").update({ user_id: userId }).eq("id", booking_id);
   }
 
   // Auto-create Google Meet; fall back to manually stored link
@@ -104,8 +97,10 @@ export async function POST(req: NextRequest) {
   }
 
   // Send client + admin emails
-  sendClientEmail({ email, name, session: session.title, formattedDate, time: booking.time, meetLink, isNewUser, tempPassword }).catch(console.error);
-  sendAdminEmail({ name, email, session: session.title, formattedDate, time: booking.time, meetLink }).catch(console.error);
+  after(async () => {
+    await sendClientEmail({ email, name, session: session.title, formattedDate, time: booking.time, meetLink, isNewUser, tempPassword }).catch(console.error);
+    await sendAdminEmail({ name, email, session: session.title, formattedDate, time: booking.time, meetLink }).catch(console.error);
+  });
 
   return NextResponse.json({ success: true, emailTo: email });
 }

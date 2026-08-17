@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, after } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { resend, EMAIL_FROM } from "@/lib/resend";
 import { verifyFlutterwaveTransaction, transactionSucceeded, chargeMatchesExpected } from "@/lib/flutterwave";
@@ -88,7 +88,7 @@ export async function POST(req: NextRequest) {
   }
 
   // ── Send confirmation email ──────────────────────────────────────────────
-  sendOrderEmail({ order, downloads, password, isNewUser, name }).catch(console.error);
+  after(() => sendOrderEmail({ order, downloads, password, isNewUser, name }).catch(console.error));
 
   return NextResponse.json({ success: true, downloads, is_new_user: isNewUser });
 }

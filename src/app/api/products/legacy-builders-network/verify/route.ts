@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, after } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { resend, EMAIL_FROM } from "@/lib/resend";
 import { verifyFlutterwaveTransaction, transactionSucceeded, chargeMatchesExpected } from "@/lib/flutterwave";
@@ -109,7 +109,7 @@ export async function POST(req: NextRequest) {
   }
 
   const whatsappUrl = await getWhatsappUrl();
-  sendConfirmationEmail({ email, name, accountUrl, tempPassword, whatsappUrl }).catch(console.error);
+  after(() => sendConfirmationEmail({ email, name, accountUrl, tempPassword, whatsappUrl }).catch(console.error));
 
   return NextResponse.json({ success: true, whatsapp_url: whatsappUrl });
 }
