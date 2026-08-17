@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -10,7 +11,7 @@ export default async function AccountDashboardPage() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/auth");
 
-  const [profileRes, enrollmentsRes, bookingsRes, progressRes] = await Promise.all([
+  const [profileRes, enrollmentsRes, bookingsRes, progressRes, ordersRes] = await Promise.all([
     supabase.from("profiles").select("full_name").eq("id", user.id).single(),
     supabase
       .from("course_enrollments")
@@ -27,6 +28,13 @@ export default async function AccountDashboardPage() {
       .from("lesson_progress")
       .select("lesson_id, course_id")
       .eq("user_id", user.id),
+    // Files & Materials count uses supabaseAdmin, matching /account/files — orders RLS
+    // is scoped for admin access, not direct user reads.
+    supabaseAdmin
+      .from("orders")
+      .select("items")
+      .eq("user_id", user.id)
+      .eq("status", "paid"),
   ]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -35,6 +43,39 @@ export default async function AccountDashboardPage() {
   const allBookings: any[] = bookingsRes.data ?? [];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const lessonProgress: any[] = progressRes.data ?? [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const paidOrders: any[] = ordersRes.data ?? [];
+
+  // ── Files & Materials count — mirrors /account/files exactly ──────────────
+  // Purchased template products (each item on a paid order)
+  const purchasedItems = paidOrders.flatMap(o => (o.items ?? []) as { id: string; name: string }[]);
+  const purchasedIds = [...new Set(purchasedItems.map(i => i.id))];
+  const { data: purchasedProducts } = purchasedIds.length
+    ? await supabaseAdmin.from("products").select("id, download_url").in("id", purchasedIds)
+    : { data: [] as { id: string; download_url: string | null }[] };
+  const downloadUrlById = new Map((purchasedProducts ?? []).map(p => [p.id, p.download_url]));
+  const purchasesReadyCount = purchasedItems.filter(i => downloadUrlById.get(i.id)).length;
+  const purchasesPendingCount = purchasedItems.length - purchasesReadyCount;
+
+  // PDF lessons from enrolled courses' curriculum
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const pdfLessonsCount = enrollments.reduce((count: number, e: any) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const sections: any[] = e.course?.curriculum ?? [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return count + sections.reduce((s: number, sec: any) =>
+      s + (sec.lessons ?? []).filter((l: { type: string; content?: string }) => l.type === "pdf" && l.content).length, 0);
+  }, 0);
+
+  // Admin-uploaded file/link resources for enrolled courses
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const enrolledCourseIds = enrollments.map((e: any) => e.course?.id).filter(Boolean) as string[];
+  const { data: courseResources } = enrolledCourseIds.length
+    ? await supabaseAdmin.from("course_resources").select("id").in("course_id", enrolledCourseIds).in("type", ["file", "link"])
+    : { data: [] as { id: string }[] };
+
+  const filesTotalCount = purchasedItems.length + pdfLessonsCount + (courseResources?.length ?? 0);
+  const filesReadyCount = purchasesReadyCount + pdfLessonsCount + (courseResources?.length ?? 0);
 
   // Next upcoming booking
   const nextBooking = allBookings
@@ -95,6 +136,19 @@ export default async function AccountDashboardPage() {
       iconColor: "text-purple-600",
       href: "/account/bookings",
     },
+    {
+      label: "Files & Materials",
+      value: filesTotalCount,
+      sub: filesTotalCount === 0
+        ? "Nothing yet"
+        : purchasesPendingCount > 0
+        ? `${purchasesPendingCount} pending delivery`
+        : `${filesReadyCount} ready to open`,
+      icon: "M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z",
+      iconBg: "bg-violet-50",
+      iconColor: "text-violet-500",
+      href: "/account/files",
+    },
   ];
 
   return (
@@ -118,7 +172,7 @@ export default async function AccountDashboardPage() {
       </div>
 
       {/* Stat cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((s) => (
           <Link
             key={s.label}
