@@ -12,39 +12,39 @@ function generatePassword(len = 12) {
   return Array.from({ length: len }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
 }
 
-export async function POST(req: NextRequest) {
-  const { allowed, retryAfterSeconds } = rateLimit(`verify:shop:${getClientIp(req)}`, 20, 10 * 60 * 1000);
-  if (!allowed) return rateLimitResponse(retryAfterSeconds!);
+type Download = { name: string; qty: number; download_url: string | null; source_type: string | null; source_id: string | null };
 
-  const { order_id, transaction_id } = await req.json();
+export type FulfillResult =
+  | { ok: true; already_paid: true; downloads: Download[] }
+  | { ok: true; already_paid: false; downloads: Download[]; is_new_user: boolean }
+  | { ok: false; status: number; error: string };
 
-  if (!FLW_SECRET) return NextResponse.json({ error: "Payment not configured." }, { status: 503 });
-
+/** Shared by the client-driven /verify redirect and the Flutterwave webhook — see webhook route for why both exist. */
+export async function fulfillShopOrder(orderId: string, transactionId: string | number): Promise<FulfillResult> {
   const { data: order, error } = await supabaseAdmin
     .from("orders")
     .select("*")
-    .eq("id", order_id)
+    .eq("id", orderId)
     .single();
 
-  if (error || !order) return NextResponse.json({ error: "Order not found." }, { status: 404 });
+  if (error || !order) return { ok: false, status: 404, error: "Order not found." };
 
   const downloads = await getDownloads(order.items);
 
   if (order.status === "paid") {
-    return NextResponse.json({ success: true, downloads });
+    return { ok: true, already_paid: true, downloads };
   }
 
-  const json = await verifyFlutterwaveTransaction(transaction_id);
+  const flwJson = await verifyFlutterwaveTransaction(transactionId);
 
-  if (!transactionSucceeded(json)) {
-    return NextResponse.json({ error: "Payment not successful." }, { status: 400 });
+  if (!transactionSucceeded(flwJson)) {
+    return { ok: false, status: 400, error: "Payment not successful." };
   }
 
-  if (!chargeMatchesExpected(json, { amount: order.total, currency: order.currency, txRef: order.tx_ref })) {
-    return NextResponse.json({ error: "This transaction does not match the order being paid for." }, { status: 400 });
+  if (!chargeMatchesExpected(flwJson, { amount: order.total, currency: order.currency, txRef: order.tx_ref })) {
+    return { ok: false, status: 400, error: "This transaction does not match the order being paid for." };
   }
 
-  // ── Resolve or create user account ──────────────────────────────────────
   const email = order.email as string;
   const name  = (order.name as string | null) ?? email.split("@")[0];
 
@@ -71,13 +71,11 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // ── Mark order paid + link to user ──────────────────────────────────────
   await supabaseAdmin
     .from("orders")
-    .update({ status: "paid", transaction_id: String(transaction_id), user_id: userId })
-    .eq("id", order_id);
+    .update({ status: "paid", transaction_id: String(transactionId), user_id: userId })
+    .eq("id", orderId);
 
-  // ── Auto-enroll in any course products ──────────────────────────────────
   if (userId) {
     const courseItems = await getCourseItems(order.items);
     for (const courseId of courseItems) {
@@ -87,10 +85,28 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // ── Send confirmation email ──────────────────────────────────────────────
   after(() => sendOrderEmail({ order, downloads, password, isNewUser, name }).catch(console.error));
 
-  return NextResponse.json({ success: true, downloads, is_new_user: isNewUser });
+  return { ok: true, already_paid: false, downloads, is_new_user: isNewUser };
+}
+
+export async function POST(req: NextRequest) {
+  const { allowed, retryAfterSeconds } = rateLimit(`verify:shop:${getClientIp(req)}`, 20, 10 * 60 * 1000);
+  if (!allowed) return rateLimitResponse(retryAfterSeconds!);
+
+  const { order_id, transaction_id } = await req.json();
+
+  if (!FLW_SECRET) return NextResponse.json({ error: "Payment not configured." }, { status: 503 });
+
+  const result = await fulfillShopOrder(order_id, transaction_id);
+
+  if (!result.ok) {
+    return NextResponse.json({ error: result.error }, { status: result.status });
+  }
+  if (result.already_paid) {
+    return NextResponse.json({ success: true, downloads: result.downloads });
+  }
+  return NextResponse.json({ success: true, downloads: result.downloads, is_new_user: result.is_new_user });
 }
 
 async function getDownloads(items: { id: string; name: string; qty: number }[]) {

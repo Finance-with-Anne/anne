@@ -18,54 +18,48 @@ async function getWhatsappUrl(): Promise<string> {
   return links.find(l => l.type === "whatsapp")?.url ?? "";
 }
 
-export async function POST(req: NextRequest) {
-  const { allowed, retryAfterSeconds } = rateLimit(`verify:lbn:${getClientIp(req)}`, 20, 10 * 60 * 1000);
-  if (!allowed) return rateLimitResponse(retryAfterSeconds!);
+export type FulfillResult =
+  | { ok: true; already_paid: true; whatsapp_url: string }
+  | { ok: true; already_paid: false; whatsapp_url: string }
+  | { ok: false; status: number; error: string };
 
-  if (!FLW_SECRET) return NextResponse.json({ error: "Payment not configured." }, { status: 503 });
-
-  const { order_id, transaction_id } = await req.json();
-  if (!order_id || !transaction_id) {
-    return NextResponse.json({ error: "Missing order_id or transaction_id." }, { status: 400 });
-  }
-
+/** Shared by the client-driven /verify redirect and the Flutterwave webhook — see webhook route for why both exist. */
+export async function fulfillLbnOrder(orderId: string, transactionId: string | number): Promise<FulfillResult> {
   const { data: order, error: orderErr } = await supabaseAdmin
     .from("orders")
     .select("*")
-    .eq("id", order_id)
+    .eq("id", orderId)
     .single();
 
   if (orderErr || !order) {
-    return NextResponse.json({ error: "Order not found." }, { status: 404 });
+    return { ok: false, status: 404, error: "Order not found." };
   }
 
   if (order.status === "paid") {
-    return NextResponse.json({ success: true, already_paid: true, whatsapp_url: await getWhatsappUrl() });
+    return { ok: true, already_paid: true, whatsapp_url: await getWhatsappUrl() };
   }
 
-  const flwJson = await verifyFlutterwaveTransaction(transaction_id);
+  const flwJson = await verifyFlutterwaveTransaction(transactionId);
 
   if (!transactionSucceeded(flwJson)) {
-    return NextResponse.json({ error: "Payment not successful." }, { status: 400 });
+    return { ok: false, status: 400, error: "Payment not successful." };
   }
 
   if (!chargeMatchesExpected(flwJson, { amount: order.total, currency: order.currency, txRef: order.tx_ref })) {
-    return NextResponse.json({ error: "This transaction does not match the order being paid for." }, { status: 400 });
+    return { ok: false, status: 400, error: "This transaction does not match the order being paid for." };
   }
 
   await supabaseAdmin
     .from("orders")
-    .update({ status: "paid", transaction_id: String(transaction_id) })
-    .eq("id", order_id);
+    .update({ status: "paid", transaction_id: String(transactionId) })
+    .eq("id", orderId);
 
   const email = order.email as string;
   const name  = (order.name as string | null) ?? email.split("@")[0];
 
-  // Create or retrieve their account, link order to user, then generate a sign-in link
   let accountUrl: string | undefined;
   let userId: string | undefined;
 
-  // Generate a temporary password they can use to log in
   const tempPassword = "LBN-" + Math.random().toString(36).slice(2, 8).toUpperCase();
 
   try {
@@ -80,7 +74,6 @@ export async function POST(req: NextRequest) {
     // User may already exist
   }
 
-  // If user already existed, find their ID and update their password
   if (!userId) {
     try {
       const { data: listData } = await supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 1000 });
@@ -92,9 +85,8 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // Bind the order to this user so it appears in their Communities page
   if (userId) {
-    await supabaseAdmin.from("orders").update({ user_id: userId }).eq("id", order_id);
+    await supabaseAdmin.from("orders").update({ user_id: userId }).eq("id", orderId);
   }
 
   try {
@@ -111,7 +103,26 @@ export async function POST(req: NextRequest) {
   const whatsappUrl = await getWhatsappUrl();
   after(() => sendConfirmationEmail({ email, name, accountUrl, tempPassword, whatsappUrl }).catch(console.error));
 
-  return NextResponse.json({ success: true, whatsapp_url: whatsappUrl });
+  return { ok: true, already_paid: false, whatsapp_url: whatsappUrl };
+}
+
+export async function POST(req: NextRequest) {
+  const { allowed, retryAfterSeconds } = rateLimit(`verify:lbn:${getClientIp(req)}`, 20, 10 * 60 * 1000);
+  if (!allowed) return rateLimitResponse(retryAfterSeconds!);
+
+  if (!FLW_SECRET) return NextResponse.json({ error: "Payment not configured." }, { status: 503 });
+
+  const { order_id, transaction_id } = await req.json();
+  if (!order_id || !transaction_id) {
+    return NextResponse.json({ error: "Missing order_id or transaction_id." }, { status: 400 });
+  }
+
+  const result = await fulfillLbnOrder(order_id, transaction_id);
+
+  if (!result.ok) {
+    return NextResponse.json({ error: result.error }, { status: result.status });
+  }
+  return NextResponse.json({ success: true, already_paid: result.already_paid, whatsapp_url: result.whatsapp_url });
 }
 
 async function sendConfirmationEmail({

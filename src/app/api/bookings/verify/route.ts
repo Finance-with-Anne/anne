@@ -15,40 +15,36 @@ function generatePassword(len = 10) {
   return Array.from({ length: len }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
 }
 
-export async function POST(req: NextRequest) {
-  const { allowed, retryAfterSeconds } = rateLimit(`verify:booking:${getClientIp(req)}`, 20, 10 * 60 * 1000);
-  if (!allowed) return rateLimitResponse(retryAfterSeconds!);
+export type FulfillResult =
+  | { ok: true; already_paid: true; emailTo?: string }
+  | { ok: true; already_paid: false; emailTo: string }
+  | { ok: false; status: number; error: string };
 
-  const { transaction_id, booking_id } = await req.json();
-
-  if (!FLW_SECRET) return NextResponse.json({ error: "Payment not configured." }, { status: 503 });
-
-  // Fetch booking + session
+/** Shared by the client-driven /verify redirect and the Flutterwave webhook — see webhook route for why both exist. */
+export async function fulfillBooking(bookingId: string, transactionId: string | number): Promise<FulfillResult> {
   const { data: booking, error } = await supabaseAdmin
     .from("bookings")
     .select("*, session:booking_sessions(title, google_meet_link, duration_minutes, questions:booking_questions(*))")
-    .eq("id", booking_id)
+    .eq("id", bookingId)
     .single();
 
-  if (error || !booking) return NextResponse.json({ error: "Booking not found." }, { status: 404 });
-  if (booking.is_paid) return NextResponse.json({ success: true });
+  if (error || !booking) return { ok: false, status: 404, error: "Booking not found." };
+  if (booking.is_paid) return { ok: true, already_paid: true };
 
-  // Verify with Flutterwave
-  const json = await verifyFlutterwaveTransaction(transaction_id);
+  const flwJson = await verifyFlutterwaveTransaction(transactionId);
 
-  if (!transactionSucceeded(json)) {
-    return NextResponse.json({ error: "Payment not successful." }, { status: 400 });
+  if (!transactionSucceeded(flwJson)) {
+    return { ok: false, status: 400, error: "Payment not successful." };
   }
 
-  if (!chargeMatchesExpected(json, { amount: booking.amount_paid, currency: booking.currency, txRef: booking.payment_ref })) {
-    return NextResponse.json({ error: "This transaction does not match the booking being paid for." }, { status: 400 });
+  if (!chargeMatchesExpected(flwJson, { amount: booking.amount_paid, currency: booking.currency, txRef: booking.payment_ref })) {
+    return { ok: false, status: 400, error: "This transaction does not match the booking being paid for." };
   }
 
-  // Mark as paid + confirmed
   await supabaseAdmin
     .from("bookings")
     .update({ is_paid: true, status: "confirmed" })
-    .eq("id", booking_id);
+    .eq("id", bookingId);
 
   const session = booking.session as {
     title: string;
@@ -60,7 +56,6 @@ export async function POST(req: NextRequest) {
     weekday: "long", day: "numeric", month: "long", year: "numeric",
   });
 
-  // Create or find user account
   const email = booking.client_email as string;
   const name  = booking.client_name as string;
 
@@ -81,7 +76,6 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  // Auto-create Google Meet; fall back to manually stored link
   const autoMeetLink = await createMeetEvent({
     title: session.title,
     date: booking.date,
@@ -93,16 +87,31 @@ export async function POST(req: NextRequest) {
   const meetLink = autoMeetLink ?? session.google_meet_link ?? undefined;
 
   if (autoMeetLink) {
-    await supabaseAdmin.from("bookings").update({ notes: autoMeetLink }).eq("id", booking_id);
+    await supabaseAdmin.from("bookings").update({ notes: autoMeetLink }).eq("id", bookingId);
   }
 
-  // Send client + admin emails
   after(async () => {
     await sendClientEmail({ email, name, session: session.title, formattedDate, time: booking.time, meetLink, isNewUser, tempPassword }).catch(console.error);
     await sendAdminEmail({ name, email, session: session.title, formattedDate, time: booking.time, meetLink }).catch(console.error);
   });
 
-  return NextResponse.json({ success: true, emailTo: email });
+  return { ok: true, already_paid: false, emailTo: email };
+}
+
+export async function POST(req: NextRequest) {
+  const { allowed, retryAfterSeconds } = rateLimit(`verify:booking:${getClientIp(req)}`, 20, 10 * 60 * 1000);
+  if (!allowed) return rateLimitResponse(retryAfterSeconds!);
+
+  const { transaction_id, booking_id } = await req.json();
+
+  if (!FLW_SECRET) return NextResponse.json({ error: "Payment not configured." }, { status: 503 });
+
+  const result = await fulfillBooking(booking_id, transaction_id);
+
+  if (!result.ok) {
+    return NextResponse.json({ error: result.error }, { status: result.status });
+  }
+  return NextResponse.json({ success: true, emailTo: result.emailTo });
 }
 
 async function sendClientEmail({
