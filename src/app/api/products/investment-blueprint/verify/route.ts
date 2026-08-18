@@ -15,69 +15,67 @@ function generatePassword(len = 12) {
   return Array.from({ length: len }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
 }
 
-export async function POST(req: NextRequest) {
-  const { allowed, retryAfterSeconds } = rateLimit(`verify:investment-blueprint:${getClientIp(req)}`, 20, 10 * 60 * 1000);
-  if (!allowed) return rateLimitResponse(retryAfterSeconds!);
+export type FulfillResult =
+  | { ok: true; already_paid: true }
+  | { ok: true; already_paid: false; is_new_user: boolean }
+  | { ok: false; status: number; error: string };
 
-  if (!FLW_SECRET) return NextResponse.json({ error: "Payment not configured." }, { status: 503 });
-
-  const { order_id, transaction_id } = await req.json();
-  if (!order_id || !transaction_id) {
-    return NextResponse.json({ error: "Missing order_id or transaction_id." }, { status: 400 });
-  }
-
-  // Fetch order
+/**
+ * Marks an Investment Blueprint order paid and delivers it. Shared by the
+ * client-driven /verify redirect AND the Flutterwave webhook, since bank
+ * transfer payments can clear *after* the customer's browser has already
+ * left the /verify page (redirect fires before the transfer settles) —
+ * the webhook is what catches those.
+ */
+export async function fulfillInvestmentBlueprintOrder(
+  orderId: string,
+  transactionId: string | number,
+  meta?: { clientIp?: string; userAgent?: string }
+): Promise<FulfillResult> {
   const { data: order, error: orderErr } = await supabaseAdmin
     .from("orders")
     .select("*")
-    .eq("id", order_id)
+    .eq("id", orderId)
     .single();
 
   if (orderErr || !order) {
-    return NextResponse.json({ error: "Order not found." }, { status: 404 });
+    return { ok: false, status: 404, error: "Order not found." };
   }
 
-  // Already processed
   if (order.status === "paid") {
-    return NextResponse.json({ success: true, already_paid: true });
+    return { ok: true, already_paid: true };
   }
 
-  // Verify with Flutterwave
-  const flwJson = await verifyFlutterwaveTransaction(transaction_id);
+  const flwJson = await verifyFlutterwaveTransaction(transactionId);
 
   if (!transactionSucceeded(flwJson)) {
-    return NextResponse.json({ error: "Payment not successful." }, { status: 400 });
+    return { ok: false, status: 400, error: "Payment not successful." };
   }
 
   if (!chargeMatchesExpected(flwJson, { amount: order.total, currency: order.currency, txRef: order.tx_ref })) {
-    return NextResponse.json({ error: "This transaction does not match the order being paid for." }, { status: 400 });
+    return { ok: false, status: 400, error: "This transaction does not match the order being paid for." };
   }
 
-  // Mark order paid
   await supabaseAdmin
     .from("orders")
-    .update({ status: "paid", transaction_id: String(transaction_id) })
-    .eq("id", order_id);
+    .update({ status: "paid", transaction_id: String(transactionId) })
+    .eq("id", orderId);
 
   const email = order.email as string;
   const name  = (order.name as string | null) ?? email.split("@")[0];
 
-  // Server-side Meta Purchase event (Conversions API)
-  const metaUserAgent = req.headers.get("user-agent") ?? undefined;
-  const metaClientIp = getClientIp(req);
   after(() =>
     sendMetaPurchaseEvent({
-      eventId: `order-${order_id}`,
+      eventId: `order-${orderId}`,
       email,
       value: order.total as number,
       currency: order.currency as string,
       eventSourceUrl: `${SITE_URL}/investment-blueprint/checkout`,
-      clientIp: metaClientIp,
-      userAgent: metaUserAgent,
+      clientIp: meta?.clientIp,
+      userAgent: meta?.userAgent,
     }).catch(console.error)
   );
 
-  // Check if user already exists
   const { data: { users } } = await supabaseAdmin.auth.admin.listUsers({ perPage: 1000 });
   const existingUser = users.find(u => u.email?.toLowerCase() === email.toLowerCase());
 
@@ -101,12 +99,10 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // Link the order to the user so it shows in their files dashboard
   if (userId) {
-    await supabaseAdmin.from("orders").update({ user_id: userId }).eq("id", order_id);
+    await supabaseAdmin.from("orders").update({ user_id: userId }).eq("id", orderId);
   }
 
-  // Send delivery email
   const { data: product } = await supabaseAdmin
     .from("products")
     .select("download_url")
@@ -118,11 +114,36 @@ export async function POST(req: NextRequest) {
   after(async () => {
     await sendDeliveryEmail({ email, name, password, isNewUser, downloadUrl }).catch(console.error);
     if (!downloadUrl) {
-      await sendMissingDownloadAlert({ email, name, orderId: order_id }).catch(console.error);
+      await sendMissingDownloadAlert({ email, name, orderId }).catch(console.error);
     }
   });
 
-  return NextResponse.json({ success: true, is_new_user: isNewUser });
+  return { ok: true, already_paid: false, is_new_user: isNewUser };
+}
+
+export async function POST(req: NextRequest) {
+  const { allowed, retryAfterSeconds } = rateLimit(`verify:investment-blueprint:${getClientIp(req)}`, 20, 10 * 60 * 1000);
+  if (!allowed) return rateLimitResponse(retryAfterSeconds!);
+
+  if (!FLW_SECRET) return NextResponse.json({ error: "Payment not configured." }, { status: 503 });
+
+  const { order_id, transaction_id } = await req.json();
+  if (!order_id || !transaction_id) {
+    return NextResponse.json({ error: "Missing order_id or transaction_id." }, { status: 400 });
+  }
+
+  const result = await fulfillInvestmentBlueprintOrder(order_id, transaction_id, {
+    clientIp: getClientIp(req),
+    userAgent: req.headers.get("user-agent") ?? undefined,
+  });
+
+  if (!result.ok) {
+    return NextResponse.json({ error: result.error }, { status: result.status });
+  }
+  if (result.already_paid) {
+    return NextResponse.json({ success: true, already_paid: true });
+  }
+  return NextResponse.json({ success: true, is_new_user: result.is_new_user });
 }
 
 async function sendMissingDownloadAlert({ email, name, orderId }: { email: string; name: string; orderId: string }) {
