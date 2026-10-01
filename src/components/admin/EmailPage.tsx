@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAdminTheme } from "@/lib/admin-theme";
 import ActionButton from "./ActionButton";
 
@@ -12,7 +12,8 @@ interface Props { campaigns: any[]; subscribers: any[]; activeCount: number; }
 export default function EmailPage({ campaigns, subscribers, activeCount }: Props) {
   const { dark } = useAdminTheme();
   const router = useRouter();
-  const [tab, setTab] = useState<Tab>("campaigns");
+  const searchParams = useSearchParams();
+  const [tab, setTab] = useState<Tab>(searchParams.get("tab") === "subscribers" ? "subscribers" : "campaigns");
   const [subject, setSubject] = useState("");
   const [body, setBody] = useState("");
   const [sending, setSending] = useState(false);

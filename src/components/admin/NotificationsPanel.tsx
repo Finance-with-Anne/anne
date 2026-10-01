@@ -9,6 +9,7 @@ type NotifItem = {
   title: string;
   description: string;
   time: string;
+  href: string;
 };
 
 function timeAgo(iso: string) {
@@ -146,7 +147,7 @@ export default function NotificationsPanel({
           items.map(item => {
             const isUnread = new Date(item.time).getTime() > lastSeen;
             return (
-              <div key={item.id} className={`flex items-start gap-3 px-4 py-3 border-b last:border-b-0 transition-colors ${hover} ${divider} ${isUnread ? dark ? "bg-white/[0.02]" : "bg-blue-50/40" : ""}`}>
+              <Link key={item.id} href={item.href} onClick={onClose} className={`flex items-start gap-3 px-4 py-3 border-b last:border-b-0 transition-colors ${hover} ${divider} ${isUnread ? dark ? "bg-white/[0.02]" : "bg-blue-50/40" : ""}`}>
                 <TypeIcon type={item.type} />
                 <div className="flex-1 min-w-0">
                   <p className={`text-xs font-medium leading-snug truncate ${itemTitle}`}>{item.title}</p>
@@ -154,21 +155,10 @@ export default function NotificationsPanel({
                   <p className={`text-[10px] mt-1 ${sub}`}>{timeAgo(item.time)}</p>
                 </div>
                 {isUnread && <div className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-400" />}
-              </div>
+              </Link>
             );
           })
         )}
-      </div>
-
-      {/* Footer */}
-      <div className={`border-t px-4 py-2.5 ${divider}`}>
-        <Link
-          href="/admin/activity"
-          onClick={onClose}
-          className={`block text-center text-xs font-medium ${dark ? "text-white/40 hover:text-white/70" : "text-gray-400 hover:text-gray-700"}`}
-        >
-          View all activity
-        </Link>
       </div>
     </div>
   );

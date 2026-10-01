@@ -31,6 +31,7 @@ export async function GET() {
       type: "booking" as const,
       title: `New booking from ${b.client_name}`,
       description: b.service ?? "Session booking",
+      href: `/admin/booking/${b.id}`,
       time: b.created_at,
     })),
     ...(enrollmentsRes.data ?? []).map(e => ({
@@ -38,6 +39,7 @@ export async function GET() {
       type: "enrollment" as const,
       title: `New enrollment`,
       description: (e.course as any)?.title ?? "Unknown course",
+      href: "/admin/courses/students",
       time: e.enrolled_at,
     })),
     ...(subscribersRes.data ?? []).map(s => ({
@@ -45,6 +47,7 @@ export async function GET() {
       type: "subscriber" as const,
       title: `New subscriber`,
       description: s.name ? `${s.name} (${s.email})` : s.email,
+      href: "/admin/email?tab=subscribers",
       time: s.created_at,
     })),
   ]
