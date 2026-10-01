@@ -144,7 +144,7 @@ export default function MessagesPanel({
             return (
               <Link
                 key={item.id}
-                href={`/admin/bookings?id=${item.id}`}
+                href={`/admin/booking/${item.id}`}
                 onClick={onClose}
                 className={`flex items-start gap-3 px-4 py-3 border-b last:border-b-0 transition-colors ${hover} ${divider} ${isUnread ? dark ? "bg-white/[0.02]" : "bg-blue-50/40" : ""}`}
               >
@@ -167,7 +167,7 @@ export default function MessagesPanel({
       {/* Footer */}
       <div className={`border-t px-4 py-2.5 ${divider}`}>
         <Link
-          href="/admin/bookings"
+          href="/admin/booking"
           onClick={onClose}
           className={`block text-center text-xs font-medium ${dark ? "text-white/40 hover:text-white/70" : "text-gray-400 hover:text-gray-700"}`}
         >

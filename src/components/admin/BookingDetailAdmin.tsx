@@ -105,7 +105,10 @@ export default function BookingDetailAdmin({ booking }: { booking: BookingWithRe
                 {status}
               </span>
             </div>
-            <p className={`text-sm mt-0.5 ${sub} truncate`}>{booking.client_email}{booking.phone ? ` · ${booking.phone}` : ""}</p>
+            <p className={`text-sm mt-0.5 ${sub} truncate`}>
+              <a href={`mailto:${booking.client_email}`} className="underline hover:opacity-80">{booking.client_email}</a>
+              {booking.phone && <> · <a href={`tel:${booking.phone}`} className="underline hover:opacity-80">{booking.phone}</a></>}
+            </p>
           </div>
 
           {/* Action buttons */}
