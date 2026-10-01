@@ -8,22 +8,6 @@ import * as React from "react";
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? EMAIL_FROM;
 
-export async function GET(req: NextRequest) {
-  const url = new URL(req.url);
-  const sessionId = url.searchParams.get("session_id");
-
-  let query = supabaseAdmin
-    .from("bookings")
-    .select("*, session:booking_sessions(title, slug), slot:booking_slots(date, start_time)")
-    .order("created_at", { ascending: false });
-
-  if (sessionId) query = query.eq("session_id", sessionId);
-
-  const { data, error } = await query;
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json(data);
-}
-
 export async function POST(req: NextRequest) {
   const body = await req.json();
   const { session_id, slot_id, client_name, client_email, phone, answers } = body;

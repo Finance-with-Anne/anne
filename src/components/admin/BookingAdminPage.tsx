@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useAdminTheme } from "@/lib/admin-theme";
 import type { Booking, BookingSession } from "@/types";
+import { paymentState, paymentStateLabel, paymentStateClass } from "@/lib/bookings";
 
 const STATUSES = ["pending", "confirmed", "completed", "cancelled"] as const;
 type Status = typeof STATUSES[number];
@@ -196,11 +197,14 @@ export default function BookingAdminPage({ bookings, sessions }: { bookings: Boo
                       {new Date(booking.date).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })} · {booking.time}
                     </td>
                     <td className="px-5 py-4">
-                      {booking.is_paid ? (
-                        <span className={`text-xs font-medium ${dark ? "text-green-400" : "text-green-600"}`}>Paid</span>
-                      ) : (
-                        <span className={`text-xs ${tSub}`}>—</span>
-                      )}
+                      {(() => {
+                        const ps = paymentState(booking);
+                        return ps ? (
+                          <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${paymentStateClass[ps]}`}>{paymentStateLabel[ps]}</span>
+                        ) : (
+                          <span className={`text-xs ${tSub}`}>—</span>
+                        );
+                      })()}
                     </td>
                     <td className="px-5 py-4">
                       <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium capitalize ${dark ? statusStyle[booking.status].dark : statusStyle[booking.status].light}`}>

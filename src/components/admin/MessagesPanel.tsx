@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
+import { paymentState, paymentStateLabel, paymentStateClass } from "@/lib/bookings";
 
 type Booking = {
   id: string;
@@ -11,6 +12,7 @@ type Booking = {
   date: string | null;
   time: string | null;
   status: string | null;
+  is_paid: boolean | null;
   answers: Record<string, string> | null;
   created_at: string;
 };
@@ -154,7 +156,13 @@ export default function MessagesPanel({
                     <p className={`text-xs font-semibold truncate ${itemTitle}`}>{item.client_name}</p>
                     <span className={`text-[10px] shrink-0 ${sub}`}>{timeAgo(item.created_at)}</span>
                   </div>
-                  <p className={`text-xs font-medium mt-0.5 truncate ${dark ? "text-white/50" : "text-gray-600"}`}>{item.service ?? "Booking"}</p>
+                  <div className="flex items-center gap-1.5 mt-0.5 min-w-0">
+                    <p className={`text-xs font-medium truncate ${dark ? "text-white/50" : "text-gray-600"}`}>{item.service ?? "Booking"}</p>
+                    {(() => {
+                      const ps = paymentState({ is_paid: item.is_paid ?? false, status: item.status as never, created_at: item.created_at });
+                      return ps && <span className={`shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-medium ${paymentStateClass[ps]}`}>{paymentStateLabel[ps]}</span>;
+                    })()}
+                  </div>
                   <p className={`text-xs mt-0.5 truncate ${sub}`}>{preview}</p>
                 </div>
                 {isUnread && <div className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-400" />}

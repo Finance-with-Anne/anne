@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAdminTheme } from "@/lib/admin-theme";
 import type { Booking, BookingSession, BookingSlot } from "@/types";
+import { paymentState, paymentStateLabel, paymentStateClass } from "@/lib/bookings";
 
 const STATUSES = ["pending", "confirmed", "completed", "cancelled"] as const;
 type Status = typeof STATUSES[number];
@@ -31,6 +32,10 @@ export default function BookingDetailAdmin({ booking }: { booking: BookingWithRe
   const [newTime, setNewTime] = useState(booking.time ?? "");
   const [rescheduleNote, setRescheduleNote] = useState("");
   const [rescheduling, setRescheduling] = useState(false);
+  const [reminder, setReminder] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [reminderError, setReminderError] = useState("");
+
+  const payState = paymentState({ ...booking, status });
 
   const bg       = dark ? "bg-[#0d1017]" : "bg-gray-50";
   const card     = dark ? "bg-[#111318] border-white/6" : "bg-white border-gray-200";
@@ -73,6 +78,19 @@ export default function BookingDetailAdmin({ booking }: { booking: BookingWithRe
     setRescheduling(false);
     setShowReschedule(false);
     router.refresh();
+  }
+
+  async function sendReminder() {
+    if (!confirm(`Email ${booking.client_email} a reminder to complete their booking?`)) return;
+    setReminder("sending");
+    const res = await fetch(`/api/bookings/${booking.id}/remind`, { method: "POST" });
+    if (res.ok) {
+      setReminder("sent");
+    } else {
+      const d = await res.json().catch(() => ({}));
+      setReminderError(d.error ?? "Could not send reminder.");
+      setReminder("error");
+    }
   }
 
   async function handleDelete() {
@@ -141,6 +159,22 @@ export default function BookingDetailAdmin({ booking }: { booking: BookingWithRe
         </div>
       </div>
 
+      {payState === "abandoned" && (
+        <div className={`rounded-2xl border p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${card}`}>
+          <div>
+            <p className={`text-sm font-semibold ${heading}`}>Checkout not completed</p>
+            <p className={`text-xs mt-1 ${sub}`}>
+              {booking.client_name.trim().split(" ")[0]} filled in the booking form but never paid. Send a reminder with a link to book again, or reply to them directly.
+            </p>
+            {reminder === "error" && <p className="text-xs mt-1 text-red-500">{reminderError}</p>}
+          </div>
+          <button onClick={sendReminder} disabled={reminder === "sending" || reminder === "sent"}
+            className="shrink-0 rounded-lg bg-[#0822C0] px-4 py-2 text-xs font-semibold text-white hover:bg-[#0620a8] disabled:opacity-60 transition-colors">
+            {reminder === "sending" ? "Sending…" : reminder === "sent" ? "Reminder sent" : "Send payment reminder"}
+          </button>
+        </div>
+      )}
+
       {/* Info grid — expands to 3 cols when meet link present */}
       <div className={`grid gap-4 ${meetLink ? "grid-cols-1 sm:grid-cols-3" : "grid-cols-1 sm:grid-cols-2"}`}>
 
@@ -163,12 +197,16 @@ export default function BookingDetailAdmin({ booking }: { booking: BookingWithRe
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <span className={`text-xs ${label}`}>Status</span>
-              <span className={`text-xs font-semibold ${booking.is_paid ? dark ? "text-green-400" : "text-green-600" : dark ? "text-white/50" : "text-gray-400"}`}>
-                {booking.is_paid ? "Paid" : booking.session?.is_free !== false ? "Free" : "Unpaid"}
-              </span>
+              {payState ? (
+                <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${paymentStateClass[payState]}`}>{paymentStateLabel[payState]}</span>
+              ) : (
+                <span className={`text-xs font-semibold ${dark ? "text-white/50" : "text-gray-400"}`}>
+                  {booking.session?.is_free !== false ? "Free" : "Unpaid"}
+                </span>
+              )}
             </div>
             {booking.amount_paid && (
-              <Row label="Amount" value={`${booking.currency} ${booking.amount_paid.toLocaleString()}`} l={label} v={value} />
+              <Row label={booking.is_paid ? "Amount" : "Amount due"} value={`${booking.currency} ${booking.amount_paid.toLocaleString()}`} l={label} v={value} />
             )}
             {booking.payment_ref && (
               <div>

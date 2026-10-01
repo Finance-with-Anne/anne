@@ -9,7 +9,7 @@ export async function GET() {
 
   const { data } = await supabaseAdmin
     .from("bookings")
-    .select("id, client_name, client_email, service, date, time, status, answers, created_at")
+    .select("id, client_name, client_email, service, date, time, status, is_paid, answers, created_at")
     .order("created_at", { ascending: false })
     .limit(15);
 
